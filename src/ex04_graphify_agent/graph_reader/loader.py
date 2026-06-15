@@ -7,6 +7,7 @@ node-link schema (the file was produced by it — note the ``"links"`` key).
 
 from __future__ import annotations
 
+import functools
 import json
 from pathlib import Path
 from typing import Any
@@ -17,8 +18,12 @@ _PATHS_CONFIG = "config/paths.json"
 _GRAPH_JSON_KEY = "graph_json"
 
 
+@functools.cache
 def _find_repo_root() -> Path:
-    """Walk up from this module until a directory containing ``config/`` is found."""
+    """Walk up from this module until a directory containing ``config/`` is found.
+
+    Cached: the repo root is static for the process, so the filesystem walk runs once.
+    """
     for parent in Path(__file__).resolve().parents:
         if (parent / _PATHS_CONFIG).is_file():
             return parent
@@ -34,8 +39,9 @@ def default_graph_path() -> Path:
 
 
 def load_graph_data(path: Path) -> dict[str, Any]:
-    """Read the raw node-link JSON payload from ``path``."""
-    data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    """Read the raw node-link JSON payload from ``path`` (streamed, no intermediate str)."""
+    with path.open(encoding="utf-8") as handle:
+        data: dict[str, Any] = json.load(handle)
     return data
 
 

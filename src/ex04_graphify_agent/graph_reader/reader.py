@@ -29,6 +29,9 @@ class GraphReader:
         self._betweenness = metrics.betweenness(self._graph)
         self._nodes = self._build_nodes()
         self._edges = self._build_edges()
+        # Rankings are immutable once the graph is loaded — sort once, slice on demand.
+        self._ranked_degree = filters.sort_by_degree(self._nodes.values())
+        self._ranked_betweenness = filters.sort_by_betweenness(self._nodes.values())
 
     def _build_nodes(self) -> dict[str, NodeView]:
         nodes: dict[str, NodeView] = {}
@@ -72,10 +75,10 @@ class GraphReader:
         return self._nodes[node_id].betweenness
 
     def top_n_by_degree(self, n: int) -> list[NodeView]:
-        return filters.top_n_by_degree(self._nodes.values(), n)
+        return self._ranked_degree[:n]
 
     def top_n_by_betweenness(self, n: int) -> list[NodeView]:
-        return filters.top_n_by_betweenness(self._nodes.values(), n)
+        return self._ranked_betweenness[:n]
 
     # -- communities ------------------------------------------------------
     def nodes_in_community(self, community: int) -> list[NodeView]:

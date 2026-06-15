@@ -63,11 +63,21 @@ def _entities(nodes: Iterable[NodeView]) -> list[NodeView]:
     return [node for node in nodes if not node.is_file_root]
 
 
+def sort_by_degree(nodes: Iterable[NodeView]) -> list[NodeView]:
+    """All God Nodes (file roots excluded) sorted by degree DESC, betweenness DESC, id ASC."""
+    return sorted(_entities(nodes), key=_degree_sort_key)
+
+
+def sort_by_betweenness(nodes: Iterable[NodeView]) -> list[NodeView]:
+    """All God Nodes sorted by betweenness DESC, degree DESC, id ASC."""
+    return sorted(_entities(nodes), key=_betweenness_sort_key)
+
+
 def top_n_by_degree(nodes: Iterable[NodeView], n: int) -> list[NodeView]:
     """Top ``n`` God Nodes by degree DESC, betweenness DESC, then id ASC."""
-    return sorted(_entities(nodes), key=_degree_sort_key)[:n]
+    return sort_by_degree(nodes)[:n]
 
 
 def top_n_by_betweenness(nodes: Iterable[NodeView], n: int) -> list[NodeView]:
     """Top ``n`` God Nodes by betweenness DESC, degree DESC, then id ASC."""
-    return sorted(_entities(nodes), key=_betweenness_sort_key)[:n]
+    return sort_by_betweenness(nodes)[:n]
