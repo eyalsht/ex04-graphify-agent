@@ -204,81 +204,81 @@
 
 ### 2.1 — models + loader interface
 
-- [ ] **P0** `PHASE2-001` graph_reader: RED — test `Confidence` enum has EXTRACTED/INFERRED/AMBIGUOUS members — DoD: test fails with AttributeError, not ImportError; ref PLAN.md §4.1
-- [ ] **P0** `PHASE2-002` graph_reader: GREEN — implement `Confidence(str, Enum)` — DoD: test passes
-- [ ] **P0** `PHASE2-003` graph_reader: RED — test `NodeView` is frozen dataclass with id/label/file_type/source_file/source_location/community/degree/betweenness — DoD: test fails; ref PRD_graph_reader public interface
-- [ ] **P0** `PHASE2-004` graph_reader: GREEN — implement `NodeView` frozen dataclass — DoD: test passes
-- [ ] **P0** `PHASE2-005` graph_reader: RED — test `EdgeView` frozen dataclass with source/target/relation/confidence/confidence_score/weight — DoD: test fails
-- [ ] **P0** `PHASE2-006` graph_reader: GREEN — implement `EdgeView` frozen dataclass — DoD: test passes
-- [ ] **P1** `PHASE2-007` graph_reader: REFACTOR — keep `models.py` ≤150 lines, split if needed — DoD: file budget honored
-- [ ] **P0** `PHASE2-008` graph_reader: RED — test `GraphReader(graph_path)` constructs without error on real graph.json — DoD: test fails (no class yet)
-- [ ] **P0** `PHASE2-009` graph_reader: GREEN — implement `GraphReader.__init__` loading JSON via `networkx.node_link_graph(data, edges="links")` — DoD: test passes; ref PRD_graph_reader behavior §1
-- [ ] **P0** `PHASE2-010` graph_reader: RED — test default `graph_path` resolves from `config/paths.json` (not hardcoded literal in logic) — DoD: test fails; ref CLAUDE.md no-hardcoded
-- [ ] **P0** `PHASE2-011` graph_reader: GREEN — implement config-driven default path — DoD: test passes
+- [x] **P0** `PHASE2-001` graph_reader: RED — test `Confidence` enum has EXTRACTED/INFERRED/AMBIGUOUS members — DoD: test fails with AttributeError, not ImportError; ref PLAN.md §4.1
+- [x] **P0** `PHASE2-002` graph_reader: GREEN — implement `Confidence(str, Enum)` — DoD: test passes
+- [x] **P0** `PHASE2-003` graph_reader: RED — test `NodeView` is frozen dataclass with id/label/file_type/source_file/source_location/community/degree/betweenness — DoD: test fails; ref PRD_graph_reader public interface
+- [x] **P0** `PHASE2-004` graph_reader: GREEN — implement `NodeView` frozen dataclass — DoD: test passes
+- [x] **P0** `PHASE2-005` graph_reader: RED — test `EdgeView` frozen dataclass with source/target/relation/confidence/confidence_score/weight — DoD: test fails
+- [x] **P0** `PHASE2-006` graph_reader: GREEN — implement `EdgeView` frozen dataclass — DoD: test passes
+- [x] **P1** `PHASE2-007` graph_reader: REFACTOR — keep `models.py` ≤150 lines, split if needed — DoD: file budget honored
+- [x] **P0** `PHASE2-008` graph_reader: RED — test `GraphReader(graph_path)` constructs without error on real graph.json — DoD: test fails (no class yet)
+- [x] **P0** `PHASE2-009` graph_reader: GREEN — implement `GraphReader.__init__` loading JSON via `networkx.node_link_graph(data, edges="links")` — DoD: test passes; ref PRD_graph_reader behavior §1
+- [x] **P0** `PHASE2-010` graph_reader: RED — test default `graph_path` resolves from `config/paths.json` (not hardcoded literal in logic) — DoD: test fails; ref CLAUDE.md no-hardcoded
+- [x] **P0** `PHASE2-011` graph_reader: GREEN — implement config-driven default path — DoD: test passes
 - [ ] **P1** `PHASE2-012` graph_reader: RED — test constructor raises clear error on missing graph file — DoD: test fails
 - [ ] **P1** `PHASE2-013` graph_reader: GREEN — implement fail-loud missing-file handling — DoD: test passes
-- [ ] **P1** `PHASE2-014` graph_reader: REFACTOR — keep `loader.py` ≤150 lines — DoD: file budget honored
+- [x] **P1** `PHASE2-014` graph_reader: REFACTOR — keep `loader.py` ≤150 lines — DoD: file budget honored
 
 ### 2.2 — GR-T1 load (23 nodes / 20 edges)
 
-- [ ] **P0** `PHASE2-015` graph_reader: RED — test `len(all_nodes()) == 23` — DoD: test fails with AttributeError; ref GR-T1
-- [ ] **P0** `PHASE2-016` graph_reader: GREEN — implement `all_nodes()` returning list[NodeView] — DoD: GR-T1 node count passes
-- [ ] **P0** `PHASE2-017` graph_reader: RED — test total edges == 20 (`len(all_edges())`/`G.number_of_edges()`) — DoD: test fails; ref GR-T1
-- [ ] **P0** `PHASE2-018` graph_reader: GREEN — implement edge count accessor — DoD: GR-T1 edge count passes
-- [ ] **P0** `PHASE2-019` graph_reader: RED — test `node("polygons_polygons_polygon")` returns NodeView with label "Polygon" — DoD: test fails
-- [ ] **P0** `PHASE2-020` graph_reader: GREEN — implement `node(node_id)` (raises KeyError on miss) — DoD: test passes
-- [ ] **P0** `PHASE2-021` graph_reader: RED — test `node()` on missing id raises `KeyError` — DoD: test fails; ref edge case "unknown node id"
-- [ ] **P0** `PHASE2-022` graph_reader: GREEN — implement KeyError on missing id — DoD: test passes
-- [ ] **P0** `PHASE2-023` graph_reader: RED — test `node_exists("nope")` is False, `node_exists("object")` is True — DoD: test fails
-- [ ] **P0** `PHASE2-024` graph_reader: GREEN — implement `node_exists(node_id)` safe probe — DoD: test passes
-- [ ] **P1** `PHASE2-025` graph_reader: RED — test NodeView accepts `source_location is None` (document nodes) — DoD: test fails; ref edge case null source_location
-- [ ] **P1** `PHASE2-026` graph_reader: GREEN — implement None-tolerant source_location — DoD: test passes
-- [ ] **P1** `PHASE2-027` graph_reader: RED — test `object` node has empty `source_file == ""` (not a real path) — DoD: test fails; ref edge case Object empty source_file
-- [ ] **P1** `PHASE2-028` graph_reader: GREEN — implement empty-source_file passthrough — DoD: test passes
+- [x] **P0** `PHASE2-015` graph_reader: RED — test `len(all_nodes()) == 23` — DoD: test fails with AttributeError; ref GR-T1
+- [x] **P0** `PHASE2-016` graph_reader: GREEN — implement `all_nodes()` returning list[NodeView] — DoD: GR-T1 node count passes
+- [x] **P0** `PHASE2-017` graph_reader: RED — test total edges == 20 (`len(all_edges())`/`G.number_of_edges()`) — DoD: test fails; ref GR-T1
+- [x] **P0** `PHASE2-018` graph_reader: GREEN — implement edge count accessor — DoD: GR-T1 edge count passes
+- [x] **P0** `PHASE2-019` graph_reader: RED — test `node("polygons_polygons_polygon")` returns NodeView with label "Polygon" — DoD: test fails
+- [x] **P0** `PHASE2-020` graph_reader: GREEN — implement `node(node_id)` (raises KeyError on miss) — DoD: test passes
+- [x] **P0** `PHASE2-021` graph_reader: RED — test `node()` on missing id raises `KeyError` — DoD: test fails; ref edge case "unknown node id"
+- [x] **P0** `PHASE2-022` graph_reader: GREEN — implement KeyError on missing id — DoD: test passes
+- [x] **P0** `PHASE2-023` graph_reader: RED — test `node_exists("nope")` is False, `node_exists("object")` is True — DoD: test fails
+- [x] **P0** `PHASE2-024` graph_reader: GREEN — implement `node_exists(node_id)` safe probe — DoD: test passes
+- [x] **P1** `PHASE2-025` graph_reader: RED — test NodeView accepts `source_location is None` (document nodes) — DoD: test fails; ref edge case null source_location
+- [x] **P1** `PHASE2-026` graph_reader: GREEN — implement None-tolerant source_location — DoD: test passes
+- [x] **P1** `PHASE2-027` graph_reader: RED — test `object` node has empty `source_file == ""` (not a real path) — DoD: test fails; ref edge case Object empty source_file
+- [x] **P1** `PHASE2-028` graph_reader: GREEN — implement empty-source_file passthrough — DoD: test passes
 
 ### 2.3 — GR-T2 degree (god node = 4)
 
-- [ ] **P0** `PHASE2-029` graph_reader: RED — test `degree("polygons_polygons_polygon") == 4` — DoD: test fails with AttributeError, not ImportError; ref GR-T2
-- [ ] **P0** `PHASE2-030` graph_reader: GREEN — implement `degree(node_id)` via `G.degree` — DoD: GR-T2 passes
+- [x] **P0** `PHASE2-029` graph_reader: RED — test `degree("polygons_polygons_polygon") == 4` — DoD: test fails with AttributeError, not ImportError; ref GR-T2
+- [x] **P0** `PHASE2-030` graph_reader: GREEN — implement `degree(node_id)` via `G.degree` — DoD: GR-T2 passes
 - [ ] **P0** `PHASE2-031` graph_reader: RED — test `degree("mathsquiz_readme_maths_quiz") == 3` — DoD: test fails; ref PRD §2 expected degrees
 - [ ] **P0** `PHASE2-032` graph_reader: GREEN — degree covered by impl — DoD: test passes
 - [ ] **P0** `PHASE2-033` graph_reader: RED — test `degree("polygons_polygons_calc_polygon_details") == 2` — DoD: test fails
 - [ ] **P0** `PHASE2-034` graph_reader: GREEN — degree covered — DoD: test passes
-- [ ] **P0** `PHASE2-035` graph_reader: RED — test each `polygons_polygons_rationale_{18,33,50}` has degree 1 — DoD: test fails; ref signal 5
-- [ ] **P0** `PHASE2-036` graph_reader: GREEN — degree covered for rationale nodes — DoD: test passes
-- [ ] **P1** `PHASE2-037` graph_reader: RED — test `degree()` on missing id raises KeyError — DoD: test fails
-- [ ] **P1** `PHASE2-038` graph_reader: GREEN — implement KeyError for degree miss — DoD: test passes
-- [ ] **P0** `PHASE2-039` graph_reader: RED — test `all_nodes()` items carry computed `degree` field — DoD: test fails
-- [ ] **P0** `PHASE2-040` graph_reader: GREEN — populate degree into NodeView — DoD: test passes
+- [x] **P0** `PHASE2-035` graph_reader: RED — test each `polygons_polygons_rationale_{18,33,50}` has degree 1 — DoD: test fails; ref signal 5
+- [x] **P0** `PHASE2-036` graph_reader: GREEN — degree covered for rationale nodes — DoD: test passes
+- [x] **P1** `PHASE2-037` graph_reader: RED — test `degree()` on missing id raises KeyError — DoD: test fails
+- [x] **P1** `PHASE2-038` graph_reader: GREEN — implement KeyError for degree miss — DoD: test passes
+- [x] **P0** `PHASE2-039` graph_reader: RED — test `all_nodes()` items carry computed `degree` field — DoD: test fails
+- [x] **P0** `PHASE2-040` graph_reader: GREEN — populate degree into NodeView — DoD: test passes
 
 ### 2.4 — betweenness
 
-- [ ] **P0** `PHASE2-041` graph_reader: RED — test `betweenness("polygons_polygons_polygon")` ≈ 0.056 (highest bridge) — DoD: test fails; ref PRD behavior §3
-- [ ] **P0** `PHASE2-042` graph_reader: GREEN — implement `betweenness(node_id)` via `networkx.betweenness_centrality` — DoD: test passes within tolerance
+- [x] **P0** `PHASE2-041` graph_reader: RED — test `betweenness("polygons_polygons_polygon")` ≈ 0.056 (highest bridge) — DoD: test fails; ref PRD behavior §3
+- [x] **P0** `PHASE2-042` graph_reader: GREEN — implement `betweenness(node_id)` via `networkx.betweenness_centrality` — DoD: test passes within tolerance
 - [ ] **P0** `PHASE2-043` graph_reader: RED — test `betweenness()` is highest for the Polygon node across all nodes — DoD: test fails
 - [ ] **P0** `PHASE2-044` graph_reader: GREEN — betweenness covered — DoD: test passes
-- [ ] **P1** `PHASE2-045` graph_reader: GREEN — populate betweenness into NodeView — DoD: NodeView.betweenness set
-- [ ] **P1** `PHASE2-046` graph_reader: REFACTOR — cache betweenness computation (compute once) — DoD: metrics.py ≤150 lines, single compute
+- [x] **P1** `PHASE2-045` graph_reader: GREEN — populate betweenness into NodeView — DoD: NodeView.betweenness set
+- [x] **P1** `PHASE2-046` graph_reader: REFACTOR — cache betweenness computation (compute once) — DoD: metrics.py ≤150 lines, single compute
 
 ### 2.5 — GR-T3 top-N by degree
 
-- [ ] **P0** `PHASE2-047` graph_reader: RED — test `top_n_by_degree(1)[0].id == "polygons_polygons_polygon"` and label "Polygon" — DoD: test fails; ref GR-T3
-- [ ] **P0** `PHASE2-048` graph_reader: GREEN — implement `top_n_by_degree(n)` sorted (degree DESC, betweenness DESC, id ASC) — DoD: GR-T3 passes
-- [ ] **P0** `PHASE2-049` graph_reader: RED — test tie-break order deterministic (betweenness DESC then id ASC) — DoD: test fails; ref interface tie-break note
-- [ ] **P0** `PHASE2-050` graph_reader: GREEN — implement deterministic tie-break — DoD: test passes
+- [x] **P0** `PHASE2-047` graph_reader: RED — test `top_n_by_degree(1)[0].id == "polygons_polygons_polygon"` and label "Polygon" — DoD: test fails; ref GR-T3
+- [x] **P0** `PHASE2-048` graph_reader: GREEN — implement `top_n_by_degree(n)` sorted (degree DESC, betweenness DESC, id ASC) — DoD: GR-T3 passes
+- [x] **P0** `PHASE2-049` graph_reader: RED — test tie-break order deterministic (betweenness DESC then id ASC) — DoD: test fails; ref interface tie-break note
+- [x] **P0** `PHASE2-050` graph_reader: GREEN — implement deterministic tie-break — DoD: test passes
 - [ ] **P1** `PHASE2-051` graph_reader: RED — test `top_n_by_degree(n)` with n > 23 returns all 23, no padding — DoD: test fails; ref edge case n > node count
 - [ ] **P1** `PHASE2-052` graph_reader: GREEN — implement no-padding behavior — DoD: test passes
-- [ ] **P0** `PHASE2-053` graph_reader: RED — test `top_n_by_betweenness(1)[0]` is the Polygon bridge node — DoD: test fails
-- [ ] **P0** `PHASE2-054` graph_reader: GREEN — implement `top_n_by_betweenness(n)` — DoD: test passes
+- [x] **P0** `PHASE2-053` graph_reader: RED — test `top_n_by_betweenness(1)[0]` is the Polygon bridge node — DoD: test fails
+- [x] **P0** `PHASE2-054` graph_reader: GREEN — implement `top_n_by_betweenness(n)` — DoD: test passes
 - [ ] **P1** `PHASE2-055` graph_reader: RED — test isolated `license_mit_license` still returned deterministically via id tie-break — DoD: test fails; ref edge case isolated node
 - [ ] **P1** `PHASE2-056` graph_reader: GREEN — ensure isolated node never crashes ranking — DoD: test passes
 
 ### 2.6 — GR-T4 community grouping
 
-- [ ] **P0** `PHASE2-057` graph_reader: RED — test `nodes_in_community(1)` ids == {polygons_polygons, polygons_polygons_draw_polygon, rationale_18, rationale_33, rationale_50} — DoD: test fails; ref GR-T4
-- [ ] **P0** `PHASE2-058` graph_reader: GREEN — implement `nodes_in_community(community)` — DoD: GR-T4 passes
-- [ ] **P0** `PHASE2-059` graph_reader: RED — test `communities()` returns dict with keys 0..5 — DoD: test fails; ref behavior §4
-- [ ] **P0** `PHASE2-060` graph_reader: GREEN — implement `communities()` bucketing — DoD: test passes
+- [x] **P0** `PHASE2-057` graph_reader: RED — test `nodes_in_community(1)` ids == {polygons_polygons, polygons_polygons_draw_polygon, rationale_18, rationale_33, rationale_50} — DoD: test fails; ref GR-T4
+- [x] **P0** `PHASE2-058` graph_reader: GREEN — implement `nodes_in_community(community)` — DoD: GR-T4 passes
+- [x] **P0** `PHASE2-059` graph_reader: RED — test `communities()` returns dict with keys 0..5 — DoD: test fails; ref behavior §4
+- [x] **P0** `PHASE2-060` graph_reader: GREEN — implement `communities()` bucketing — DoD: test passes
 - [ ] **P1** `PHASE2-061` graph_reader: RED — test `nodes_in_community(4)` contains Polygon, object, __init__, calc_polygon_details — DoD: test fails; ref signal 1 Community 4
 - [ ] **P1** `PHASE2-062` graph_reader: GREEN — community grouping covered — DoD: test passes
 - [ ] **P1** `PHASE2-063` graph_reader: RED — test `nodes_in_community(99)` returns `[]` (no crash) — DoD: test fails
@@ -286,32 +286,32 @@
 
 ### 2.7 — GR-T5/T6/T7 confidence filtering
 
-- [ ] **P0** `PHASE2-065` graph_reader: RED — test `edges_with_confidence("INFERRED")` returns exactly 2 edges — DoD: test fails; ref GR-T5
-- [ ] **P0** `PHASE2-066` graph_reader: GREEN — implement `edges_with_confidence(level)` — DoD: GR-T5 count passes
-- [ ] **P0** `PHASE2-067` graph_reader: RED — test the 2 INFERRED edges are the mathsquiz_final→mathsquiz (0.8) and readme_maths_quiz→readme_broken_python (0.9) — DoD: test fails; ref GR-T5
-- [ ] **P0** `PHASE2-068` graph_reader: GREEN — edge identity covered — DoD: test passes
-- [ ] **P0** `PHASE2-069` graph_reader: RED — test `inferred_edges_below(0.85)` returns exactly 1 (the 0.8 semantically_similar_to) — DoD: test fails; ref GR-T6
-- [ ] **P0** `PHASE2-070` graph_reader: GREEN — implement `inferred_edges_below(threshold)` (INFERRED and score < threshold) — DoD: GR-T6 passes
-- [ ] **P0** `PHASE2-071` graph_reader: RED — test `edges_with_confidence("AMBIGUOUS")` returns `[]` (not raise) — DoD: test fails; ref GR-T7
-- [ ] **P0** `PHASE2-072` graph_reader: GREEN — implement AMBIGUOUS-empty tolerance — DoD: GR-T7 passes
-- [ ] **P0** `PHASE2-073` graph_reader: RED — test `edges_with_confidence("EXTRACTED")` returns 18 edges (90% of 20) — DoD: test fails
-- [ ] **P0** `PHASE2-074` graph_reader: GREEN — EXTRACTED filter covered — DoD: test passes
-- [ ] **P1** `PHASE2-075` graph_reader: REFACTOR — keep `filters.py` ≤150 lines — DoD: file budget honored
+- [x] **P0** `PHASE2-065` graph_reader: RED — test `edges_with_confidence("INFERRED")` returns exactly 2 edges — DoD: test fails; ref GR-T5
+- [x] **P0** `PHASE2-066` graph_reader: GREEN — implement `edges_with_confidence(level)` — DoD: GR-T5 count passes
+- [x] **P0** `PHASE2-067` graph_reader: RED — test the 2 INFERRED edges are the mathsquiz_final→mathsquiz (0.8) and readme_maths_quiz→readme_broken_python (0.9) — DoD: test fails; ref GR-T5
+- [x] **P0** `PHASE2-068` graph_reader: GREEN — edge identity covered — DoD: test passes
+- [x] **P0** `PHASE2-069` graph_reader: RED — test `inferred_edges_below(0.85)` returns exactly 1 (the 0.8 semantically_similar_to) — DoD: test fails; ref GR-T6
+- [x] **P0** `PHASE2-070` graph_reader: GREEN — implement `inferred_edges_below(threshold)` (INFERRED and score < threshold) — DoD: GR-T6 passes
+- [x] **P0** `PHASE2-071` graph_reader: RED — test `edges_with_confidence("AMBIGUOUS")` returns `[]` (not raise) — DoD: test fails; ref GR-T7
+- [x] **P0** `PHASE2-072` graph_reader: GREEN — implement AMBIGUOUS-empty tolerance — DoD: GR-T7 passes
+- [x] **P0** `PHASE2-073` graph_reader: RED — test `edges_with_confidence("EXTRACTED")` returns 18 edges (90% of 20) — DoD: test fails
+- [x] **P0** `PHASE2-074` graph_reader: GREEN — EXTRACTED filter covered — DoD: test passes
+- [x] **P1** `PHASE2-075` graph_reader: REFACTOR — keep `filters.py` ≤150 lines — DoD: file budget honored
 
 ### 2.8 — edges_of + edge-case coverage
 
-- [ ] **P0** `PHASE2-076` graph_reader: RED — test `edges_of("polygons_polygons_polygon")` returns its 4 incident edges — DoD: test fails
-- [ ] **P0** `PHASE2-077` graph_reader: GREEN — implement `edges_of(node_id)` — DoD: test passes
+- [x] **P0** `PHASE2-076` graph_reader: RED — test `edges_of("polygons_polygons_polygon")` returns its 4 incident edges — DoD: test fails
+- [x] **P0** `PHASE2-077` graph_reader: GREEN — implement `edges_of(node_id)` — DoD: test passes
 - [ ] **P1** `PHASE2-078` graph_reader: RED — test `edges_of` on isolated node returns its single edge — DoD: test fails
 - [ ] **P1** `PHASE2-079` graph_reader: GREEN — edges_of isolated covered — DoD: test passes
 - [ ] **P1** `PHASE2-080` graph_reader: RED — test duplicate labels (welcome_message ×2) addressed by distinct ids — DoD: test fails; ref edge case duplicate labels
 - [ ] **P1** `PHASE2-081` graph_reader: GREEN — ensure node keying by id not label — DoD: test passes
-- [ ] **P1** `PHASE2-082` graph_reader: RED — test EdgeView accepts null `source_location` — DoD: test fails
-- [ ] **P1** `PHASE2-083` graph_reader: GREEN — implement null-tolerant EdgeView — DoD: test passes
+- [x] **P1** `PHASE2-082` graph_reader: RED — test EdgeView accepts null `source_location` — DoD: test fails
+- [x] **P1** `PHASE2-083` graph_reader: GREEN — implement null-tolerant EdgeView — DoD: test passes
 - [ ] **P2** `PHASE2-084` graph_reader: REFACTOR — extract shared sort helper for top_n_by_* — DoD: no duplicated sort logic
-- [ ] **P1** `PHASE2-085` graph_reader: verify — `mypy --strict` clean on graph_reader package — DoD: 0 errors
-- [ ] **P1** `PHASE2-086` graph_reader: verify — `ruff check` clean on graph_reader package — DoD: 0 violations
-- [ ] **P1** `PHASE2-087` graph_reader: verify — coverage ≥90% for graph_reader package — DoD: cov report green
+- [x] **P1** `PHASE2-085` graph_reader: verify — `mypy --strict` clean on graph_reader package — DoD: 0 errors
+- [x] **P1** `PHASE2-086` graph_reader: verify — `ruff check` clean on graph_reader package — DoD: 0 violations
+- [x] **P1** `PHASE2-087` graph_reader: verify — coverage ≥90% for graph_reader package — DoD: cov report green
 - [ ] **P1** `PHASE2-088` graph_reader: commit — `feat: graph_reader query layer (GR-T1..7)` — DoD: tests committed with code; Conventional Commits
 
 ### 2.9 — obsidian_writer ranking (OW-T1..T3)
