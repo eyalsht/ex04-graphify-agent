@@ -6,10 +6,14 @@ CLI/GUI hold no logic; they call this. Concrete methods are added as each phase 
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING, cast
 
 from .graph_reader import GraphReader
 from .obsidian_writer import ObsidianWriter
 from .weakness_detector import WeaknessDetector, WeaknessFinding
+
+if TYPE_CHECKING:
+    from .agent_workflow.state import AgentState, RunType
 
 
 class Ex04Sdk:
@@ -32,3 +36,27 @@ class Ex04Sdk:
         reader = GraphReader()
         writer = ObsidianWriter(reader, vault_dir=vault_dir)
         return writer.write_hot_md()
+
+    def run_agent(self, run_type: str, scratch_dir: str | Path | None = None) -> AgentState:
+        """Build + invoke the LangGraph agent for ``run_type`` and return the final state.
+
+        Keyless by default (the gatekeeper injects its MockClient when no key is set).
+        ``scratch_dir`` is where the fix node writes the corrected file; when ``None`` the
+        node computes the diff without touching the vendored baseline (CLAUDE.md §4).
+        """
+        if run_type not in ("graph_guided", "naive"):
+            msg = f"unknown run_type: {run_type!r} (expected 'graph_guided' or 'naive')"
+            raise ValueError(msg)
+        from .agent_workflow import config, graph_def, nodes
+        from .agent_workflow.deps import NodeDeps
+        from .gatekeeper import Gatekeeper, TokenLogger
+
+        gatekeeper = Gatekeeper(config.agent_config(), TokenLogger())
+        deps = NodeDeps(
+            gatekeeper=gatekeeper,
+            run_id=run_type,
+            scratch_dir=Path(scratch_dir) if scratch_dir is not None else None,
+        )
+        rt = cast("RunType", run_type)
+        graph = graph_def.build_graph(rt, deps)
+        return cast("AgentState", graph.invoke(nodes.initial_state(rt)))
