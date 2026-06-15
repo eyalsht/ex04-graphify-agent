@@ -60,7 +60,7 @@
 - [x] **P0** `PHASE0-012` planning: create ADR-0004 (graph-guided over naive) — DoD: core thesis per D4 — ✅ done this session
 - [x] **P0** `PHASE0-013` planning: create ADR-0005 (keyless-by-default) — DoD: accepted per D5 — ✅ done this session
 - [x] **P0** `PHASE0-014` planning: create `docs/TODO.md` (this file) — DoD: phased atomic task list — ✅ done this session
-- [ ] **P0** `PHASE0-015` owner: real identities PROVIDED — Eyal Shtinmtez (ID 314884834, eyalshtinmetz@gmail.com) + Imree Cohen (ID 312359284); recorded in brief §0. Remaining: Imree's email + confirm Eyal's Latin surname spelling ("Shtinmtez" vs "shtinmetz") — DoD: no placeholder remains in `[project] authors` once those two are confirmed; ref brief §0
+- [x] **P0** `PHASE0-015` owner: real identities recorded — Eyal Shtinmtez (ID 314884834, eyalshtinmetz@gmail.com) + Imree Cohen (ID 312359284, imree.c@gmail.com) in `pyproject.toml`. Only open: confirm Eyal's Latin surname spelling ("Shtinmtez" vs "shtinmetz") before submission — ✅ authors set
 - [ ] **P0** `PHASE0-016` owner: spot-check `docs/ASSIGNMENT.md` against the original Hebrew PDF with a Hebrew-capable reader — DoD: each R#.# verified or corrected; misreads flagged as ADR amendment; ref ASSIGNMENT extraction note
 - [ ] **P0** `PHASE0-017` owner: confirm Graphify CLI is available locally for the POST-FIX re-run — DoD: `graphify --version` (or equivalent) runs; if unavailable, note in KNOWN_LIMITATIONS; ref R5.6.3
 - [ ] **P0** `PHASE0-018` owner: confirm Obsidian is installed for vault screenshots (R5.4.1/R7.9) — DoD: vault opens in Obsidian; graph view renders
@@ -87,7 +87,7 @@
 
 - [ ] **P0** `PHASE1-001` scaffold: `uv init` the project at repo root — DoD: `pyproject.toml` created, `uv` recognizes project; ref R9.1/D7
 - [ ] **P0** `PHASE1-002` scaffold: set `[project] name = "ex04-graphify-agent"`, `requires-python = ">=3.11"` — DoD: fields present
-- [ ] **P0** `PHASE1-003` scaffold: add real `[project] authors` — `Eyal Shtinmtez` (ID 314884834, eyalshtinmetz@gmail.com) + `Imree Cohen` (ID 312359284, email TBD); IDs in a comment or `[tool]` table since TOML authors take name/email — DoD: real names present, NOT "AI Agent"; Imree email + Eyal spelling confirmed before commit; ref brief §0
+- [x] **P0** `PHASE1-003` scaffold: real `[project] authors` set — `Eyal Shtinmtez` (eyalshtinmetz@gmail.com) + `Imree Cohen` (imree.c@gmail.com); IDs 314884834/312359284 in the file header comment — ✅ done; NOT "AI Agent"; ref brief §0
 - [ ] **P0** `PHASE1-004` scaffold: configure src layout `src/ex04_graphify_agent/` in `[tool.hatch]`/build backend — DoD: package importable via `uv run python -c "import ex04_graphify_agent"`
 - [ ] **P0** `PHASE1-005` scaffold: `uv add networkx` — DoD: dependency in pyproject; ref PRD_graph_reader dependency note
 - [ ] **P0** `PHASE1-006` scaffold: `uv add langgraph` — DoD: dependency present; ref ADR-0001

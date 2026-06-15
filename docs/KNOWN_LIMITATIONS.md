@@ -10,13 +10,12 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
 
 ## Limitations
 
-1. **Author identification — resolved, two tiny follow-ups.** Real identities provided
-   (2026-06-14): **Eyal Shtinmtez** (ID 314884834, `eyalshtinmetz@gmail.com`) and **Imree
-   Cohen** (ID 312359284). Recorded in `docs/_internal_context_brief.md` §0 and `CLAUDE.md`
-   for use when scaffolding `pyproject.toml`. Remaining before the first commit: (a) Imree's
-   email is not yet supplied (needed for the author entry + `Co-Authored-By` trailer);
-   (b) Eyal's Latin surname as given ("Shtinmtez") differs from the "shtinmetz" in his
-   email — confirm the intended spelling. Neither blocks any other work.
+1. **Author identification — resolved, one tiny follow-up.** Real identities: **Eyal
+   Shtinmtez** (ID 314884834, `eyalshtinmetz@gmail.com`) and **Imree Cohen** (ID 312359284,
+   `imree.c@gmail.com`), recorded in `pyproject.toml`, `docs/_internal_context_brief.md` §0
+   and `CLAUDE.md`. Commits are authored by Eyal with `Co-Authored-By:` Imree + Claude
+   (user-confirmed AI disclosure, R8.8). Remaining: confirm Eyal's Latin surname spelling
+   ("Shtinmtez" vs the "shtinmetz" in his email) before submission. Does not block work.
 
 2. **`docs/ASSIGNMENT.md` extraction caveat.** The source PDF
    (`lec/ex04-gaphify-obcidian-Reverse-engineering.pdf`) embeds its Hebrew body text with a

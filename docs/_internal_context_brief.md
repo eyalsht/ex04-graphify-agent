@@ -16,15 +16,14 @@ requirement ID or to a locked decision below.
   ```toml
   authors = [
     { name = "Eyal Shtinmtez", email = "eyalshtinmetz@gmail.com" },   # ID 314884834 (HE: אייל שטינמץ)
-    { name = "Imree Cohen", email = "" },                             # ID 312359284 (HE: אמרי כהן) — email still TODO
+    { name = "Imree Cohen", email = "imree.c@gmail.com" },           # ID 312359284 (HE: אמרי כהן)
   ]
   ```
-  - **ID 314884834** — Eyal Shtinmtez / אייל שטינמץ.
-  - **ID 312359284** — Imree Cohen / אמרי כהן.
-  - Two tiny open items remain: (a) Imree's email is not yet provided (needed for the
-    `Co-Authored-By` trailer + pyproject author email); (b) Eyal's surname as typed
-    ("Shtinmtez") differs from his email local-part ("shtinmetz") — confirm the intended
-    Latin spelling before the first commit. Neither blocks scaffolding the rest.
+  - **ID 314884834** — Eyal Shtinmtez / אייל שטינמץ / eyalshtinmetz@gmail.com.
+  - **ID 312359284** — Imree Cohen / אמרי כהן / imree.c@gmail.com.
+  - Commits: author = Eyal; `Co-Authored-By:` Imree + Claude (user-confirmed AI disclosure,
+    R8.8). One tiny open item: Eyal's surname as typed ("Shtinmtez") differs from his email
+    local-part ("shtinmetz") — confirm the intended Latin spelling before submission.
   - **Never** use "AI Agent" or similar as an author (CLAUDE.md non-negotiable).
 
 ## 1. Locked decisions (treat as final — do not re-litigate)
