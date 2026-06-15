@@ -60,3 +60,15 @@ class Ex04Sdk:
         rt = cast("RunType", run_type)
         graph = graph_def.build_graph(rt, deps)
         return cast("AgentState", graph.invoke(nodes.initial_state(rt)))
+
+    def compare_tokens(self, report_path: str | Path | None = None) -> Path:
+        """Run both routes, compare token usage, and write ``reports/token_comparison.md``.
+
+        Thin delegation to ``token_comparison.TokenComparison`` (R5.6 / R7.8). Keyless by
+        default — both runs use the gatekeeper's MockClient when no provider key is set.
+        """
+        from .token_comparison import TokenComparison
+
+        comparison = TokenComparison()
+        result = comparison.run_both(self)
+        return comparison.write_report(result, path=report_path)

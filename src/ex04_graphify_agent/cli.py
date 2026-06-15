@@ -37,5 +37,15 @@ def hot() -> None:
     typer.echo(f"Wrote {path}")
 
 
+@app.command()
+def compare() -> None:
+    """Run graph-guided vs naive and write ``reports/token_comparison.md`` (R5.6/R7.8).
+
+    Keyless by default: delegates entirely to ``Ex04Sdk.compare_tokens``.
+    """
+    path = Ex04Sdk().compare_tokens()
+    typer.echo(f"Wrote {path}")
+
+
 if __name__ == "__main__":  # pragma: no cover
     app()
