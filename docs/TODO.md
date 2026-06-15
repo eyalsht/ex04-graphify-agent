@@ -44,6 +44,14 @@
 
 ---
 
+> **Progress (2026-06-15):** Phase 0 ✅ complete; Phase 1 ✅ complete (uv project, package
+> skeleton, config JSONs, tests skeleton, 3 TDD'd gate scripts, tests/evals first eval,
+> pre-commit, CI). Repo live & **private** at `github.com/eyalsht/ex04-graphify-agent`,
+> 7 commits, CI green, all gates pass (ruff 0, mypy 0, pytest 15 @ 100% cov). Phase 0
+> verification items PHASE0-020…032 confirmed during scaffolding. Branch protection is
+> enabler-ready (`scripts/enable_branch_protection.sh`) — blocked on GitHub free-private
+> tier (see KNOWN_LIMITATIONS #9). **Next:** Phase 2 (graph_reader, TDD) in a worktree.
+
 ## Phase 0 — Planning
 
 - [x] **P0** `PHASE0-001` planning: create `docs/ASSIGNMENT.md` with requirement IDs R1.1–R10.5 — DoD: file exists, all sections numbered — ✅ done this session
