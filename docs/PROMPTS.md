@@ -138,6 +138,30 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-16 — Phase 6 (token_comparison + evidence)
+
+- **Prompt summary:** With Phase 5 still in review (PR #4, unmerged), the owner asked the
+  orchestrator to start Phase 6 by spawning a subagent **based on the Phase-5 branch** (not
+  main) on a new branch — a stacked PR — rather than waiting for a merge. Phase 6 → **Sonnet
+  subagent** in an isolated worktree, which first `git reset --hard`'d onto the Phase-5 branch
+  tip (to get the `agent_workflow` it measures), then built `token_comparison/` strictly via
+  TDD against `docs/PRD_token_comparison.md` (TC-T1..10 / TC-E1..5), and opened its PR with
+  `--base` = the Phase-5 branch (auto-retargets to main when Phase 5 merges).
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator); Claude Sonnet (Phase 6
+  subagent).
+- **AI-generated vs. human-reviewed/edited:** Fully AI-drafted under the gates — `RunMetrics`/
+  `ComparisonResult`, `metrics_from_state`, the 3-part correctness check, `compare` (reduction
+  % + R4.1/R4.2 narrative), `render/write_report` with the mandated R5.6.5 `Files read` +
+  `Iterations` columns, `diff_graphs`, and a manual key-gated `scripts/run_comparison.py`.
+  Orchestrator **independently re-ran the gates** (CI doesn't trigger on a non-main PR base):
+  ruff 0, mypy 0 (48 files), **217 tests @ 98%**, `-m eval` 4 passed, all gate scripts.
+  Honest gaps (in PR #5 body): `correctness.py` 87% line cov (overall 98%); `runner.py` tight
+  at 138/150; TC-E5 gatekeeper-log cross-check is opt-in (`state["token_usage"]` authoritative
+  by default); real R5.6/R7.8 numbers + POST-FIX graph deferred to the manual run (not
+  fabricated, ADR-0005). Awaiting owner review/approval.
+
+---
+
 ## Template for future entries
 
 ```markdown
