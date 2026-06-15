@@ -8,7 +8,6 @@ log entry (never an estimate).
 
 from __future__ import annotations
 
-import dataclasses
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -43,7 +42,8 @@ class TokenLogger:
         """Write all records as JSONL; default path derives from the first run_id."""
         out = Path(path) if path is not None else self._default_path()
         out.parent.mkdir(parents=True, exist_ok=True)
-        lines = [json.dumps(dataclasses.asdict(r)) for r in self.records]
+        # TokenRecord is flat — ``__dict__`` avoids ``asdict``'s recursive deep-copy.
+        lines = [json.dumps(r.__dict__) for r in self.records]
         out.write_text("\n".join(lines), encoding="utf-8")
         return out
 

@@ -22,9 +22,14 @@ def god_node(reader: GraphReader, thresholds: dict[str, Any]) -> list[WeaknessFi
     """Signal 1 — highest-degree bottleneck node (EXTRACTED, primary)."""
     floor = int(thresholds["god_node_min_degree"])
     findings: list[WeaknessFinding] = []
-    for node in reader.top_n_by_degree(len(reader.all_nodes())):
-        if node.degree < floor:
-            break
+    # God nodes = core abstractions at/above the degree floor, excluding file-container
+    # roots (matching GRAPH_REPORT); sort that small subset directly instead of slicing
+    # a full copy of the whole ranking.
+    god_nodes = sorted(
+        (n for n in reader.all_nodes() if not n.is_file_root and n.degree >= floor),
+        key=lambda n: (-n.degree, -n.betweenness, n.id),
+    )
+    for node in god_nodes:
         hypo = (
             f"`{node.label}` (`{node.id}`) is the highest-degree node "
             f"(degree {node.degree}) and bridges its communities — it is the core "

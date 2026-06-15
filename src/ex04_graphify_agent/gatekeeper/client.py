@@ -11,6 +11,7 @@ absent a deterministic ``MockClient`` is injected so the suite runs keyless (ADR
 from __future__ import annotations
 
 import os
+import random
 import time
 from dataclasses import dataclass
 from typing import Any, Protocol
@@ -125,6 +126,9 @@ class Gatekeeper:
             except RateLimitError as exc:
                 last_error = exc
                 if attempt + 1 < self._max_attempts:
-                    time.sleep(self._backoff * (attempt + 1))
+                    # Exponential backoff with full jitter (avoids thundering herd);
+                    # ``backoff_seconds == 0`` (tests) yields no delay.
+                    delay = self._backoff * (2**attempt)
+                    time.sleep(delay + random.uniform(0.0, self._backoff))
         msg = f"LLM call failed after {self._max_attempts} attempts"
         raise RuntimeError(msg) from last_error
