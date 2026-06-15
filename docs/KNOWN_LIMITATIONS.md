@@ -1,0 +1,68 @@
+# Known Limitations
+
+This file is an honest, defensible self-assessment of EX04 (Graphify + Obsidian
+Reverse-Engineering Agent), as required by **R8.9** (Known limitations + honest
+self-grade) and the `CLAUDE.md` non-negotiable: *"Honest self-grade with
+`docs/KNOWN_LIMITATIONS.md`; conservative, defensible number."*
+
+It is updated as the project progresses through phases (see `docs/PLAN.md` /
+`docs/TODO.md`). The list below reflects the state at the **end of Phase 0 (planning)**.
+
+## Limitations
+
+1. **Author identification — resolved, two tiny follow-ups.** Real identities provided
+   (2026-06-14): **Eyal Shtinmtez** (ID 314884834, `eyalshtinmetz@gmail.com`) and **Imree
+   Cohen** (ID 312359284). Recorded in `docs/_internal_context_brief.md` §0 and `CLAUDE.md`
+   for use when scaffolding `pyproject.toml`. Remaining before the first commit: (a) Imree's
+   email is not yet supplied (needed for the author entry + `Co-Authored-By` trailer);
+   (b) Eyal's Latin surname as given ("Shtinmtez") differs from the "shtinmetz" in his
+   email — confirm the intended spelling. Neither blocks any other work.
+
+2. **`docs/ASSIGNMENT.md` extraction caveat.** The source PDF
+   (`lec/ex04-gaphify-obcidian-Reverse-engineering.pdf`) embeds its Hebrew body text with a
+   custom font encoding that standard extractors (`pypdf`, etc.) cannot decode into
+   readable text. `docs/ASSIGNMENT.md` was reconstructed from the English/technical terms
+   that do extract cleanly, plus the project owner's own section-by-section digest of the
+   PDF. It needs a spot-check against the original PDF (e.g. with an Adobe/Hebrew-capable
+   reader) to catch any misreadings; corrections that change scope should be filed as ADR
+   amendments.
+
+3. **No code written yet.** This is Phase 0 (planning layer only). All PRDs, `PLAN.md`,
+   and ADRs describe *intended* behavior, not implemented or tested behavior. Self-grade
+   for Phases 1-8 is **N/A** until those phases are implemented and verified.
+
+4. **`hot.md` does not exist yet.** The pre-fix Obsidian vault currently contains
+   `index.md` plus 28 per-node notes, but no `hot.md`. Generating `hot.md` (a
+   centrality/proximity-derived "where to look first" map, per R5.1.4/R5.6.1) is a Phase 4
+   deliverable and is not yet present.
+
+5. **Token-comparison numbers are placeholders.** The real numbers required by R5.6.2/
+   R5.6.4/R7.8 (input/output tokens and call counts for the graph-guided run vs. the naive
+   baseline run) require one live LLM run per ADR-0005, using whichever provider is set in
+   `config/agent.json` (the provider/model is config-driven and not yet finalized — likely
+   Google Gemini, since a Gemini key already exists in the Graphify environment; D6). No
+   such run has been performed yet; no numbers exist to report, and the committed numbers
+   (once produced) will reflect that one specific provider/model.
+
+6. **Duplicate `broken-python/` clone.** A pristine clone of `martinpeck/broken-python`
+   (with its own `.git` history) currently sits alongside the vendored copy at
+   `data/broken-python/`. This needs cleanup (removal or `.gitignore`) before submission so
+   the project tree does not contain two competing git histories.
+
+7. **Graphify re-run for the POST-FIX graph is unverified.** Producing the post-fix
+   `artifacts/graphify_post_fix/graph.json` and `GRAPH_REPORT.md` (R5.6.3, R7.4) depends on
+   the Graphify CLI tool being available and runnable in the dev environment. This has not
+   yet been confirmed.
+
+8. **`draw_polygon`'s `turtle` dependency.** The `turtle` module requires a display/GUI
+   environment, which is unavailable in CI or headless test runs. Per
+   `docs/PRD_token_comparison.md`, the correctness check for the fixed `draw_polygon` will
+   use a mocked call-count assertion (verifying the right sequence of `forward`/`right`
+   calls for arbitrary `sides`) rather than a visual/rendered verification.
+
+## Self-grade
+
+**Not yet applicable.** Phase 0 (planning) is complete; a self-grade against the rubric in
+`docs/ASSIGNMENT.md` will be computed in Phase 8, once the ruff, mypy --strict, and
+coverage (≥90%) gates have been run and the deliverables in R7.1-R7.9 exist as inspectable
+artifacts.
