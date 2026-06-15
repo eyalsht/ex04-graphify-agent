@@ -7,12 +7,20 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ex04_graphify_agent.graph_reader import GraphReader
-from ex04_graphify_agent.obsidian_writer import ObsidianWriter
+from .graph_reader import GraphReader
+from .obsidian_writer import ObsidianWriter
+from .weakness_detector import WeaknessDetector, WeaknessFinding
 
 
 class Ex04Sdk:
     """Top-level façade — orchestrates the lower-level modules, holds no algorithms."""
+
+    def detect_weaknesses(self, graph_path: str | Path | None = None) -> list[WeaknessFinding]:
+        """Run the six PART-C weakness signals and return ranked findings (Phase 3 façade).
+
+        Thin delegation only — all detection logic lives in ``weakness_detector``.
+        """
+        return WeaknessDetector(GraphReader(graph_path)).detect()
 
     def generate_hot(self, vault_dir: str | Path | None = None) -> Path:
         """Render and write ``hot.md`` (R5.1.4 / R5.6.1).
