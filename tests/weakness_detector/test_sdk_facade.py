@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from ex04_graphify_agent.sdk import detect_weaknesses
+from ex04_graphify_agent.sdk import Ex04Sdk
 from ex04_graphify_agent.weakness_detector import WeaknessFinding
 
 
 def test_detect_weaknesses_returns_ranked_findings() -> None:
-    findings = detect_weaknesses()
+    findings = Ex04Sdk().detect_weaknesses()
     assert findings and isinstance(findings[0], WeaknessFinding)
     assert findings[0].priority == "primary"

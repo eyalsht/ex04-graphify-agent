@@ -53,6 +53,68 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-15 — Phases 3 & 4 (parallel subagent dispatch)
+
+- **Prompt summary:** Project owner asked the orchestrator (this session) to drive Phases 3
+  and 4 by dispatching subagents, deciding parallel-vs-serial and model per task, and
+  PR-gating each. After a dependency check (Phase 2 `graph_reader` was already merged via
+  PR #1; `obsidian_writer` was NOT), the orchestrator dispatched **two parallel subagents,
+  each in its own git worktree off `main`**, since both depend only on `graph_reader` and
+  touch disjoint modules:
+  - **Phase 3 → Claude Opus** (analytical core): build `weakness_detector/` (six PART-C
+    signals, EXTRACTED/INFERRED/AMBIGUOUS language↔tag invariant, Signal-6 disclosed
+    source-peek, ranked `detect()` with `source_validation=None`) + `gatekeeper/`
+    (provider-agnostic choke point, retry/queue, JSONL token log, keyless `MockClient`),
+    strict TDD, keyless, ≤150-line files, → PR #2.
+  - **Phase 4 → Claude Sonnet** (mechanical, well-specified): build the leftover Phase-2
+    `obsidian_writer` ranking (OW-T1..5) then generate PRE-FIX `obsidian/hot.md`, a
+    `check_vault_consistency.py` gate, and the `ex04 hot` CLI; baselines immutable;
+    deterministic output, → PR #3.
+  - Each subagent was given a self-contained brief (CLAUDE.md rules, the real `graph_reader`
+    API, config contracts, target-bug facts, module boundaries to avoid collision, and
+    "open a PR + return a summary"). `docs/TODO.md` / `docs/PROMPTS.md` were reserved for the
+    orchestrator (this entry) to avoid cross-agent conflicts.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 orchestrator; Claude Opus (Phase 3
+  subagent) + Claude Sonnet (Phase 4 subagent).
+- **AI-generated vs. human-reviewed/edited:** Both PRs were **fully AI-drafted** under strict
+  gates (PR #2: ruff 0 / mypy 0 / 92 tests @ 97.13%; PR #3: ruff 0 / mypy 0 / 68 tests @
+  97.64%). The **human owner ran an "Antigravity" code review** on both PRs (3 performance
+  findings each) and **chose Option B** for the `hot.md` ranking (centrality × proximity to
+  the bug node, over the pure-degree metric the subagent first shipped). Revisions to address
+  the review findings + the ranking change are applied on the existing PR branches before
+  merge. The Phase-3 subagent self-disclosed a partial-TDD deviation (the six signal bodies
+  were written alongside their tests rather than strict RED-first; scaffolding units did
+  follow RED→GREEN) — recorded honestly rather than overstated.
+
+---
+
+### 2026-06-15 — Phases 3 & 4 (code review, Option B, reconcile + merge)
+
+- **Prompt summary:** Owner ran an **"Antigravity" code review** on both PRs (3 performance
+  findings each) and directed the orchestrator to (a) address the findings on each PR branch,
+  (b) decide the `hot.md` ranking — owner chose **Option B**, (c) keep `docs/TODO.md`,
+  `docs/PROMPTS.md`, and `README.md` in sync with the work, (d) resolve the `sdk.py` conflict,
+  and (e) merge PR #3 once green. Because this harness can't resume the original subagents,
+  the orchestrator applied the fixes **inline** in each PR's worktree (cheaper than a
+  cold-start re-spawn) under the `receiving-code-review` discipline (each finding verified
+  against the code before implementing — e.g. the god_node fix was checked to preserve the
+  file-root exclusion, caught by a regression test).
+  - **PR #2 (Phase 3):** exponential backoff + full jitter; god_node degree-floor filter;
+    `__dict__` token-log dump. → merged to `main`.
+  - **PR #3 (Phase 4):** **Option B re-rank** (`obsidian_writer/ranking.py` — centrality ×
+    proximity-to-bug via BFS; config-driven bug-node id; `obsidian/hot.md` regenerated so all
+    top-8 are the polygons subgraph); `@functools.cache` on config; set-based wikilink check.
+    Then `main` was merged in and the `sdk.py` overlap reconciled into one `Ex04Sdk` class
+    (`detect_weaknesses` + `generate_hot`, PLAN §4.7), the Phase-3 façade test updated to call
+    it. → merged to `main`.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, inline revisions + merge).
+- **AI-generated vs. human-reviewed/edited:** Fixes/reconciliation AI-authored under the gates
+  (ruff 0, mypy 0, **117 tests @ 97%**, all gate scripts incl. vault-consistency). The
+  **human owner** supplied the Antigravity review, made the Option B ranking decision, and
+  approved both merges. Review replies were posted on each PR documenting the fixes.
+
+---
+
 ## Template for future entries
 
 ```markdown

@@ -36,6 +36,9 @@ jobs:
       - name: Anti-pattern gate
         run: uv run python scripts/check_anti_patterns.py
 
+      - name: Vault consistency gate (index.md / hot.md wikilinks)
+        run: uv run python scripts/check_vault_consistency.py obsidian
+
       - name: Tests + coverage (keyless, >=90%)
         run: uv run pytest --cov=src --cov-fail-under=90
 

@@ -5,6 +5,8 @@ Concrete commands are wired as each phase lands; for now ``ex04 --help`` resolve
 
 import typer
 
+from ex04_graphify_agent.sdk import Ex04Sdk
+
 app = typer.Typer(
     name="ex04",
     help="Graph-guided Graphify+Obsidian agent for reverse-engineering broken-python.",
@@ -23,6 +25,16 @@ def version() -> None:
     from ex04_graphify_agent import __version__
 
     typer.echo(__version__)
+
+
+@app.command()
+def hot() -> None:
+    """Generate ``obsidian/hot.md`` — the graph-ranked "where to look first" note.
+
+    Keyless (no LLM call): delegates entirely to ``Ex04Sdk.generate_hot``.
+    """
+    path = Ex04Sdk().generate_hot()
+    typer.echo(f"Wrote {path}")
 
 
 if __name__ == "__main__":  # pragma: no cover

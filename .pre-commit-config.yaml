@@ -34,3 +34,8 @@ repos:
         entry: uv run python scripts/check_anti_patterns.py
         language: system
         pass_filenames: false
+      - id: check-vault-consistency
+        name: vault consistency gate (index.md / hot.md wikilinks)
+        entry: uv run python scripts/check_vault_consistency.py obsidian
+        language: system
+        pass_filenames: false
