@@ -18,13 +18,15 @@ _SCANNED_FILES = ("index.md", "hot.md")
 
 def find_dangling_links(vault_dir: Path) -> list[tuple[str, str]]:
     """Return ``(filename, node_id)`` for every wikilink without a matching note file."""
+    # Snapshot existing note stems once; O(1) membership beats a stat() per wikilink.
+    note_ids = {path.stem for path in vault_dir.glob("*.md")}
     offenders: list[tuple[str, str]] = []
     for filename in _SCANNED_FILES:
         path = vault_dir / filename
         if not path.is_file():
             continue
         for node_id in _WIKILINK.findall(path.read_text(encoding="utf-8")):
-            if not (vault_dir / f"{node_id}.md").is_file():
+            if node_id not in note_ids:
                 offenders.append((filename, node_id))
     return offenders
 

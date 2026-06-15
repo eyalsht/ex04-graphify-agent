@@ -1,12 +1,12 @@
 # Hot — Where to look first
 
-Ranked by degree DESC, betweenness DESC, id ASC (degree = centrality / core-abstraction signal; betweenness = proximity to the cross-community bridge, i.e. proximity to the bug location, R5.6.1).
+Ranked by centrality * proximity to the bug node `polygons_polygons_polygon` (R5.6.1, PLAN §5): centrality = 0.6·degree + 0.4·betweenness (max-normalized); proximity = 1 / (1 + shortest-path distance to the bug node). File-container roots are excluded.
 
 1. [[polygons_polygons_polygon|Polygon]] — degree=4 · bw=0.0563 · community=4 · polygons/polygons.py:L3
-2. [[mathsquiz_readme_maths_quiz|Maths Quiz Documentation]] — degree=3 · bw=0.0173 · community=0 · mathsquiz/README.md
-3. [[readme_broken_python|Broken Python Project]] — degree=2 · bw=0.0130 · community=0 · README.md
-4. [[mathsquiz_mathsquiz|mathsquiz.py]] — degree=2 · bw=0.0000 · community=0 · mathsquiz/mathsquiz.py:L1
-5. [[mathsquiz_mathsquiz_final_py|mathsquiz-final.py]] — degree=2 · bw=0.0000 · community=0 · mathsquiz/mathsquiz-final.py
-6. [[polygons_polygons_calc_polygon_details|calc_polygon_details()]] — degree=2 · bw=0.0000 · community=4 · polygons/polygons.py:L13
-7. [[license_mit_license|MIT License]] — degree=1 · bw=0.0000 · community=0 · LICENSE.txt
-8. [[mathsquiz_mathsquiz_step2_ask_question|ask_question()]] — degree=1 · bw=0.0000 · community=2 · mathsquiz/mathsquiz-step2.py:L8
+2. [[polygons_polygons_calc_polygon_details|calc_polygon_details()]] — degree=2 · bw=0.0000 · community=4 · polygons/polygons.py:L13
+3. [[object|Object]] — degree=1 · bw=0.0000 · community=4 · 
+4. [[polygons_polygons_polygon_init|.__init__()]] — degree=1 · bw=0.0000 · community=4 · polygons/polygons.py:L5
+5. [[polygons_polygons_draw_polygon|draw_polygon()]] — degree=1 · bw=0.0000 · community=1 · polygons/polygons.py:L41
+6. [[polygons_polygons_rationale_18|# TODO: find a better way to work this stuff out]] — degree=1 · bw=0.0000 · community=1 · polygons/polygons.py:L18
+7. [[polygons_polygons_rationale_33|# TODO: perhaps I should use the class Polygon instead!]] — degree=1 · bw=0.0000 · community=1 · polygons/polygons.py:L33
+8. [[polygons_polygons_rationale_50|# TODO: make this work for any type of polygon]] — degree=1 · bw=0.0000 · community=1 · polygons/polygons.py:L50

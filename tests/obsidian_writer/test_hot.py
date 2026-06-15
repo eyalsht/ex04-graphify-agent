@@ -27,14 +27,6 @@ def test_rank_hot_nodes_truncates_to_top_k(graph_json_path: Path, tmp_path: Path
     assert len(writer.rank_hot_nodes(3)) == 3
 
 
-def test_rank_hot_nodes_deterministic_tie_break(graph_json_path: Path, tmp_path: Path) -> None:
-    writer = _writer(graph_json_path, tmp_path)
-    ranked = writer.rank_hot_nodes(8)
-    # degree DESC, betweenness DESC, id ASC -- never crash, always sorted.
-    keys = [(-n.degree, -n.betweenness, n.id) for n in ranked]
-    assert keys == sorted(keys)
-
-
 def test_ow_t2_wikilink_format(graph_json_path: Path, tmp_path: Path) -> None:
     writer = _writer(graph_json_path, tmp_path)
     polygon = writer.rank_hot_nodes(1)[0]
@@ -48,8 +40,9 @@ def test_ow_t3_render_hot_md_has_heading_links_and_metric(
     md = writer.render_hot_md(5)
     assert md.startswith("# Hot — Where to look first")
     assert "[[polygons_polygons_polygon|Polygon]]" in md
-    assert "degree DESC" in md
-    assert "betweenness DESC" in md
+    assert "centrality" in md
+    assert "proximity" in md
+    assert "polygons_polygons_polygon" in md  # bug node disclosed as the proximity anchor
 
 
 def test_render_hot_md_item_metadata(graph_json_path: Path, tmp_path: Path) -> None:

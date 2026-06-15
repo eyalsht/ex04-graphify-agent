@@ -26,7 +26,9 @@ def _find_repo_root() -> Path:
     raise FileNotFoundError(msg)
 
 
+@functools.cache
 def _load_json(relative_path: str) -> dict[str, Any]:
+    """Parse and cache a config file (static for a run — avoids re-reading on hot paths)."""
     root = _find_repo_root()
     data: dict[str, Any] = json.loads((root / relative_path).read_text(encoding="utf-8"))
     return data
@@ -42,3 +44,14 @@ def default_hot_md_top_k() -> int:
     """Resolve the default ``hot.md`` top-k from ``config/weakness_thresholds.json``."""
     config = _load_json(_THRESHOLDS_CONFIG)
     return int(config["hot_md_top_k"])
+
+
+def default_hot_md_weights() -> dict[str, float]:
+    """Resolve the centrality blend weights (degree/betweenness) from config."""
+    weights = _load_json(_THRESHOLDS_CONFIG)["hot_md_weights"]
+    return {key: float(value) for key, value in weights.items()}
+
+
+def default_bug_node_id() -> str:
+    """Resolve the bug-location node id (proximity anchor for the hot.md ranking)."""
+    return str(_load_json(_THRESHOLDS_CONFIG)["hot_md_bug_node_id"])
