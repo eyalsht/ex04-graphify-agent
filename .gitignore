@@ -23,6 +23,10 @@ htmlcov/
 # Course lecture PDFs are reference-only copyrighted material, not our work (PHASE1-068).
 /lec/
 
+# Session-internal coordination brief — NOT a deliverable (PHASE0-031). Kept on disk for
+# execution-phase reference but untracked; delete physically at submission.
+docs/_internal_context_brief.md
+
 # OS / editor
 .DS_Store
 Thumbs.db
