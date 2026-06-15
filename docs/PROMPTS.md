@@ -53,6 +53,41 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-15 — Phases 3 & 4 (parallel subagent dispatch)
+
+- **Prompt summary:** Project owner asked the orchestrator (this session) to drive Phases 3
+  and 4 by dispatching subagents, deciding parallel-vs-serial and model per task, and
+  PR-gating each. After a dependency check (Phase 2 `graph_reader` was already merged via
+  PR #1; `obsidian_writer` was NOT), the orchestrator dispatched **two parallel subagents,
+  each in its own git worktree off `main`**, since both depend only on `graph_reader` and
+  touch disjoint modules:
+  - **Phase 3 → Claude Opus** (analytical core): build `weakness_detector/` (six PART-C
+    signals, EXTRACTED/INFERRED/AMBIGUOUS language↔tag invariant, Signal-6 disclosed
+    source-peek, ranked `detect()` with `source_validation=None`) + `gatekeeper/`
+    (provider-agnostic choke point, retry/queue, JSONL token log, keyless `MockClient`),
+    strict TDD, keyless, ≤150-line files, → PR #2.
+  - **Phase 4 → Claude Sonnet** (mechanical, well-specified): build the leftover Phase-2
+    `obsidian_writer` ranking (OW-T1..5) then generate PRE-FIX `obsidian/hot.md`, a
+    `check_vault_consistency.py` gate, and the `ex04 hot` CLI; baselines immutable;
+    deterministic output, → PR #3.
+  - Each subagent was given a self-contained brief (CLAUDE.md rules, the real `graph_reader`
+    API, config contracts, target-bug facts, module boundaries to avoid collision, and
+    "open a PR + return a summary"). `docs/TODO.md` / `docs/PROMPTS.md` were reserved for the
+    orchestrator (this entry) to avoid cross-agent conflicts.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 orchestrator; Claude Opus (Phase 3
+  subagent) + Claude Sonnet (Phase 4 subagent).
+- **AI-generated vs. human-reviewed/edited:** Both PRs were **fully AI-drafted** under strict
+  gates (PR #2: ruff 0 / mypy 0 / 92 tests @ 97.13%; PR #3: ruff 0 / mypy 0 / 68 tests @
+  97.64%). The **human owner ran an "Antigravity" code review** on both PRs (3 performance
+  findings each) and **chose Option B** for the `hot.md` ranking (centrality × proximity to
+  the bug node, over the pure-degree metric the subagent first shipped). Revisions to address
+  the review findings + the ranking change are applied on the existing PR branches before
+  merge. The Phase-3 subagent self-disclosed a partial-TDD deviation (the six signal bodies
+  were written alongside their tests rather than strict RED-first; scaffolding units did
+  follow RED→GREEN) — recorded honestly rather than overstated.
+
+---
+
 ## Template for future entries
 
 ```markdown

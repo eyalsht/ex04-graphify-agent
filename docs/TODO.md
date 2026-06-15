@@ -44,13 +44,37 @@
 
 ---
 
-> **Progress (2026-06-15):** Phase 0 ✅ complete; Phase 1 ✅ complete (uv project, package
-> skeleton, config JSONs, tests skeleton, 3 TDD'd gate scripts, tests/evals first eval,
-> pre-commit, CI). Repo live & **private** at `github.com/eyalsht/ex04-graphify-agent`,
-> 7 commits, CI green, all gates pass (ruff 0, mypy 0, pytest 15 @ 100% cov). Phase 0
-> verification items PHASE0-020…032 confirmed during scaffolding. Branch protection is
-> enabler-ready (`scripts/enable_branch_protection.sh`) — blocked on GitHub free-private
-> tier (see KNOWN_LIMITATIONS #9). **Next:** Phase 2 (graph_reader, TDD) in a worktree.
+> **Progress (2026-06-15):** Phase 0 ✅ · Phase 1 ✅ · **Phase 2 (graph_reader) ✅ merged**
+> (PR #1, GR-T1..T7; review fixes: cached rankings, streamed JSON). Repo live & **private**
+> at `github.com/eyalsht/ex04-graphify-agent`. Branch protection enabler-ready
+> (`scripts/enable_branch_protection.sh`) — blocked on GitHub free-private tier
+> (see KNOWN_LIMITATIONS #9).
+>
+> **Phase 3 (weakness_detector + gatekeeper) — PR #2 OPEN, under review.** Dispatched to an
+> Opus subagent in its own worktree (parallel with Phase 4). Built all six PART-C signals
+> with the EXTRACTED/INFERRED/AMBIGUOUS language↔tag invariant + Signal-6 disclosed
+> source-peek, primary-above-secondary ranking (`source_validation` left `None`, WD-T8), and
+> the provider-agnostic gatekeeper choke point (throttle→retry→JSONL token log, keyless
+> `MockClient`, ADR-0002/0005). Gates green at PR open: ruff 0, mypy 0, **92 tests @ 97.13%**.
+> ⏳ Antigravity review left 3 perf findings (exponential-backoff+jitter; god_node full-list
+> copy; `asdict` deep-copy in token-log dump) — **revisions in progress**, do not merge yet.
+>
+> **Phase 4 (obsidian_writer + PRE-FIX hot.md) — PR #3 OPEN, under review.** Dispatched to a
+> Sonnet subagent in its own worktree. ALSO built the leftover Phase-2 `obsidian_writer`
+> ranking (OW-T1..5; PHASE2-089…121 — it was NOT in PR #1), then generated `obsidian/hot.md`,
+> the `check_vault_consistency.py` gate, and the `ex04 hot` CLI. Gates green at PR open:
+> ruff 0, mypy 0, **68 tests @ 97.64%**, baselines unmodified. ⏳ Two follow-ups in progress:
+> (a) **owner chose Option B** — re-rank `hot.md` by **centrality × proximity-to-bug-node**
+> (PLAN §5; satisfies R1.4 / PHASE4-030/031 — the pure-degree metric ranked mathsquiz/README
+> above the polygons community); (b) Antigravity review's 3 perf findings (use cached
+> `top_n_by_degree`; set-based wikilink check; cache parsed config JSON).
+>
+> **`sdk.py` reconciliation pending:** PR #2 added a module-level `detect_weaknesses()`,
+> PR #3 added a `class Ex04Sdk` (matches PLAN §4.7). The second PR to merge will be
+> reconciled by the orchestrator into the single `Ex04Sdk` façade.
+>
+> **Next:** apply both PRs' revisions on their existing branches → re-verify gates →
+> merge (resolving the `sdk.py` overlap) → tick the per-item Phase-2.9/3/4 checkboxes below.
 
 ## Phase 0 — Planning
 
