@@ -77,7 +77,20 @@
 > `generate_hot`, PLAN §4.7). Merged-into-`main` and re-verified green: ruff 0, mypy 0,
 > **117 tests @ 97%**, all gates incl. vault-consistency.
 >
-> **Next:** Phase 5 — LangGraph agent (TDD) + structural evals.
+> **Phase 5 (LangGraph agent_workflow + structural evals) — PR #4 OPEN.** Dispatched to an
+> Opus subagent (own worktree); the subagent was cut off mid-task by a session limit after
+> committing state/prompts/nodes, and the orchestrator finished it inline (build_graph
+> typing, end-to-end run/routing tests, `Ex04Sdk.run_agent`, the AW-T1 eval). One
+> parameterized `StateGraph` keyed on `run_type` (AW-T8): graph-guided
+> `plan→read_vault→hypothesize→validate→fix→report` with a bounded validate→hypothesize loop
+> (AW-E1/AW-T6); naive `plan→dump_repo→fix→report`; shared plan/fix/report node objects for
+> instrumentation parity. The keyless **AW-T1 structural eval proves the thesis**:
+> graph-guided fix-context **458 tokens vs naive 1795 (~74% fewer)**. Gates green: ruff 0,
+> mypy 0 (42 files), **165 tests @ 98%**, `-m eval` 4 passed, all gate scripts.
+> ⏳ Awaiting review/approval. *(Honest note: the orchestrator-added parts were written
+> tests+code together, not strict RED-first; the subagent's earlier units did follow RED→GREEN.)*
+>
+> **Next:** Phase 6 — token comparison + evidence (depends on Phase 5; sequential).
 
 ## Phase 0 — Planning
 
@@ -591,123 +604,123 @@
 
 ### 5.1 — typed state schema
 
-- [ ] **P0** `PHASE5-001` agent: RED — test `AgentState` TypedDict has run_type/messages/vault_context/dumped_context/current_hypothesis/validated_source/validated/findings_tried/fix_diff/token_usage — DoD: test fails; ref PRD state schema / R6.1.4
-- [ ] **P0** `PHASE5-002` agent: GREEN — implement `AgentState` TypedDict — DoD: test passes
-- [ ] **P0** `PHASE5-003` agent: RED — test `run_type` is Literal["graph_guided","naive"] — DoD: mypy/test fails
-- [ ] **P0** `PHASE5-004` agent: GREEN — implement Literal run_type — DoD: test passes
-- [ ] **P0** `PHASE5-005` agent: RED — test `TokenRecord` state type (node/input_tokens/output_tokens) — DoD: test fails
-- [ ] **P0** `PHASE5-006` agent: GREEN — implement TokenRecord in state — DoD: test passes
-- [ ] **P1** `PHASE5-007` agent: RED — test state is typed not ad-hoc dict (no untyped fields) — DoD: mypy strict fails on violation; ref R6.1.4
-- [ ] **P1** `PHASE5-008` agent: GREEN — finalize typed state — DoD: mypy clean
-- [ ] **P1** `PHASE5-009` agent: REFACTOR — keep `state.py` ≤150 lines — DoD: file budget honored
+- [x] **P0** `PHASE5-001` agent: RED — test `AgentState` TypedDict has run_type/messages/vault_context/dumped_context/current_hypothesis/validated_source/validated/findings_tried/fix_diff/token_usage — DoD: test fails; ref PRD state schema / R6.1.4
+- [x] **P0** `PHASE5-002` agent: GREEN — implement `AgentState` TypedDict — DoD: test passes
+- [x] **P0** `PHASE5-003` agent: RED — test `run_type` is Literal["graph_guided","naive"] — DoD: mypy/test fails
+- [x] **P0** `PHASE5-004` agent: GREEN — implement Literal run_type — DoD: test passes
+- [x] **P0** `PHASE5-005` agent: RED — test `TokenRecord` state type (node/input_tokens/output_tokens) — DoD: test fails
+- [x] **P0** `PHASE5-006` agent: GREEN — implement TokenRecord in state — DoD: test passes
+- [x] **P1** `PHASE5-007` agent: RED — test state is typed not ad-hoc dict (no untyped fields) — DoD: mypy strict fails on violation; ref R6.1.4
+- [x] **P1** `PHASE5-008` agent: GREEN — finalize typed state — DoD: mypy clean
+- [x] **P1** `PHASE5-009` agent: REFACTOR — keep `state.py` ≤150 lines — DoD: file budget honored
 
 ### 5.2 — plan node
 
-- [ ] **P0** `PHASE5-010` agent: RED — test `plan(state)` sets run_type and initializes state — DoD: test fails; ref PRD nodes
-- [ ] **P0** `PHASE5-011` agent: GREEN — implement `plan` node (tiny system prompt context) — DoD: test passes
-- [ ] **P0** `PHASE5-012` agent: RED — test `plan` routes graph_guided vs naive by run_type — DoD: test fails
-- [ ] **P0** `PHASE5-013` agent: GREEN — implement plan routing decision — DoD: test passes
-- [ ] **P1** `PHASE5-014` agent: RED — test `plan` LLM call goes through gatekeeper (token recorded) — DoD: test fails (mocked)
-- [ ] **P1** `PHASE5-015` agent: GREEN — route plan call via gatekeeper — DoD: test passes
+- [x] **P0** `PHASE5-010` agent: RED — test `plan(state)` sets run_type and initializes state — DoD: test fails; ref PRD nodes
+- [x] **P0** `PHASE5-011` agent: GREEN — implement `plan` node (tiny system prompt context) — DoD: test passes
+- [x] **P0** `PHASE5-012` agent: RED — test `plan` routes graph_guided vs naive by run_type — DoD: test fails
+- [x] **P0** `PHASE5-013` agent: GREEN — implement plan routing decision — DoD: test passes
+- [x] **P1** `PHASE5-014` agent: RED — test `plan` LLM call goes through gatekeeper (token recorded) — DoD: test fails (mocked)
+- [x] **P1** `PHASE5-015` agent: GREEN — route plan call via gatekeeper — DoD: test passes
 
 ### 5.3 — read_vault node (graph-guided)
 
-- [ ] **P0** `PHASE5-016` agent: RED — test `read_vault(state)` loads `index.md` + `hot.md` into `vault_context` — DoD: test fails; ref PRD read_vault
-- [ ] **P0** `PHASE5-017` agent: GREEN — implement `read_vault` (no source files read) — DoD: test passes; ref R5.3.2
-- [ ] **P0** `PHASE5-018` agent: RED — test `read_vault` reads NO source files — DoD: test fails; ref R1.3
-- [ ] **P0** `PHASE5-019` agent: GREEN — ensure no source reads in read_vault — DoD: test passes
-- [ ] **P0** `PHASE5-020` agent: RED — test `read_vault` fails loud if `hot.md` missing ("run obsidian_writer first") — DoD: test fails; ref AW-E2
-- [ ] **P0** `PHASE5-021` agent: GREEN — implement fail-loud-on-missing-hot.md (no silent dump fallback) — DoD: test passes
-- [ ] **P1** `PHASE5-022` agent: RED — test `vault_context` is non-empty and contains the Polygon wikilink — DoD: test fails
-- [ ] **P1** `PHASE5-023` agent: GREEN — populate vault_context correctly — DoD: test passes
+- [x] **P0** `PHASE5-016` agent: RED — test `read_vault(state)` loads `index.md` + `hot.md` into `vault_context` — DoD: test fails; ref PRD read_vault
+- [x] **P0** `PHASE5-017` agent: GREEN — implement `read_vault` (no source files read) — DoD: test passes; ref R5.3.2
+- [x] **P0** `PHASE5-018` agent: RED — test `read_vault` reads NO source files — DoD: test fails; ref R1.3
+- [x] **P0** `PHASE5-019` agent: GREEN — ensure no source reads in read_vault — DoD: test passes
+- [x] **P0** `PHASE5-020` agent: RED — test `read_vault` fails loud if `hot.md` missing ("run obsidian_writer first") — DoD: test fails; ref AW-E2
+- [x] **P0** `PHASE5-021` agent: GREEN — implement fail-loud-on-missing-hot.md (no silent dump fallback) — DoD: test passes
+- [x] **P1** `PHASE5-022` agent: RED — test `vault_context` is non-empty and contains the Polygon wikilink — DoD: test fails
+- [x] **P1** `PHASE5-023` agent: GREEN — populate vault_context correctly — DoD: test passes
 
 ### 5.4 — hypothesize node (AW-T4)
 
-- [ ] **P0** `PHASE5-024` agent: RED — test `hypothesize(state)` sets `current_hypothesis` to top-ranked finding — DoD: test fails; ref PRD hypothesize
-- [ ] **P0** `PHASE5-025` agent: GREEN — implement `hypothesize` calling `WeaknessDetector.detect()` — DoD: test passes
-- [ ] **P0** `PHASE5-026` agent: RED — test `current_hypothesis.source_file == "polygons/polygons.py"` and `priority=="primary"` — DoD: test fails; ref AW-T4
-- [ ] **P0** `PHASE5-027` agent: GREEN — select primary finding (Signal 1 Polygon) — DoD: AW-T4 passes
-- [ ] **P1** `PHASE5-028` agent: RED — test hypothesis carries EXTRACTED/INFERRED/AMBIGUOUS tag into state — DoD: test fails
-- [ ] **P1** `PHASE5-029` agent: GREEN — propagate tag into current_hypothesis — DoD: test passes
-- [ ] **P1** `PHASE5-030` agent: RED — test `hypothesize` LLM call routed via gatekeeper — DoD: test fails
-- [ ] **P1** `PHASE5-031` agent: GREEN — route hypothesize call via gatekeeper — DoD: test passes
+- [x] **P0** `PHASE5-024` agent: RED — test `hypothesize(state)` sets `current_hypothesis` to top-ranked finding — DoD: test fails; ref PRD hypothesize
+- [x] **P0** `PHASE5-025` agent: GREEN — implement `hypothesize` calling `WeaknessDetector.detect()` — DoD: test passes
+- [x] **P0** `PHASE5-026` agent: RED — test `current_hypothesis.source_file == "polygons/polygons.py"` and `priority=="primary"` — DoD: test fails; ref AW-T4
+- [x] **P0** `PHASE5-027` agent: GREEN — select primary finding (Signal 1 Polygon) — DoD: AW-T4 passes
+- [x] **P1** `PHASE5-028` agent: RED — test hypothesis carries EXTRACTED/INFERRED/AMBIGUOUS tag into state — DoD: test fails
+- [x] **P1** `PHASE5-029` agent: GREEN — propagate tag into current_hypothesis — DoD: test passes
+- [x] **P1** `PHASE5-030` agent: RED — test `hypothesize` LLM call routed via gatekeeper — DoD: test fails
+- [x] **P1** `PHASE5-031` agent: GREEN — route hypothesize call via gatekeeper — DoD: test passes
 
 ### 5.5 — validate node (AW-T5, AW-T2)
 
-- [ ] **P0** `PHASE5-032` agent: RED — test `validate(state)` reads `current_hypothesis.source_file` into `validated_source` — DoD: test fails; ref PRD validate
-- [ ] **P0** `PHASE5-033` agent: GREEN — implement `validate` reading polygons.py (~76 lines) — DoD: test passes
-- [ ] **P0** `PHASE5-034` agent: RED — test `validated == True` and `current_hypothesis.source_validation is not None` after validate — DoD: test fails; ref AW-T5
-- [ ] **P0** `PHASE5-035` agent: GREEN — fill source_validation + set validated — DoD: AW-T5 passes
-- [ ] **P0** `PHASE5-036` agent: RED — test `validated_source` contains ONLY polygons.py (no mathsquiz content) — DoD: test fails; ref AW-T2
-- [ ] **P0** `PHASE5-037` agent: GREEN — restrict validate to single source file — DoD: AW-T2 passes
-- [ ] **P0** `PHASE5-038` agent: RED — test source contradicting hypothesis routes back to hypothesize — DoD: test fails; ref PLAN.md §3a
-- [ ] **P0** `PHASE5-039` agent: GREEN — implement re-hypothesize conditional edge — DoD: test passes
-- [ ] **P1** `PHASE5-040` agent: RED — test inference discipline: INFERRED/AMBIGUOUS not actionable until validated — DoD: test fails; ref brief §5
-- [ ] **P1** `PHASE5-041` agent: GREEN — gate fix on validated for INFERRED/AMBIGUOUS — DoD: test passes
+- [x] **P0** `PHASE5-032` agent: RED — test `validate(state)` reads `current_hypothesis.source_file` into `validated_source` — DoD: test fails; ref PRD validate
+- [x] **P0** `PHASE5-033` agent: GREEN — implement `validate` reading polygons.py (~76 lines) — DoD: test passes
+- [x] **P0** `PHASE5-034` agent: RED — test `validated == True` and `current_hypothesis.source_validation is not None` after validate — DoD: test fails; ref AW-T5
+- [x] **P0** `PHASE5-035` agent: GREEN — fill source_validation + set validated — DoD: AW-T5 passes
+- [x] **P0** `PHASE5-036` agent: RED — test `validated_source` contains ONLY polygons.py (no mathsquiz content) — DoD: test fails; ref AW-T2
+- [x] **P0** `PHASE5-037` agent: GREEN — restrict validate to single source file — DoD: AW-T2 passes
+- [x] **P0** `PHASE5-038` agent: RED — test source contradicting hypothesis routes back to hypothesize — DoD: test fails; ref PLAN.md §3a
+- [x] **P0** `PHASE5-039` agent: GREEN — implement re-hypothesize conditional edge — DoD: test passes
+- [x] **P1** `PHASE5-040` agent: RED — test inference discipline: INFERRED/AMBIGUOUS not actionable until validated — DoD: test fails; ref brief §5
+- [x] **P1** `PHASE5-041` agent: GREEN — gate fix on validated for INFERRED/AMBIGUOUS — DoD: test passes
 
 ### 5.6 — fix node (graph-guided)
 
-- [ ] **P0** `PHASE5-042` agent: RED — test `fix(state)` makes one gatekeeper LLM call with system+vault_context+validated_source+hypothesis — DoD: test fails; ref PRD fix
-- [ ] **P0** `PHASE5-043` agent: GREEN — implement `fix` node producing corrected content → `fix_diff` — DoD: test passes
-- [ ] **P0** `PHASE5-044` agent: RED — test no mathsquiz file content appears in any fix-node prompt (graph-guided) — DoD: test fails; ref AW-T2
-- [ ] **P0** `PHASE5-045` agent: GREEN — ensure minimal context at fix — DoD: AW-T2 passes
-- [ ] **P0** `PHASE5-046` agent: RED — test `fix_diff` is a unified diff vs original polygons.py — DoD: test fails
-- [ ] **P0** `PHASE5-047` agent: GREEN — implement unified-diff generation — DoD: test passes
-- [ ] **P1** `PHASE5-048` agent: RED — test empty/no usable diff → report records failure (no crash) — DoD: test fails; ref AW-E5
-- [ ] **P1** `PHASE5-049` agent: GREEN — handle empty-fix gracefully — DoD: test passes
+- [x] **P0** `PHASE5-042` agent: RED — test `fix(state)` makes one gatekeeper LLM call with system+vault_context+validated_source+hypothesis — DoD: test fails; ref PRD fix
+- [x] **P0** `PHASE5-043` agent: GREEN — implement `fix` node producing corrected content → `fix_diff` — DoD: test passes
+- [x] **P0** `PHASE5-044` agent: RED — test no mathsquiz file content appears in any fix-node prompt (graph-guided) — DoD: test fails; ref AW-T2
+- [x] **P0** `PHASE5-045` agent: GREEN — ensure minimal context at fix — DoD: AW-T2 passes
+- [x] **P0** `PHASE5-046` agent: RED — test `fix_diff` is a unified diff vs original polygons.py — DoD: test fails
+- [x] **P0** `PHASE5-047` agent: GREEN — implement unified-diff generation — DoD: test passes
+- [x] **P1** `PHASE5-048` agent: RED — test empty/no usable diff → report records failure (no crash) — DoD: test fails; ref AW-E5
+- [x] **P1** `PHASE5-049` agent: GREEN — handle empty-fix gracefully — DoD: test passes
 
 ### 5.7 — report node
 
-- [ ] **P0** `PHASE5-050` agent: RED — test `report(state)` summarizes root cause + finding + validation + diff — DoD: test fails; ref PRD report
-- [ ] **P0** `PHASE5-051` agent: GREEN — implement `report` node — DoD: test passes
-- [ ] **P1** `PHASE5-052` agent: RED — test report node makes no LLM call (no gatekeeper) — DoD: test fails
-- [ ] **P1** `PHASE5-053` agent: GREEN — ensure report is deterministic/no-LLM — DoD: test passes
+- [x] **P0** `PHASE5-050` agent: RED — test `report(state)` summarizes root cause + finding + validation + diff — DoD: test fails; ref PRD report
+- [x] **P0** `PHASE5-051` agent: GREEN — implement `report` node — DoD: test passes
+- [x] **P1** `PHASE5-052` agent: RED — test report node makes no LLM call (no gatekeeper) — DoD: test fails
+- [x] **P1** `PHASE5-053` agent: GREEN — ensure report is deterministic/no-LLM — DoD: test passes
 
 ### 5.8 — dump_repo node (naive, AW-T3)
 
-- [ ] **P0** `PHASE5-054` agent: RED — test `dump_repo(state)` reads all files under `data/broken-python/` into `dumped_context` — DoD: test fails; ref PRD dump_repo
-- [ ] **P0** `PHASE5-055` agent: GREEN — implement `dump_repo` (no graph, no hot.md) — DoD: test passes
-- [ ] **P0** `PHASE5-056` agent: RED — test `dumped_context` includes polygons.py + 5 mathsquiz scripts + 2 READMEs + LICENSE.txt — DoD: test fails; ref AW-T3
-- [ ] **P0** `PHASE5-057` agent: GREEN — ensure full-tree dump — DoD: AW-T3 passes
-- [ ] **P0** `PHASE5-058` agent: RED — test dump is deterministic (sorted paths) — DoD: test fails; ref AW-E4
-- [ ] **P0** `PHASE5-059` agent: GREEN — implement sorted-path concatenation — DoD: test passes
-- [ ] **P1** `PHASE5-060` agent: RED — test naive `fix` prompt = system + entire dumped_context (no hypothesis, no map) — DoD: test fails; ref context table
-- [ ] **P1** `PHASE5-061` agent: GREEN — implement naive fix context assembly — DoD: test passes
+- [x] **P0** `PHASE5-054` agent: RED — test `dump_repo(state)` reads all files under `data/broken-python/` into `dumped_context` — DoD: test fails; ref PRD dump_repo
+- [x] **P0** `PHASE5-055` agent: GREEN — implement `dump_repo` (no graph, no hot.md) — DoD: test passes
+- [x] **P0** `PHASE5-056` agent: RED — test `dumped_context` includes polygons.py + 5 mathsquiz scripts + 2 READMEs + LICENSE.txt — DoD: test fails; ref AW-T3
+- [x] **P0** `PHASE5-057` agent: GREEN — ensure full-tree dump — DoD: AW-T3 passes
+- [x] **P0** `PHASE5-058` agent: RED — test dump is deterministic (sorted paths) — DoD: test fails; ref AW-E4
+- [x] **P0** `PHASE5-059` agent: GREEN — implement sorted-path concatenation — DoD: test passes
+- [x] **P1** `PHASE5-060` agent: RED — test naive `fix` prompt = system + entire dumped_context (no hypothesis, no map) — DoD: test fails; ref context table
+- [x] **P1** `PHASE5-061` agent: GREEN — implement naive fix context assembly — DoD: test passes
 
 ### 5.9 — graph_def + parameterization (AW-T8)
 
-- [ ] **P0** `PHASE5-062` agent: RED — test `build_graph("graph_guided")` compiles a CompiledGraph — DoD: test fails; ref PRD graph_def
-- [ ] **P0** `PHASE5-063` agent: GREEN — implement `build_graph` graph-guided topology (plan→read_vault→hypothesize→validate→fix→report) — DoD: test passes; ref R5.5.1
-- [ ] **P0** `PHASE5-064` agent: RED — test `build_graph("naive")` compiles (plan→dump_repo→fix→report) — DoD: test fails
-- [ ] **P0** `PHASE5-065` agent: GREEN — implement naive topology with conditional edges — DoD: test passes
-- [ ] **P0** `PHASE5-066` agent: RED — test both routes share the SAME plan/fix/report node objects (AW-T8) — DoD: test fails; ref AW-T8
-- [ ] **P0** `PHASE5-067` agent: GREEN — implement single parameterized graph (no duplicated node impls) — DoD: AW-T8 passes
-- [ ] **P1** `PHASE5-068` agent: RED — test conditional edge selects path by `run_type` — DoD: test fails
-- [ ] **P1** `PHASE5-069` agent: GREEN — implement run_type conditional routing — DoD: test passes
-- [ ] **P1** `PHASE5-070` agent: REFACTOR — keep `graph_def.py` ≤150 lines — DoD: file budget honored
-- [ ] **P1** `PHASE5-071` agent: REFACTOR — split `nodes.py` into nodes_graph/nodes_naive if > 150 lines — DoD: file budget honored
+- [x] **P0** `PHASE5-062` agent: RED — test `build_graph("graph_guided")` compiles a CompiledGraph — DoD: test fails; ref PRD graph_def
+- [x] **P0** `PHASE5-063` agent: GREEN — implement `build_graph` graph-guided topology (plan→read_vault→hypothesize→validate→fix→report) — DoD: test passes; ref R5.5.1
+- [x] **P0** `PHASE5-064` agent: RED — test `build_graph("naive")` compiles (plan→dump_repo→fix→report) — DoD: test fails
+- [x] **P0** `PHASE5-065` agent: GREEN — implement naive topology with conditional edges — DoD: test passes
+- [x] **P0** `PHASE5-066` agent: RED — test both routes share the SAME plan/fix/report node objects (AW-T8) — DoD: test fails; ref AW-T8
+- [x] **P0** `PHASE5-067` agent: GREEN — implement single parameterized graph (no duplicated node impls) — DoD: AW-T8 passes
+- [x] **P1** `PHASE5-068` agent: RED — test conditional edge selects path by `run_type` — DoD: test fails
+- [x] **P1** `PHASE5-069` agent: GREEN — implement run_type conditional routing — DoD: test passes
+- [x] **P1** `PHASE5-070` agent: REFACTOR — keep `graph_def.py` ≤150 lines — DoD: file budget honored
+- [x] **P1** `PHASE5-071` agent: REFACTOR — split `nodes.py` into nodes_graph/nodes_naive if > 150 lines — DoD: file budget honored
 
 ### 5.10 — stop conditions + AMBIGUOUS fall-through (AW-T6, AW-E1)
 
-- [ ] **P0** `PHASE5-072` agent: RED — test graph-guided stops after fix+report when `validated==True` — DoD: test fails; ref stop conditions
-- [ ] **P0** `PHASE5-073` agent: GREEN — implement validated-stop condition — DoD: test passes
-- [ ] **P0** `PHASE5-074` agent: RED — test AMBIGUOUS top finding that fails to confirm falls through to next finding (findings_tried++) — DoD: test fails; ref AW-E1
-- [ ] **P0** `PHASE5-075` agent: GREEN — implement fall-through to next-ranked finding — DoD: test passes
-- [ ] **P0** `PHASE5-076` agent: RED — test `findings_tried <= max_findings_tried` and graph terminates (no infinite loop) — DoD: test fails; ref AW-T6
-- [ ] **P0** `PHASE5-077` agent: GREEN — implement bounded loop (max_findings_tried from config) — DoD: AW-T6 passes
-- [ ] **P0** `PHASE5-078` agent: RED — test "no confirmable finding" report after exhausting findings — DoD: test fails; ref stop conditions
-- [ ] **P0** `PHASE5-079` agent: GREEN — implement exhaustion report — DoD: test passes
-- [ ] **P1** `PHASE5-080` agent: RED — test `max_validation_attempts` honored (default 1 from config) — DoD: test fails
-- [ ] **P1** `PHASE5-081` agent: GREEN — implement validation-attempt bound — DoD: test passes
-- [ ] **P0** `PHASE5-082` agent: RED — test naive stops after fix+report (single pass, no validation loop) — DoD: test fails; ref stop conditions
-- [ ] **P0** `PHASE5-083` agent: GREEN — implement single-pass naive stop — DoD: test passes
+- [x] **P0** `PHASE5-072` agent: RED — test graph-guided stops after fix+report when `validated==True` — DoD: test fails; ref stop conditions
+- [x] **P0** `PHASE5-073` agent: GREEN — implement validated-stop condition — DoD: test passes
+- [x] **P0** `PHASE5-074` agent: RED — test AMBIGUOUS top finding that fails to confirm falls through to next finding (findings_tried++) — DoD: test fails; ref AW-E1
+- [x] **P0** `PHASE5-075` agent: GREEN — implement fall-through to next-ranked finding — DoD: test passes
+- [x] **P0** `PHASE5-076` agent: RED — test `findings_tried <= max_findings_tried` and graph terminates (no infinite loop) — DoD: test fails; ref AW-T6
+- [x] **P0** `PHASE5-077` agent: GREEN — implement bounded loop (max_findings_tried from config) — DoD: AW-T6 passes
+- [x] **P0** `PHASE5-078` agent: RED — test "no confirmable finding" report after exhausting findings — DoD: test fails; ref stop conditions
+- [x] **P0** `PHASE5-079` agent: GREEN — implement exhaustion report — DoD: test passes
+- [x] **P1** `PHASE5-080` agent: RED — test `max_validation_attempts` honored (default 1 from config) — DoD: test fails
+- [x] **P1** `PHASE5-081` agent: GREEN — implement validation-attempt bound — DoD: test passes
+- [x] **P0** `PHASE5-082` agent: RED — test naive stops after fix+report (single pass, no validation loop) — DoD: test fails; ref stop conditions
+- [x] **P0** `PHASE5-083` agent: GREEN — implement single-pass naive stop — DoD: test passes
 
 ### 5.11 — context-minimization thesis (AW-T1)
 
-- [ ] **P0** `PHASE5-084` agent: RED — test `count_tokens(vault_context + validated_source) < count_tokens(dumped_context)` (structural, no real LLM) — DoD: test fails; ref AW-T1 (core thesis)
-- [ ] **P0** `PHASE5-085` agent: GREEN — confirm graph-guided context strictly smaller than naive dump — DoD: AW-T1 passes; ref R1.4
-- [ ] **P1** `PHASE5-086` agent: RED — test the context delta is at the fix node specifically — DoD: test fails; ref PRD context-minimization
-- [ ] **P1** `PHASE5-087` agent: GREEN — confirm fix-node context delta — DoD: test passes
+- [x] **P0** `PHASE5-084` agent: RED — test `count_tokens(vault_context + validated_source) < count_tokens(dumped_context)` (structural, no real LLM) — DoD: test fails; ref AW-T1 (core thesis)
+- [x] **P0** `PHASE5-085` agent: GREEN — confirm graph-guided context strictly smaller than naive dump — DoD: AW-T1 passes; ref R1.4
+- [x] **P1** `PHASE5-086` agent: RED — test the context delta is at the fix node specifically — DoD: test fails; ref PRD context-minimization
+- [x] **P1** `PHASE5-087` agent: GREEN — confirm fix-node context delta — DoD: test passes
 
 ### 5.12 — structural evals (`tests/evals/`, keyless, pass^k=100%) — promote the thesis
 
@@ -717,73 +730,73 @@
 > **every** run (`pass^k = 100%`, not a statistical rate). This is the agent-debate
 > credibility signature (structural evals + committed evidence) ported to EX04.
 
-- [ ] **P0** `PHASE5-E01` evals: create `tests/evals/test_thesis_context_delta.py` (`@pytest.mark.eval`) — the AW-T1 token-delta promoted to a first-class structural eval (graph-guided context < naive context, no API key) — DoD: eval passes; runs under `-m eval`; ref AW-T1/R1.4 (highest-leverage)
-- [ ] **P0** `PHASE5-E02` evals: create `tests/evals/test_known_answer_weakness.py` — known-answer eval against the REAL `artifacts/graphify/graph.json`: detector finds Signal 1 (god node = `polygons_polygons_polygon`, degree 4) AND Signal 5 (isolated cluster = the three `rationale_*` nodes) — DoD: both findings asserted; ref WD-T1/WD-T5, brief §2
-- [ ] **P0** `PHASE5-E03` evals: create `tests/evals/test_hot_ranks_god_node.py` — `obsidian/hot.md` ranks `polygons_polygons_polygon` at/near the top (PRE-FIX metric) — DoD: eval passes; ref OW-T*/R5.6.1
-- [ ] **P0** `PHASE5-E04` evals: create `tests/evals/test_graph_schema.py` — `graph.json` conforms to the PLAN.md data contract (node/edge fields, confidence ∈ {EXTRACTED,INFERRED,AMBIGUOUS}) — DoD: schema eval passes; ref PLAN.md data contract
-- [ ] **P0** `PHASE5-E05` evals: create `tests/evals/test_fixed_polygons_correct.py` — the correctness invariant (pentagon 540/108, hexagon 720/120; mocked-turtle loop depends on `sides`) as a known-answer eval — DoD: passes on a fixed-source fixture, fails on the original; ref TC-T4/TC-T5
-- [ ] **P1** `PHASE5-E06` evals: create `tests/evals/test_report_wellformed.py` — given mocked gatekeeper-log fixtures, `reports/token_comparison.md` has the mandated columns incl. `Files read` + `Iterations` (R5.6.5) — DoD: passes; ref TC-T9
-- [ ] **P1** `PHASE5-E07` evals: add a `tests/evals/README.md` documenting the structural/behavioural split + `pass^k=100%` bar + how to run (`-m eval`) — DoD: present; ref eval-harness skill
-- [ ] **P1** `PHASE5-E08` evals: ensure `tests/evals/` runs in CI keyless and is reported separately from unit tests — DoD: CI step `uv run pytest -m eval` green; ref PHASE1-071
-- [ ] **P1** `PHASE5-E09` evals: commit — `test(evals): keyless structural evals proving the graph-guided thesis (pass^k)` — DoD: evals + this section ticked
+- [x] **P0** `PHASE5-E01` evals: create `tests/evals/test_thesis_context_delta.py` (`@pytest.mark.eval`) — the AW-T1 token-delta promoted to a first-class structural eval (graph-guided context < naive context, no API key) — DoD: eval passes; runs under `-m eval`; ref AW-T1/R1.4 (highest-leverage)
+- [x] **P0** `PHASE5-E02` evals: create `tests/evals/test_known_answer_weakness.py` — known-answer eval against the REAL `artifacts/graphify/graph.json`: detector finds Signal 1 (god node = `polygons_polygons_polygon`, degree 4) AND Signal 5 (isolated cluster = the three `rationale_*` nodes) — DoD: both findings asserted; ref WD-T1/WD-T5, brief §2
+- [x] **P0** `PHASE5-E03` evals: create `tests/evals/test_hot_ranks_god_node.py` — `obsidian/hot.md` ranks `polygons_polygons_polygon` at/near the top (PRE-FIX metric) — DoD: eval passes; ref OW-T*/R5.6.1
+- [x] **P0** `PHASE5-E04` evals: create `tests/evals/test_graph_schema.py` — `graph.json` conforms to the PLAN.md data contract (node/edge fields, confidence ∈ {EXTRACTED,INFERRED,AMBIGUOUS}) — DoD: schema eval passes; ref PLAN.md data contract
+- [x] **P0** `PHASE5-E05` evals: create `tests/evals/test_fixed_polygons_correct.py` — the correctness invariant (pentagon 540/108, hexagon 720/120; mocked-turtle loop depends on `sides`) as a known-answer eval — DoD: passes on a fixed-source fixture, fails on the original; ref TC-T4/TC-T5
+- [x] **P1** `PHASE5-E06` evals: create `tests/evals/test_report_wellformed.py` — given mocked gatekeeper-log fixtures, `reports/token_comparison.md` has the mandated columns incl. `Files read` + `Iterations` (R5.6.5) — DoD: passes; ref TC-T9
+- [x] **P1** `PHASE5-E07` evals: add a `tests/evals/README.md` documenting the structural/behavioural split + `pass^k=100%` bar + how to run (`-m eval`) — DoD: present; ref eval-harness skill
+- [x] **P1** `PHASE5-E08` evals: ensure `tests/evals/` runs in CI keyless and is reported separately from unit tests — DoD: CI step `uv run pytest -m eval` green; ref PHASE1-071
+- [x] **P1** `PHASE5-E09` evals: commit — `test(evals): keyless structural evals proving the graph-guided thesis (pass^k)` — DoD: evals + this section ticked
 
 ### 5.12 — token_usage from gatekeeper (AW-T7) + keyless (AW-E3)
 
-- [ ] **P0** `PHASE5-088` agent: RED — test `token_usage` has one TokenRecord per LLM call (node/input/output) — DoD: test fails; ref AW-T7
-- [ ] **P0** `PHASE5-089` agent: GREEN — append TokenRecord per gatekeeper call — DoD: AW-T7 passes
-- [ ] **P0** `PHASE5-090` agent: RED — test keyless run (no key) uses mocked response; routing + token-structure assertions hold — DoD: test fails; ref AW-E3
-- [ ] **P0** `PHASE5-091` agent: GREEN — confirm keyless graph routes via mocked gatekeeper — DoD: AW-E3 passes
-- [ ] **P1** `PHASE5-092` agent: RED — test `token_usage` reconciles against gatekeeper JSONL log — DoD: test fails; ref TC-E5
-- [ ] **P1** `PHASE5-093` agent: GREEN — ensure state mirrors gatekeeper log — DoD: test passes
+- [x] **P0** `PHASE5-088` agent: RED — test `token_usage` has one TokenRecord per LLM call (node/input/output) — DoD: test fails; ref AW-T7
+- [x] **P0** `PHASE5-089` agent: GREEN — append TokenRecord per gatekeeper call — DoD: AW-T7 passes
+- [x] **P0** `PHASE5-090` agent: RED — test keyless run (no key) uses mocked response; routing + token-structure assertions hold — DoD: test fails; ref AW-E3
+- [x] **P0** `PHASE5-091` agent: GREEN — confirm keyless graph routes via mocked gatekeeper — DoD: AW-E3 passes
+- [x] **P1** `PHASE5-092` agent: RED — test `token_usage` reconciles against gatekeeper JSONL log — DoD: test fails; ref TC-E5
+- [x] **P1** `PHASE5-093` agent: GREEN — ensure state mirrors gatekeeper log — DoD: test passes
 
 ### 5.13 — prompts + wiring + quality gates
 
-- [ ] **P1** `PHASE5-094` agent: RED — test `prompts.py` templates load as text (no logic) — DoD: test fails
-- [ ] **P1** `PHASE5-095` agent: GREEN — implement prompt templates (plan/hypothesize/fix) — DoD: test passes
-- [ ] **P1** `PHASE5-096` agent: RED — test model id loaded from `config/agent.json` (not hardcoded) — DoD: test fails; ref D6
-- [ ] **P1** `PHASE5-097` agent: GREEN — config-driven model in agent calls — DoD: test passes
-- [ ] **P1** `PHASE5-098` agent: REFACTOR — keep `prompts.py` + `nodes.py` ≤150 lines each — DoD: file budget honored
-- [ ] **P0** `PHASE5-099` agent: RED — test `sdk.run_agent("graph_guided")` runs end-to-end keyless — DoD: test fails
-- [ ] **P0** `PHASE5-100` agent: GREEN — wire `run_agent` into `sdk.py` — DoD: test passes
-- [ ] **P0** `PHASE5-101` agent: RED — test `sdk.run_agent("naive")` runs end-to-end keyless — DoD: test fails
-- [ ] **P0** `PHASE5-102` agent: GREEN — naive run via sdk — DoD: test passes
-- [ ] **P1** `PHASE5-103` agent: RED — test `cli.py` `run` command delegates to sdk (zero logic) — DoD: test fails
-- [ ] **P1** `PHASE5-104` agent: GREEN — implement thin `ex04 run --type` CLI — DoD: test passes; ref SDK-first
-- [ ] **P1** `PHASE5-105` agent: RED — test every node/tool is documented (R6.2.2 explainability) — DoD: docstrings present
-- [ ] **P1** `PHASE5-106` agent: GREEN — add node docstrings — DoD: test passes
-- [ ] **P1** `PHASE5-107` agent: verify — mypy/ruff clean, coverage ≥90% on agent_workflow — DoD: gates green
-- [ ] **P1** `PHASE5-108` agent: verify — full keyless suite green (ADR-0005) — DoD: `uv run pytest` no key, 0 failures
-- [ ] **P1** `PHASE5-109` agent: commit — `feat: LangGraph agent both run types (AW-T1..8)` — DoD: tests with code
+- [x] **P1** `PHASE5-094` agent: RED — test `prompts.py` templates load as text (no logic) — DoD: test fails
+- [x] **P1** `PHASE5-095` agent: GREEN — implement prompt templates (plan/hypothesize/fix) — DoD: test passes
+- [x] **P1** `PHASE5-096` agent: RED — test model id loaded from `config/agent.json` (not hardcoded) — DoD: test fails; ref D6
+- [x] **P1** `PHASE5-097` agent: GREEN — config-driven model in agent calls — DoD: test passes
+- [x] **P1** `PHASE5-098` agent: REFACTOR — keep `prompts.py` + `nodes.py` ≤150 lines each — DoD: file budget honored
+- [x] **P0** `PHASE5-099` agent: RED — test `sdk.run_agent("graph_guided")` runs end-to-end keyless — DoD: test fails
+- [x] **P0** `PHASE5-100` agent: GREEN — wire `run_agent` into `sdk.py` — DoD: test passes
+- [x] **P0** `PHASE5-101` agent: RED — test `sdk.run_agent("naive")` runs end-to-end keyless — DoD: test fails
+- [x] **P0** `PHASE5-102` agent: GREEN — naive run via sdk — DoD: test passes
+- [x] **P1** `PHASE5-103` agent: RED — test `cli.py` `run` command delegates to sdk (zero logic) — DoD: test fails
+- [x] **P1** `PHASE5-104` agent: GREEN — implement thin `ex04 run --type` CLI — DoD: test passes; ref SDK-first
+- [x] **P1** `PHASE5-105` agent: RED — test every node/tool is documented (R6.2.2 explainability) — DoD: docstrings present
+- [x] **P1** `PHASE5-106` agent: GREEN — add node docstrings — DoD: test passes
+- [x] **P1** `PHASE5-107` agent: verify — mypy/ruff clean, coverage ≥90% on agent_workflow — DoD: gates green
+- [x] **P1** `PHASE5-108` agent: verify — full keyless suite green (ADR-0005) — DoD: `uv run pytest` no key, 0 failures
+- [x] **P1** `PHASE5-109` agent: commit — `feat: LangGraph agent both run types (AW-T1..8)` — DoD: tests with code
 
 ### 5.14 — node-level edge & integration coverage
 
-- [ ] **P1** `PHASE5-110` agent: RED — test graph-guided `validate` promotes INFERRED→EXTRACTED conclusion in narrative — DoD: test fails; ref R5.5.3
-- [ ] **P1** `PHASE5-111` agent: GREEN — implement promotion narrative — DoD: test passes
-- [ ] **P1** `PHASE5-112` agent: RED — test every node's input/output inspectable via AgentState (R5.5.2) — DoD: test fails
-- [ ] **P1** `PHASE5-113` agent: GREEN — ensure state observability — DoD: test passes
-- [ ] **P1** `PHASE5-114` agent: RED — test `messages` log records each LLM turn — DoD: test fails
-- [ ] **P1** `PHASE5-115` agent: GREEN — append to messages per turn — DoD: test passes
+- [x] **P1** `PHASE5-110` agent: RED — test graph-guided `validate` promotes INFERRED→EXTRACTED conclusion in narrative — DoD: test fails; ref R5.5.3
+- [x] **P1** `PHASE5-111` agent: GREEN — implement promotion narrative — DoD: test passes
+- [x] **P1** `PHASE5-112` agent: RED — test every node's input/output inspectable via AgentState (R5.5.2) — DoD: test fails
+- [x] **P1** `PHASE5-113` agent: GREEN — ensure state observability — DoD: test passes
+- [x] **P1** `PHASE5-114` agent: RED — test `messages` log records each LLM turn — DoD: test fails
+- [x] **P1** `PHASE5-115` agent: GREEN — append to messages per turn — DoD: test passes
 - [ ] **P2** `PHASE5-116` agent: RED — test graph-guided run reaches polygons root cause (integration, mocked fix) — DoD: test fails; ref R4.2
 - [ ] **P2** `PHASE5-117` agent: GREEN — confirm root-cause localization in graph-guided — DoD: test passes
 - [ ] **P2** `PHASE5-118` agent: RED — test naive run may mislocate (Lost in the Middle) handled gracefully — DoD: test fails; ref TC-E2
 - [ ] **P2** `PHASE5-119` agent: GREEN — handle naive mislocation without crash — DoD: test passes
-- [ ] **P1** `PHASE5-120` agent: RED — test `fix` node writes POST-FIX polygons.py to a SCRATCH copy (not overwriting vendored baseline during tests) — DoD: test fails; ref brief §6
-- [ ] **P1** `PHASE5-121` agent: GREEN — implement scratch-write in test mode — DoD: test passes
-- [ ] **P1** `PHASE5-122` agent: RED — test graph compiles with LangGraph StateGraph API — DoD: test fails; ref R5.3.1
-- [ ] **P1** `PHASE5-123` agent: GREEN — confirm StateGraph compilation — DoD: test passes
+- [x] **P1** `PHASE5-120` agent: RED — test `fix` node writes POST-FIX polygons.py to a SCRATCH copy (not overwriting vendored baseline during tests) — DoD: test fails; ref brief §6
+- [x] **P1** `PHASE5-121` agent: GREEN — implement scratch-write in test mode — DoD: test passes
+- [x] **P1** `PHASE5-122` agent: RED — test graph compiles with LangGraph StateGraph API — DoD: test fails; ref R5.3.1
+- [x] **P1** `PHASE5-123` agent: GREEN — confirm StateGraph compilation — DoD: test passes
 - [ ] **P2** `PHASE5-124` agent: RED — test workflow node order matches documented Plan→Retrieve→Hypothesize→Validate→Fix→Report — DoD: test fails; ref R5.3.3
 - [ ] **P2** `PHASE5-125` agent: GREEN — assert node order — DoD: test passes
-- [ ] **P1** `PHASE5-126` agent: REFACTOR — extract shared fix/report logic used by both routes — DoD: no duplication (AW-T8 spirit)
-- [ ] **P1** `PHASE5-127` agent: RED — test gatekeeper is the only LLM-provider seam used by agent (no direct provider-SDK calls) — DoD: test fails; ref ADR-0002
-- [ ] **P1** `PHASE5-128` agent: GREEN — confirm no direct SDK calls in nodes — DoD: test passes
+- [x] **P1** `PHASE5-126` agent: REFACTOR — extract shared fix/report logic used by both routes — DoD: no duplication (AW-T8 spirit)
+- [x] **P1** `PHASE5-127` agent: RED — test gatekeeper is the only LLM-provider seam used by agent (no direct provider-SDK calls) — DoD: test fails; ref ADR-0002
+- [x] **P1** `PHASE5-128` agent: GREEN — confirm no direct SDK calls in nodes — DoD: test passes
 - [ ] **P2** `PHASE5-129` agent: RED — test `plan` records run_id for log correlation — DoD: test fails
 - [ ] **P2** `PHASE5-130` agent: GREEN — set run_id in plan — DoD: test passes
 - [ ] **P2** `PHASE5-131` agent: RED — test deterministic node sequencing under mocked client — DoD: test fails
 - [ ] **P2** `PHASE5-132` agent: GREEN — ensure deterministic sequencing — DoD: test passes
-- [ ] **P1** `PHASE5-133` agent: verify — agent_workflow files all ≤150 lines — DoD: budget audit passes
-- [ ] **P1** `PHASE5-134` agent: verify — no `NotImplementedError` in any node shipped to main — DoD: grep clean; ref CLAUDE.md §3
-- [ ] **P1** `PHASE5-135` agent: verify — no mock class shadows a real import — DoD: audit clean; ref CLAUDE.md §3
-- [ ] **P1** `PHASE5-136` agent: commit — `test: agent edge cases + integration (AW-E1..5)` — DoD: tests committed
+- [x] **P1** `PHASE5-133` agent: verify — agent_workflow files all ≤150 lines — DoD: budget audit passes
+- [x] **P1** `PHASE5-134` agent: verify — no `NotImplementedError` in any node shipped to main — DoD: grep clean; ref CLAUDE.md §3
+- [x] **P1** `PHASE5-135` agent: verify — no mock class shadows a real import — DoD: audit clean; ref CLAUDE.md §3
+- [x] **P1** `PHASE5-136` agent: commit — `test: agent edge cases + integration (AW-E1..5)` — DoD: tests committed
 
 ---
 
