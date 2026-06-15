@@ -59,6 +59,17 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
    use a mocked call-count assertion (verifying the right sequence of `forward`/`right`
    calls for arbitrary `sides`) rather than a visual/rendered verification.
 
+9. **Enforced branch protection needs a public repo or GitHub Pro.** The repo is **private**
+   (to keep student IDs unindexed). GitHub gates branch-protection rules / rulesets behind
+   Pro for private repos (HTTP 403 on the free tier), so server-side *block-until-CI-green*
+   cannot be enforced here. Mitigations in place: CI (`.github/workflows/ci.yml`) runs
+   ruff + mypy + pytest (≥90%) + the structural evals + the three gate scripts on **every
+   push and pull request** to `main` (verified green on the initial push); a PR template
+   enforces the checklist; and local pre-commit hooks run the same gates. To turn on
+   enforced protection the moment the repo goes public (R7.1, at submission) or onto Pro,
+   run `bash scripts/enable_branch_protection.sh` (a one-command ruleset that requires a PR
+   + the `quality` check and blocks force-push/deletion).
+
 ## Self-grade
 
 **Not yet applicable.** Phase 0 (planning) is complete; a self-grade against the rubric in
