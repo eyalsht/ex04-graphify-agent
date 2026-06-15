@@ -21,11 +21,20 @@ uv sync
 uv run pytest            # full suite, keyless (provider client mocked)
 uv run pytest -m eval    # structural evals (the thesis, no API key)
 uv run ruff check . && uv run mypy --strict src/
+uv run ex04 hot          # (re)generate obsidian/hot.md from the PRE-FIX graph (keyless)
 ```
 
 The real token-comparison numbers (one manual run, requires a provider API key — likely
 `GEMINI_API_KEY`) are produced separately and committed as static artifacts under
 `reports/` + `docs/evidence/`, so grading never needs a key (see `docs/adr/0005-*`).
+
+## Navigating the graph (Obsidian vault)
+
+Open `obsidian/` as an Obsidian vault. Start at
+[`obsidian/index.md`](obsidian/index.md) (all 23 nodes + 6 communities) or
+[`obsidian/hot.md`](obsidian/hot.md) — "where to look first", ranked by degree DESC,
+betweenness DESC, id ASC (R5.1.4/R5.6.1). The top entry, `[[polygons_polygons_polygon|Polygon]]`
+(degree 4), is the god node at the bug location.
 
 ## License
 
