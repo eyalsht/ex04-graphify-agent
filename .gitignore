@@ -1,0 +1,30 @@
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Secrets — never commit a provider API key (e.g. GEMINI_API_KEY)
+.env
+.env.*
+*.key
+
+# The pristine upstream clone of martinpeck/broken-python lives beside the vendored
+# copy in data/ for provenance only — it has its own .git and is NOT part of the
+# EX04 deliverable tree (brief §2/§3).
+/broken-python/
+
+# Course lecture PDFs are reference-only copyrighted material, not our work (PHASE1-068).
+/lec/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

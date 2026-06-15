@@ -1,0 +1,6 @@
+# Normalize line endings to LF in the repo so Linux CI and Windows dev agree
+# (ruff-format / mypy / coverage stay consistent across platforms).
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.html binary
