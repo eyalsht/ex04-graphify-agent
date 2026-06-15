@@ -44,37 +44,40 @@
 
 ---
 
-> **Progress (2026-06-15):** Phase 0 ✅ · Phase 1 ✅ · **Phase 2 (graph_reader) ✅ merged**
-> (PR #1, GR-T1..T7; review fixes: cached rankings, streamed JSON). Repo live & **private**
-> at `github.com/eyalsht/ex04-graphify-agent`. Branch protection enabler-ready
-> (`scripts/enable_branch_protection.sh`) — blocked on GitHub free-private tier
-> (see KNOWN_LIMITATIONS #9).
+> **Progress (2026-06-15):** Phase 0 ✅ · Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅.
+> Repo live & **private** at `github.com/eyalsht/ex04-graphify-agent`. Branch protection
+> enabler-ready (`scripts/enable_branch_protection.sh`) — blocked on GitHub free-private tier
+> (see KNOWN_LIMITATIONS #9). All P0/P1 items for Phases 2.9–4 are ticked below; remaining
+> unchecked items are P2 stretch (e.g. PHASE3-118 integration eval, PHASE4-020 scratch diff)
+> and Phases 5–8.
 >
-> **Phase 3 (weakness_detector + gatekeeper) — PR #2 OPEN, under review.** Dispatched to an
-> Opus subagent in its own worktree (parallel with Phase 4). Built all six PART-C signals
-> with the EXTRACTED/INFERRED/AMBIGUOUS language↔tag invariant + Signal-6 disclosed
-> source-peek, primary-above-secondary ranking (`source_validation` left `None`, WD-T8), and
-> the provider-agnostic gatekeeper choke point (throttle→retry→JSONL token log, keyless
-> `MockClient`, ADR-0002/0005). Gates green at PR open: ruff 0, mypy 0, **92 tests @ 97.13%**.
-> ⏳ Antigravity review left 3 perf findings (exponential-backoff+jitter; god_node full-list
-> copy; `asdict` deep-copy in token-log dump) — **revisions in progress**, do not merge yet.
+> **Phase 2 (graph_reader) ✅ — PR #1 merged.** GR-T1..T7 typed query layer; review fixes:
+> cached rankings, streamed JSON.
 >
-> **Phase 4 (obsidian_writer + PRE-FIX hot.md) — PR #3 OPEN, under review.** Dispatched to a
-> Sonnet subagent in its own worktree. ALSO built the leftover Phase-2 `obsidian_writer`
-> ranking (OW-T1..5; PHASE2-089…121 — it was NOT in PR #1), then generated `obsidian/hot.md`,
-> the `check_vault_consistency.py` gate, and the `ex04 hot` CLI. Gates green at PR open:
-> ruff 0, mypy 0, **68 tests @ 97.64%**, baselines unmodified. ⏳ Two follow-ups in progress:
-> (a) **owner chose Option B** — re-rank `hot.md` by **centrality × proximity-to-bug-node**
-> (PLAN §5; satisfies R1.4 / PHASE4-030/031 — the pure-degree metric ranked mathsquiz/README
-> above the polygons community); (b) Antigravity review's 3 perf findings (use cached
-> `top_n_by_degree`; set-based wikilink check; cache parsed config JSON).
+> **Phase 3 (weakness_detector + gatekeeper) ✅ — PR #2 merged.** Built by an Opus subagent
+> (own worktree, parallel with Phase 4): all six PART-C signals with the
+> EXTRACTED/INFERRED/AMBIGUOUS language↔tag invariant + Signal-6 disclosed source-peek,
+> primary-above-secondary ranking (`source_validation` left `None`, WD-T8); provider-agnostic
+> gatekeeper choke point (throttle→retry→JSONL token log, keyless `MockClient`, ADR-0002/0005).
+> Antigravity review (3 perf findings) addressed before merge: **exponential backoff + full
+> jitter**, **god_node degree-floor filter** (no full-ranking copy; file-roots still excluded),
+> **`__dict__` token-log dump** (no `asdict` deep-copy). Merged green: ruff 0, mypy 0, 92 tests.
 >
-> **`sdk.py` reconciliation pending:** PR #2 added a module-level `detect_weaknesses()`,
-> PR #3 added a `class Ex04Sdk` (matches PLAN §4.7). The second PR to merge will be
-> reconciled by the orchestrator into the single `Ex04Sdk` façade.
+> **Phase 4 (obsidian_writer + PRE-FIX hot.md) ✅ — PR #3.** Built by a Sonnet subagent (own
+> worktree): the leftover Phase-2 `obsidian_writer` ranking (OW-T1..5; PHASE2-089…121),
+> `obsidian/hot.md`, the `check_vault_consistency.py` gate, and the `ex04 hot` CLI. Then the
+> orchestrator applied the owner's **Option B** decision — re-rank `hot.md` by **centrality
+> × proximity-to-bug-node** (new `obsidian_writer/ranking.py`: BFS hop-distance from the
+> config-driven bug node; score = (0.6·degree + 0.4·betweenness, max-norm) × 1/(1+dist)).
+> Result: all top-8 are the polygons subgraph (Polygon #1); the disconnected mathsquiz/README
+> nodes drop to proximity 0 (satisfies R1.4 / PHASE4-030/031). Antigravity review (3 perf
+> findings) addressed: **`@functools.cache` on config**, **set-based wikilink check**, and the
+> composite ranking reads cached per-node metrics (no from-scratch degree sort). The `sdk.py`
+> overlap with Phase 3 was reconciled into a single `Ex04Sdk` (`detect_weaknesses` +
+> `generate_hot`, PLAN §4.7). Merged-into-`main` and re-verified green: ruff 0, mypy 0,
+> **117 tests @ 97%**, all gates incl. vault-consistency.
 >
-> **Next:** apply both PRs' revisions on their existing branches → re-verify gates →
-> merge (resolving the `sdk.py` overlap) → tick the per-item Phase-2.9/3/4 checkboxes below.
+> **Next:** Phase 5 — LangGraph agent (TDD) + structural evals.
 
 ## Phase 0 — Planning
 
@@ -340,42 +343,42 @@
 
 ### 2.9 — obsidian_writer ranking (OW-T1..T3)
 
-- [ ] **P0** `PHASE2-089` obsidian_writer: RED — test `ObsidianWriter(reader)` constructs with injected GraphReader — DoD: test fails; ref PRD interface
-- [ ] **P0** `PHASE2-090` obsidian_writer: GREEN — implement `ObsidianWriter.__init__(reader, vault_dir)` — DoD: test passes
-- [ ] **P0** `PHASE2-091` obsidian_writer: RED — test `rank_hot_nodes(5)[0].id == "polygons_polygons_polygon"` — DoD: test fails; ref OW-T1
-- [ ] **P0** `PHASE2-092` obsidian_writer: GREEN — implement `rank_hot_nodes` sorted (degree DESC, betweenness DESC, id ASC) — DoD: OW-T1 passes; ref R5.6.1
-- [ ] **P0** `PHASE2-093` obsidian_writer: RED — test `rank_hot_nodes(5)` returns exactly 5 nodes — DoD: test fails
-- [ ] **P0** `PHASE2-094` obsidian_writer: GREEN — top_k truncation covered — DoD: test passes
-- [ ] **P0** `PHASE2-095` obsidian_writer: RED — test `wikilink(polygon_node) == "[[polygons_polygons_polygon|Polygon]]"` — DoD: test fails; ref OW-T2
-- [ ] **P0** `PHASE2-096` obsidian_writer: GREEN — implement `wikilink(node)` = `f"[[{node.id}|{node.label}]]"` — DoD: OW-T2 passes
-- [ ] **P0** `PHASE2-097` obsidian_writer: RED — test `render_hot_md(5)` contains `[[polygons_polygons_polygon|Polygon]]` — DoD: test fails; ref OW-T3
-- [ ] **P0** `PHASE2-098` obsidian_writer: GREEN — implement `render_hot_md` with heading + ordered list — DoD: OW-T3 link assertion passes
-- [ ] **P0** `PHASE2-099` obsidian_writer: RED — test `render_hot_md` output discloses metric line (degree DESC, betweenness DESC) — DoD: test fails; ref OW-T3 / R5.6.1
-- [ ] **P0** `PHASE2-100` obsidian_writer: GREEN — implement metric-disclosure line — DoD: test passes
-- [ ] **P1** `PHASE2-101` obsidian_writer: RED — test each list item shows `degree=D · bw=B · community=C · source_file:loc` — DoD: test fails; ref behavior §3
-- [ ] **P1** `PHASE2-102` obsidian_writer: GREEN — implement per-item metadata rendering — DoD: test passes
-- [ ] **P1** `PHASE2-103` obsidian_writer: RED — test null `source_location` rendered gracefully (omit `:Lxx`) — DoD: test fails; ref edge case null loc
-- [ ] **P1** `PHASE2-104` obsidian_writer: GREEN — implement graceful null-loc rendering — DoD: test passes
+- [x] **P0** `PHASE2-089` obsidian_writer: RED — test `ObsidianWriter(reader)` constructs with injected GraphReader — DoD: test fails; ref PRD interface
+- [x] **P0** `PHASE2-090` obsidian_writer: GREEN — implement `ObsidianWriter.__init__(reader, vault_dir)` — DoD: test passes
+- [x] **P0** `PHASE2-091` obsidian_writer: RED — test `rank_hot_nodes(5)[0].id == "polygons_polygons_polygon"` — DoD: test fails; ref OW-T1
+- [x] **P0** `PHASE2-092` obsidian_writer: GREEN — implement `rank_hot_nodes` sorted (degree DESC, betweenness DESC, id ASC) — DoD: OW-T1 passes; ref R5.6.1
+- [x] **P0** `PHASE2-093` obsidian_writer: RED — test `rank_hot_nodes(5)` returns exactly 5 nodes — DoD: test fails
+- [x] **P0** `PHASE2-094` obsidian_writer: GREEN — top_k truncation covered — DoD: test passes
+- [x] **P0** `PHASE2-095` obsidian_writer: RED — test `wikilink(polygon_node) == "[[polygons_polygons_polygon|Polygon]]"` — DoD: test fails; ref OW-T2
+- [x] **P0** `PHASE2-096` obsidian_writer: GREEN — implement `wikilink(node)` = `f"[[{node.id}|{node.label}]]"` — DoD: OW-T2 passes
+- [x] **P0** `PHASE2-097` obsidian_writer: RED — test `render_hot_md(5)` contains `[[polygons_polygons_polygon|Polygon]]` — DoD: test fails; ref OW-T3
+- [x] **P0** `PHASE2-098` obsidian_writer: GREEN — implement `render_hot_md` with heading + ordered list — DoD: OW-T3 link assertion passes
+- [x] **P0** `PHASE2-099` obsidian_writer: RED — test `render_hot_md` output discloses metric line (degree DESC, betweenness DESC) — DoD: test fails; ref OW-T3 / R5.6.1
+- [x] **P0** `PHASE2-100` obsidian_writer: GREEN — implement metric-disclosure line — DoD: test passes
+- [x] **P1** `PHASE2-101` obsidian_writer: RED — test each list item shows `degree=D · bw=B · community=C · source_file:loc` — DoD: test fails; ref behavior §3
+- [x] **P1** `PHASE2-102` obsidian_writer: GREEN — implement per-item metadata rendering — DoD: test passes
+- [x] **P1** `PHASE2-103` obsidian_writer: RED — test null `source_location` rendered gracefully (omit `:Lxx`) — DoD: test fails; ref edge case null loc
+- [x] **P1** `PHASE2-104` obsidian_writer: GREEN — implement graceful null-loc rendering — DoD: test passes
 
 ### 2.10 — obsidian_writer write + baseline safety (OW-T4/T5)
 
-- [ ] **P0** `PHASE2-105` obsidian_writer: RED — test `write_hot_md()` creates `obsidian/hot.md` and returns its path — DoD: test fails; ref OW-T4 (use temp vault dir)
-- [ ] **P0** `PHASE2-106` obsidian_writer: GREEN — implement `write_hot_md(top_k)` writing to vault dir — DoD: test passes
-- [ ] **P0** `PHASE2-107` obsidian_writer: RED — test writing twice is byte-identical (deterministic) — DoD: test fails; ref OW-T4
-- [ ] **P0** `PHASE2-108` obsidian_writer: GREEN — ensure deterministic output (stable ordering, no timestamps) — DoD: OW-T4 passes
-- [ ] **P0** `PHASE2-109` obsidian_writer: RED — test `write_hot_md()` leaves `index.md` + `polygons_polygons_polygon.md` mtime/hash unchanged — DoD: test fails; ref OW-T5
-- [ ] **P0** `PHASE2-110` obsidian_writer: GREEN — ensure only `hot.md` is written (baselines untouched) — DoD: OW-T5 passes; ref brief §6
-- [ ] **P1** `PHASE2-111` obsidian_writer: RED — test `write_hot_md` never overwrites `graph.json`/`GRAPH_REPORT.md` — DoD: test fails
-- [ ] **P1** `PHASE2-112` obsidian_writer: GREEN — restrict writer to hot.md only — DoD: test passes
-- [ ] **P1** `PHASE2-113` obsidian_writer: REFACTOR — keep `hot.py` ≤150 lines — DoD: file budget honored
+- [x] **P0** `PHASE2-105` obsidian_writer: RED — test `write_hot_md()` creates `obsidian/hot.md` and returns its path — DoD: test fails; ref OW-T4 (use temp vault dir)
+- [x] **P0** `PHASE2-106` obsidian_writer: GREEN — implement `write_hot_md(top_k)` writing to vault dir — DoD: test passes
+- [x] **P0** `PHASE2-107` obsidian_writer: RED — test writing twice is byte-identical (deterministic) — DoD: test fails; ref OW-T4
+- [x] **P0** `PHASE2-108` obsidian_writer: GREEN — ensure deterministic output (stable ordering, no timestamps) — DoD: OW-T4 passes
+- [x] **P0** `PHASE2-109` obsidian_writer: RED — test `write_hot_md()` leaves `index.md` + `polygons_polygons_polygon.md` mtime/hash unchanged — DoD: test fails; ref OW-T5
+- [x] **P0** `PHASE2-110` obsidian_writer: GREEN — ensure only `hot.md` is written (baselines untouched) — DoD: OW-T5 passes; ref brief §6
+- [x] **P1** `PHASE2-111` obsidian_writer: RED — test `write_hot_md` never overwrites `graph.json`/`GRAPH_REPORT.md` — DoD: test fails
+- [x] **P1** `PHASE2-112` obsidian_writer: GREEN — restrict writer to hot.md only — DoD: test passes
+- [x] **P1** `PHASE2-113` obsidian_writer: REFACTOR — keep `hot.py` ≤150 lines — DoD: file budget honored
 - [ ] **P2** `PHASE2-114` obsidian_writer: RED — test `render_node_note` produces wikilinked note (for consistency checks) — DoD: test fails; ref notes.py
 - [ ] **P2** `PHASE2-115` obsidian_writer: GREEN — implement `render_node_note(node, neighbors)` — DoD: test passes
 - [ ] **P2** `PHASE2-116` obsidian_writer: RED — test `render_index` lists 6 communities + all nodes as wikilinks — DoD: test fails; ref R5.1.3
 - [ ] **P2** `PHASE2-117` obsidian_writer: GREEN — implement `render_index` — DoD: test passes
-- [ ] **P1** `PHASE2-118` obsidian_writer: verify — mypy/ruff clean, coverage ≥90% on obsidian_writer — DoD: gates green
-- [ ] **P1** `PHASE2-119` obsidian_writer: commit — `feat: obsidian_writer hot.md ranking (OW-T1..5)` — DoD: tests with code
-- [ ] **P1** `PHASE2-120` graph_reader/obsidian_writer: wire into `sdk.py` (`load_graph`, `generate_hot` façade methods) — DoD: sdk delegates, no logic in sdk
-- [ ] **P1** `PHASE2-121` graph_reader/obsidian_writer: REFACTOR pass — confirm no module re-parses graph.json except graph_reader — DoD: single read path (R5.2.1)
+- [x] **P1** `PHASE2-118` obsidian_writer: verify — mypy/ruff clean, coverage ≥90% on obsidian_writer — DoD: gates green
+- [x] **P1** `PHASE2-119` obsidian_writer: commit — `feat: obsidian_writer hot.md ranking (OW-T1..5)` — DoD: tests with code
+- [x] **P1** `PHASE2-120` graph_reader/obsidian_writer: wire into `sdk.py` (`load_graph`, `generate_hot` façade methods) — DoD: sdk delegates, no logic in sdk
+- [x] **P1** `PHASE2-121` graph_reader/obsidian_writer: REFACTOR pass — confirm no module re-parses graph.json except graph_reader — DoD: single read path (R5.2.1)
 
 ---
 
@@ -387,145 +390,145 @@
 
 ### 3.1 — hypothesis model + thresholds
 
-- [ ] **P0** `PHASE3-001` weakness_detector: RED — test `SourceValidation(confirmed, note)` dataclass exists — DoD: test fails; ref interface
-- [ ] **P0** `PHASE3-002` weakness_detector: GREEN — implement `SourceValidation` dataclass — DoD: test passes
-- [ ] **P0** `PHASE3-003` weakness_detector: RED — test `WeaknessFinding` has signal/tag/hypothesis/priority/source_file/nodes/edges/source_validation — DoD: test fails
-- [ ] **P0** `PHASE3-004` weakness_detector: GREEN — implement `WeaknessFinding` dataclass with `source_validation=None` default — DoD: test passes
-- [ ] **P0** `PHASE3-005` weakness_detector: RED — test `tag` constrained to Literal[EXTRACTED,INFERRED,AMBIGUOUS] — DoD: mypy/test fails
-- [ ] **P0** `PHASE3-006` weakness_detector: GREEN — implement Tag/Priority Literals — DoD: test passes
-- [ ] **P0** `PHASE3-007` weakness_detector: RED — test `WeaknessDetector(reader, thresholds_path)` loads `config/weakness_thresholds.json` — DoD: test fails
-- [ ] **P0** `PHASE3-008` weakness_detector: GREEN — implement `WeaknessDetector.__init__` loading thresholds — DoD: test passes
-- [ ] **P0** `PHASE3-009` weakness_detector: RED — test missing thresholds config fails loud (clear error) — DoD: test fails; ref WD-E5
-- [ ] **P0** `PHASE3-010` weakness_detector: GREEN — implement fail-loud on missing config — DoD: test passes
-- [ ] **P1** `PHASE3-011` weakness_detector: REFACTOR — keep `hypothesis.py` ≤150 lines — DoD: file budget honored
+- [x] **P0** `PHASE3-001` weakness_detector: RED — test `SourceValidation(confirmed, note)` dataclass exists — DoD: test fails; ref interface
+- [x] **P0** `PHASE3-002` weakness_detector: GREEN — implement `SourceValidation` dataclass — DoD: test passes
+- [x] **P0** `PHASE3-003` weakness_detector: RED — test `WeaknessFinding` has signal/tag/hypothesis/priority/source_file/nodes/edges/source_validation — DoD: test fails
+- [x] **P0** `PHASE3-004` weakness_detector: GREEN — implement `WeaknessFinding` dataclass with `source_validation=None` default — DoD: test passes
+- [x] **P0** `PHASE3-005` weakness_detector: RED — test `tag` constrained to Literal[EXTRACTED,INFERRED,AMBIGUOUS] — DoD: mypy/test fails
+- [x] **P0** `PHASE3-006` weakness_detector: GREEN — implement Tag/Priority Literals — DoD: test passes
+- [x] **P0** `PHASE3-007` weakness_detector: RED — test `WeaknessDetector(reader, thresholds_path)` loads `config/weakness_thresholds.json` — DoD: test fails
+- [x] **P0** `PHASE3-008` weakness_detector: GREEN — implement `WeaknessDetector.__init__` loading thresholds — DoD: test passes
+- [x] **P0** `PHASE3-009` weakness_detector: RED — test missing thresholds config fails loud (clear error) — DoD: test fails; ref WD-E5
+- [x] **P0** `PHASE3-010` weakness_detector: GREEN — implement fail-loud on missing config — DoD: test passes
+- [x] **P1** `PHASE3-011` weakness_detector: REFACTOR — keep `hypothesis.py` ≤150 lines — DoD: file budget honored
 
 ### 3.2 — Signal 1 god node (WD-T1)
 
-- [ ] **P0** `PHASE3-012` weakness_detector: RED — test `signal_1_god_node()` returns a finding with signal==1 — DoD: test fails with AttributeError; ref WD-T1
-- [ ] **P0** `PHASE3-013` weakness_detector: GREEN — implement `signal_1_god_node()` (degree >= god_node_min_degree) — DoD: test passes
-- [ ] **P0** `PHASE3-014` weakness_detector: RED — test finding has `"polygons_polygons_polygon" in nodes` — DoD: test fails; ref WD-T1
-- [ ] **P0** `PHASE3-015` weakness_detector: GREEN — node identity covered — DoD: test passes
-- [ ] **P0** `PHASE3-016` weakness_detector: RED — test `tag=="EXTRACTED"` and `priority=="primary"` — DoD: test fails; ref WD-T1
-- [ ] **P0** `PHASE3-017` weakness_detector: GREEN — set EXTRACTED/primary on signal 1 — DoD: test passes
-- [ ] **P0** `PHASE3-018` weakness_detector: RED — test hypothesis text contains "Polygon" and uses "is"/"bridges" (no "may") — DoD: test fails; ref WD-T1
-- [ ] **P0** `PHASE3-019` weakness_detector: GREEN — author EXTRACTED-language hypothesis string — DoD: test passes
-- [ ] **P1** `PHASE3-020` weakness_detector: RED — test threshold-driven: god_node_min_degree from config (not hardcoded 4) — DoD: test fails
-- [ ] **P1** `PHASE3-021` weakness_detector: GREEN — read threshold from config — DoD: test passes
-- [ ] **P1** `PHASE3-022` weakness_detector: RED — test `source_file == "polygons/polygons.py"` on the finding — DoD: test fails; ref AW-T4
-- [ ] **P1** `PHASE3-023` weakness_detector: GREEN — set source_file on finding — DoD: test passes
+- [x] **P0** `PHASE3-012` weakness_detector: RED — test `signal_1_god_node()` returns a finding with signal==1 — DoD: test fails with AttributeError; ref WD-T1
+- [x] **P0** `PHASE3-013` weakness_detector: GREEN — implement `signal_1_god_node()` (degree >= god_node_min_degree) — DoD: test passes
+- [x] **P0** `PHASE3-014` weakness_detector: RED — test finding has `"polygons_polygons_polygon" in nodes` — DoD: test fails; ref WD-T1
+- [x] **P0** `PHASE3-015` weakness_detector: GREEN — node identity covered — DoD: test passes
+- [x] **P0** `PHASE3-016` weakness_detector: RED — test `tag=="EXTRACTED"` and `priority=="primary"` — DoD: test fails; ref WD-T1
+- [x] **P0** `PHASE3-017` weakness_detector: GREEN — set EXTRACTED/primary on signal 1 — DoD: test passes
+- [x] **P0** `PHASE3-018` weakness_detector: RED — test hypothesis text contains "Polygon" and uses "is"/"bridges" (no "may") — DoD: test fails; ref WD-T1
+- [x] **P0** `PHASE3-019` weakness_detector: GREEN — author EXTRACTED-language hypothesis string — DoD: test passes
+- [x] **P1** `PHASE3-020` weakness_detector: RED — test threshold-driven: god_node_min_degree from config (not hardcoded 4) — DoD: test fails
+- [x] **P1** `PHASE3-021` weakness_detector: GREEN — read threshold from config — DoD: test passes
+- [x] **P1** `PHASE3-022` weakness_detector: RED — test `source_file == "polygons/polygons.py"` on the finding — DoD: test fails; ref AW-T4
+- [x] **P1** `PHASE3-023` weakness_detector: GREEN — set source_file on finding — DoD: test passes
 
 ### 3.3 — Signal 2 ambiguous/inferred edge (WD-T3)
 
-- [ ] **P0** `PHASE3-024` weakness_detector: RED — test `signal_2_ambiguous_edge()` returns ≥1 finding tag=="INFERRED" — DoD: test fails; ref WD-T3
-- [ ] **P0** `PHASE3-025` weakness_detector: GREEN — implement `signal_2_ambiguous_edge()` over `edges_with_confidence("INFERRED")` ≤ ambiguous_confidence_max — DoD: test passes
-- [ ] **P0** `PHASE3-026` weakness_detector: RED — test finding `priority=="secondary"` — DoD: test fails; ref WD-T3
-- [ ] **P0** `PHASE3-027` weakness_detector: GREEN — set secondary priority — DoD: test passes
-- [ ] **P0** `PHASE3-028` weakness_detector: RED — test references `mathsquiz_readme_maths_quiz→readme_broken_python` edge — DoD: test fails; ref WD-T3
-- [ ] **P0** `PHASE3-029` weakness_detector: GREEN — populate edge endpoints — DoD: test passes
-- [ ] **P0** `PHASE3-030` weakness_detector: RED — test hypothesis uses "suggests"/"may" (INFERRED language) — DoD: test fails; ref WD-T3
-- [ ] **P0** `PHASE3-031` weakness_detector: GREEN — author INFERRED-language hypothesis — DoD: test passes
-- [ ] **P0** `PHASE3-032` weakness_detector: RED — test signal 2 does not crash on 0 AMBIGUOUS edges — DoD: test fails; ref WD-E2
-- [ ] **P0** `PHASE3-033` weakness_detector: GREEN — implement AMBIGUOUS-empty tolerance — DoD: test passes
+- [x] **P0** `PHASE3-024` weakness_detector: RED — test `signal_2_ambiguous_edge()` returns ≥1 finding tag=="INFERRED" — DoD: test fails; ref WD-T3
+- [x] **P0** `PHASE3-025` weakness_detector: GREEN — implement `signal_2_ambiguous_edge()` over `edges_with_confidence("INFERRED")` ≤ ambiguous_confidence_max — DoD: test passes
+- [x] **P0** `PHASE3-026` weakness_detector: RED — test finding `priority=="secondary"` — DoD: test fails; ref WD-T3
+- [x] **P0** `PHASE3-027` weakness_detector: GREEN — set secondary priority — DoD: test passes
+- [x] **P0** `PHASE3-028` weakness_detector: RED — test references `mathsquiz_readme_maths_quiz→readme_broken_python` edge — DoD: test fails; ref WD-T3
+- [x] **P0** `PHASE3-029` weakness_detector: GREEN — populate edge endpoints — DoD: test passes
+- [x] **P0** `PHASE3-030` weakness_detector: RED — test hypothesis uses "suggests"/"may" (INFERRED language) — DoD: test fails; ref WD-T3
+- [x] **P0** `PHASE3-031` weakness_detector: GREEN — author INFERRED-language hypothesis — DoD: test passes
+- [x] **P0** `PHASE3-032` weakness_detector: RED — test signal 2 does not crash on 0 AMBIGUOUS edges — DoD: test fails; ref WD-E2
+- [x] **P0** `PHASE3-033` weakness_detector: GREEN — implement AMBIGUOUS-empty tolerance — DoD: test passes
 
 ### 3.4 — Signal 3 broken/missing path (WD-T4)
 
-- [ ] **P0** `PHASE3-034` weakness_detector: RED — test `signal_3_broken_path()` references `mathsquiz_mathsquiz_final_py` — DoD: test fails; ref WD-T4
-- [ ] **P0** `PHASE3-035` weakness_detector: GREEN — implement `signal_3_broken_path(repo_root)` (referenced node whose source_file is absent) — DoD: test passes
-- [ ] **P0** `PHASE3-036` weakness_detector: RED — test finding `priority=="secondary"` — DoD: test fails; ref WD-T4
-- [ ] **P0** `PHASE3-037` weakness_detector: GREEN — set secondary priority — DoD: test passes
-- [ ] **P0** `PHASE3-038` weakness_detector: RED — test existence check resolves relative to `data/broken-python/`, not repo root — DoD: test fails; ref WD-E4
-- [ ] **P0** `PHASE3-039` weakness_detector: GREEN — implement repo-root-relative path resolution — DoD: test passes
-- [ ] **P1** `PHASE3-040` weakness_detector: RED — test no raise when whole `mathsquiz/` dir absent — DoD: test fails; ref WD-E4
-- [ ] **P1** `PHASE3-041` weakness_detector: GREEN — implement missing-dir tolerance — DoD: test passes
-- [ ] **P1** `PHASE3-042` weakness_detector: RED — test hypothesis states file "is" referenced but "is" absent (EXTRACTED about edge) — DoD: test fails
-- [ ] **P1** `PHASE3-043` weakness_detector: GREEN — author signal-3 hypothesis — DoD: test passes
+- [x] **P0** `PHASE3-034` weakness_detector: RED — test `signal_3_broken_path()` references `mathsquiz_mathsquiz_final_py` — DoD: test fails; ref WD-T4
+- [x] **P0** `PHASE3-035` weakness_detector: GREEN — implement `signal_3_broken_path(repo_root)` (referenced node whose source_file is absent) — DoD: test passes
+- [x] **P0** `PHASE3-036` weakness_detector: RED — test finding `priority=="secondary"` — DoD: test fails; ref WD-T4
+- [x] **P0** `PHASE3-037` weakness_detector: GREEN — set secondary priority — DoD: test passes
+- [x] **P0** `PHASE3-038` weakness_detector: RED — test existence check resolves relative to `data/broken-python/`, not repo root — DoD: test fails; ref WD-E4
+- [x] **P0** `PHASE3-039` weakness_detector: GREEN — implement repo-root-relative path resolution — DoD: test passes
+- [x] **P1** `PHASE3-040` weakness_detector: RED — test no raise when whole `mathsquiz/` dir absent — DoD: test fails; ref WD-E4
+- [x] **P1** `PHASE3-041` weakness_detector: GREEN — implement missing-dir tolerance — DoD: test passes
+- [x] **P1** `PHASE3-042` weakness_detector: RED — test hypothesis states file "is" referenced but "is" absent (EXTRACTED about edge) — DoD: test fails
+- [x] **P1** `PHASE3-043` weakness_detector: GREEN — author signal-3 hypothesis — DoD: test passes
 
 ### 3.5 — Signal 4 critical-path break
 
-- [ ] **P0** `PHASE3-044` weakness_detector: RED — test `signal_4_critical_path_break()` fires on calc_polygon_details/draw_polygon (no sides>=3 guard) — DoD: test fails; ref signal 4
-- [ ] **P0** `PHASE3-045` weakness_detector: GREEN — implement `signal_4_critical_path_break()` — DoD: test passes
-- [ ] **P0** `PHASE3-046` weakness_detector: RED — test `tag=="INFERRED"`, `priority=="secondary"` — DoD: test fails
-- [ ] **P0** `PHASE3-047` weakness_detector: GREEN — set INFERRED/secondary — DoD: test passes
-- [ ] **P0** `PHASE3-048` weakness_detector: RED — test hypothesis uses "may" and mentions OOP-summary-only — DoD: test fails; ref signal 4 language
-- [ ] **P0** `PHASE3-049` weakness_detector: GREEN — author signal-4 hypothesis — DoD: test passes
+- [x] **P0** `PHASE3-044` weakness_detector: RED — test `signal_4_critical_path_break()` fires on calc_polygon_details/draw_polygon (no sides>=3 guard) — DoD: test fails; ref signal 4
+- [x] **P0** `PHASE3-045` weakness_detector: GREEN — implement `signal_4_critical_path_break()` — DoD: test passes
+- [x] **P0** `PHASE3-046` weakness_detector: RED — test `tag=="INFERRED"`, `priority=="secondary"` — DoD: test fails
+- [x] **P0** `PHASE3-047` weakness_detector: GREEN — set INFERRED/secondary — DoD: test passes
+- [x] **P0** `PHASE3-048` weakness_detector: RED — test hypothesis uses "may" and mentions OOP-summary-only — DoD: test fails; ref signal 4 language
+- [x] **P0** `PHASE3-049` weakness_detector: GREEN — author signal-4 hypothesis — DoD: test passes
 
 ### 3.6 — Signal 5 isolated cluster (WD-T2)
 
-- [ ] **P0** `PHASE3-050` weakness_detector: RED — test `signal_5_isolated_cluster()` nodes == {rationale_18, rationale_33, rationale_50} — DoD: test fails; ref WD-T2
-- [ ] **P0** `PHASE3-051` weakness_detector: GREEN — implement `signal_5_isolated_cluster()` (degree ≤ isolated_cluster_max_edges, no tested_by) — DoD: test passes
-- [ ] **P0** `PHASE3-052` weakness_detector: RED — test `tag=="EXTRACTED"`, `priority=="primary"` — DoD: test fails; ref WD-T2
-- [ ] **P0** `PHASE3-053` weakness_detector: GREEN — set EXTRACTED/primary — DoD: test passes
-- [ ] **P0** `PHASE3-054` weakness_detector: RED — test hypothesis: TODOs "are" the bug (EXTRACTED, no hedge) — DoD: test fails; ref WD-T2
-- [ ] **P0** `PHASE3-055` weakness_detector: GREEN — author signal-5 hypothesis — DoD: test passes
-- [ ] **P1** `PHASE3-056` weakness_detector: RED — test grouping by community (Community 1) — DoD: test fails
-- [ ] **P1** `PHASE3-057` weakness_detector: GREEN — implement community grouping in signal 5 — DoD: test passes
-- [ ] **P1** `PHASE3-058` weakness_detector: RED — test threshold isolated_cluster_max_edges read from config — DoD: test fails
-- [ ] **P1** `PHASE3-059` weakness_detector: GREEN — config-driven threshold — DoD: test passes
+- [x] **P0** `PHASE3-050` weakness_detector: RED — test `signal_5_isolated_cluster()` nodes == {rationale_18, rationale_33, rationale_50} — DoD: test fails; ref WD-T2
+- [x] **P0** `PHASE3-051` weakness_detector: GREEN — implement `signal_5_isolated_cluster()` (degree ≤ isolated_cluster_max_edges, no tested_by) — DoD: test passes
+- [x] **P0** `PHASE3-052` weakness_detector: RED — test `tag=="EXTRACTED"`, `priority=="primary"` — DoD: test fails; ref WD-T2
+- [x] **P0** `PHASE3-053` weakness_detector: GREEN — set EXTRACTED/primary — DoD: test passes
+- [x] **P0** `PHASE3-054` weakness_detector: RED — test hypothesis: TODOs "are" the bug (EXTRACTED, no hedge) — DoD: test fails; ref WD-T2
+- [x] **P0** `PHASE3-055` weakness_detector: GREEN — author signal-5 hypothesis — DoD: test passes
+- [x] **P1** `PHASE3-056` weakness_detector: RED — test grouping by community (Community 1) — DoD: test fails
+- [x] **P1** `PHASE3-057` weakness_detector: GREEN — implement community grouping in signal 5 — DoD: test passes
+- [x] **P1** `PHASE3-058` weakness_detector: RED — test threshold isolated_cluster_max_edges read from config — DoD: test fails
+- [x] **P1** `PHASE3-059` weakness_detector: GREEN — config-driven threshold — DoD: test passes
 
 ### 3.7 — Signal 6 semantic duplicate + source-read (WD-T5)
 
-- [ ] **P0** `PHASE3-060` weakness_detector: RED — test `signal_6_semantic_duplicate()` returns finding signal==6 referencing polygon_init + calc_polygon_details — DoD: test fails; ref WD-T5
-- [ ] **P0** `PHASE3-061` weakness_detector: GREEN — implement `signal_6_semantic_duplicate()` structural detection (both nodes Community 4, same source_file) — DoD: test passes
-- [ ] **P0** `PHASE3-062` weakness_detector: RED — test pre-read `tag=="AMBIGUOUS"` — DoD: test fails; ref WD-T5
-- [ ] **P0** `PHASE3-063` weakness_detector: GREEN — set AMBIGUOUS tag pre-read — DoD: test passes
-- [ ] **P0** `PHASE3-064` weakness_detector: RED — test hypothesis contains "manual ... check" (AMBIGUOUS language) — DoD: test fails; ref WD-T5
-- [ ] **P0** `PHASE3-065` weakness_detector: GREEN — author AMBIGUOUS-language hypothesis — DoD: test passes
-- [ ] **P0** `PHASE3-066` weakness_detector: RED — test detector demonstrably opens `polygons/polygons.py` (source-read occurred / fields compared) — DoD: test fails; ref WD-T5 / WD-E1
-- [ ] **P0** `PHASE3-067` weakness_detector: GREEN — implement the disclosed Signal-6 source-peek (read + compare dict keys vs __init__ fields) — DoD: test passes
-- [ ] **P1** `PHASE3-068` weakness_detector: RED — test source-read compares `sides`/`internal_angles_sum`/`internal_angle(s)` fields — DoD: test fails; ref behavior §6
-- [ ] **P1** `PHASE3-069` weakness_detector: GREEN — implement field comparison — DoD: test passes
-- [ ] **P1** `PHASE3-070` weakness_detector: RED — test signal 6 addresses nodes by id not label — DoD: test fails; ref WD-E3
-- [ ] **P1** `PHASE3-071` weakness_detector: GREEN — ensure id-keyed access — DoD: test passes
+- [x] **P0** `PHASE3-060` weakness_detector: RED — test `signal_6_semantic_duplicate()` returns finding signal==6 referencing polygon_init + calc_polygon_details — DoD: test fails; ref WD-T5
+- [x] **P0** `PHASE3-061` weakness_detector: GREEN — implement `signal_6_semantic_duplicate()` structural detection (both nodes Community 4, same source_file) — DoD: test passes
+- [x] **P0** `PHASE3-062` weakness_detector: RED — test pre-read `tag=="AMBIGUOUS"` — DoD: test fails; ref WD-T5
+- [x] **P0** `PHASE3-063` weakness_detector: GREEN — set AMBIGUOUS tag pre-read — DoD: test passes
+- [x] **P0** `PHASE3-064` weakness_detector: RED — test hypothesis contains "manual ... check" (AMBIGUOUS language) — DoD: test fails; ref WD-T5
+- [x] **P0** `PHASE3-065` weakness_detector: GREEN — author AMBIGUOUS-language hypothesis — DoD: test passes
+- [x] **P0** `PHASE3-066` weakness_detector: RED — test detector demonstrably opens `polygons/polygons.py` (source-read occurred / fields compared) — DoD: test fails; ref WD-T5 / WD-E1
+- [x] **P0** `PHASE3-067` weakness_detector: GREEN — implement the disclosed Signal-6 source-peek (read + compare dict keys vs __init__ fields) — DoD: test passes
+- [x] **P1** `PHASE3-068` weakness_detector: RED — test source-read compares `sides`/`internal_angles_sum`/`internal_angle(s)` fields — DoD: test fails; ref behavior §6
+- [x] **P1** `PHASE3-069` weakness_detector: GREEN — implement field comparison — DoD: test passes
+- [x] **P1** `PHASE3-070` weakness_detector: RED — test signal 6 addresses nodes by id not label — DoD: test fails; ref WD-E3
+- [x] **P1** `PHASE3-071` weakness_detector: GREEN — ensure id-keyed access — DoD: test passes
 
 ### 3.8 — detect() orchestration + ranking (WD-T6/T7/T8)
 
-- [ ] **P0** `PHASE3-072` weakness_detector: RED — test `detect()` runs all six and returns ranked list — DoD: test fails; ref interface
-- [ ] **P0** `PHASE3-073` weakness_detector: GREEN — implement `detect()` calling all six signals — DoD: test passes
-- [ ] **P0** `PHASE3-074` weakness_detector: RED — test first finding `priority=="primary"` and is one of signals {1,5,6} — DoD: test fails; ref WD-T6
-- [ ] **P0** `PHASE3-075` weakness_detector: GREEN — implement primary-above-secondary ranking — DoD: WD-T6 passes
-- [ ] **P0** `PHASE3-076` weakness_detector: RED — test mathsquiz signals (2,3) rank below as secondary — DoD: test fails; ref WD-T6
-- [ ] **P0** `PHASE3-077` weakness_detector: GREEN — implement within-band ordering (degree DESC / confidence ASC) — DoD: test passes
-- [ ] **P0** `PHASE3-078` weakness_detector: RED — test EXTRACTED findings contain no hedge ("may"/"suggests") — DoD: test fails; ref WD-T7
-- [ ] **P0** `PHASE3-079` weakness_detector: GREEN — enforce language↔tag invariant for EXTRACTED — DoD: test passes
-- [ ] **P0** `PHASE3-080` weakness_detector: RED — test INFERRED findings contain a hedge — DoD: test fails; ref WD-T7
-- [ ] **P0** `PHASE3-081` weakness_detector: GREEN — enforce hedge in INFERRED — DoD: test passes
-- [ ] **P0** `PHASE3-082` weakness_detector: RED — test AMBIGUOUS findings contain "manual check required" — DoD: test fails; ref WD-T7
-- [ ] **P0** `PHASE3-083` weakness_detector: GREEN — enforce AMBIGUOUS phrasing — DoD: test passes
-- [ ] **P0** `PHASE3-084` weakness_detector: RED — test every `detect()` finding has `source_validation is None` — DoD: test fails; ref WD-T8
-- [ ] **P0** `PHASE3-085` weakness_detector: GREEN — ensure detector never fills source_validation — DoD: WD-T8 passes
-- [ ] **P1** `PHASE3-086` weakness_detector: REFACTOR — split signals across files if `signals.py` > 150 lines — DoD: file budget honored
-- [ ] **P1** `PHASE3-087` weakness_detector: REFACTOR — keep `detector.py` ≤150 lines — DoD: file budget honored
-- [ ] **P1** `PHASE3-088` weakness_detector: verify — mypy/ruff clean, coverage ≥90% on weakness_detector — DoD: gates green
-- [ ] **P1** `PHASE3-089` weakness_detector: wire `detect_weaknesses` into `sdk.py` façade — DoD: sdk delegates, no logic
-- [ ] **P1** `PHASE3-090` weakness_detector: commit — `feat: six-signal weakness_detector (WD-T1..8)` — DoD: tests with code
+- [x] **P0** `PHASE3-072` weakness_detector: RED — test `detect()` runs all six and returns ranked list — DoD: test fails; ref interface
+- [x] **P0** `PHASE3-073` weakness_detector: GREEN — implement `detect()` calling all six signals — DoD: test passes
+- [x] **P0** `PHASE3-074` weakness_detector: RED — test first finding `priority=="primary"` and is one of signals {1,5,6} — DoD: test fails; ref WD-T6
+- [x] **P0** `PHASE3-075` weakness_detector: GREEN — implement primary-above-secondary ranking — DoD: WD-T6 passes
+- [x] **P0** `PHASE3-076` weakness_detector: RED — test mathsquiz signals (2,3) rank below as secondary — DoD: test fails; ref WD-T6
+- [x] **P0** `PHASE3-077` weakness_detector: GREEN — implement within-band ordering (degree DESC / confidence ASC) — DoD: test passes
+- [x] **P0** `PHASE3-078` weakness_detector: RED — test EXTRACTED findings contain no hedge ("may"/"suggests") — DoD: test fails; ref WD-T7
+- [x] **P0** `PHASE3-079` weakness_detector: GREEN — enforce language↔tag invariant for EXTRACTED — DoD: test passes
+- [x] **P0** `PHASE3-080` weakness_detector: RED — test INFERRED findings contain a hedge — DoD: test fails; ref WD-T7
+- [x] **P0** `PHASE3-081` weakness_detector: GREEN — enforce hedge in INFERRED — DoD: test passes
+- [x] **P0** `PHASE3-082` weakness_detector: RED — test AMBIGUOUS findings contain "manual check required" — DoD: test fails; ref WD-T7
+- [x] **P0** `PHASE3-083` weakness_detector: GREEN — enforce AMBIGUOUS phrasing — DoD: test passes
+- [x] **P0** `PHASE3-084` weakness_detector: RED — test every `detect()` finding has `source_validation is None` — DoD: test fails; ref WD-T8
+- [x] **P0** `PHASE3-085` weakness_detector: GREEN — ensure detector never fills source_validation — DoD: WD-T8 passes
+- [x] **P1** `PHASE3-086` weakness_detector: REFACTOR — split signals across files if `signals.py` > 150 lines — DoD: file budget honored
+- [x] **P1** `PHASE3-087` weakness_detector: REFACTOR — keep `detector.py` ≤150 lines — DoD: file budget honored
+- [x] **P1** `PHASE3-088` weakness_detector: verify — mypy/ruff clean, coverage ≥90% on weakness_detector — DoD: gates green
+- [x] **P1** `PHASE3-089` weakness_detector: wire `detect_weaknesses` into `sdk.py` façade — DoD: sdk delegates, no logic
+- [x] **P1** `PHASE3-090` weakness_detector: commit — `feat: six-signal weakness_detector (WD-T1..8)` — DoD: tests with code
 
 ### 3.9 — gatekeeper base (ADR-0002) built before agent
 
-- [ ] **P0** `PHASE3-091` gatekeeper: RED — test `TokenRecord` dataclass has run_id/run_type/node/input_tokens/output_tokens/model — DoD: test fails; ref PLAN.md §4.5
-- [ ] **P0** `PHASE3-092` gatekeeper: GREEN — implement `TokenRecord` — DoD: test passes
-- [ ] **P0** `PHASE3-093` gatekeeper: RED — test `TokenLogger.record(r)` appends a record — DoD: test fails
-- [ ] **P0** `PHASE3-094` gatekeeper: GREEN — implement `TokenLogger.record` — DoD: test passes
-- [ ] **P0** `PHASE3-095` gatekeeper: RED — test `TokenLogger.dump(path)` writes JSONL to `artifacts/runs/<run_id>.jsonl` — DoD: test fails
-- [ ] **P0** `PHASE3-096` gatekeeper: GREEN — implement `TokenLogger.dump` — DoD: test passes
-- [ ] **P0** `PHASE3-097` gatekeeper: RED — test `Gatekeeper(cfg, logger)` constructs from `config/agent.json` — DoD: test fails
-- [ ] **P0** `PHASE3-098` gatekeeper: GREEN — implement `Gatekeeper.__init__` (model/rate-limit/retry from config) — DoD: test passes
-- [ ] **P0** `PHASE3-099` gatekeeper: RED — test `call(messages, system, run_id, node)` returns LLMResponse and records tokens — DoD: test fails (mocked client)
-- [ ] **P0** `PHASE3-100` gatekeeper: GREEN — implement `call()` wrapping the (mocked) provider client behind a provider-agnostic interface, recording TokenRecord tagged {run_type,node} — DoD: test passes; ref ADR-0002
-- [ ] **P0** `PHASE3-101` gatekeeper: RED — test keyless mode (no provider key present) injects/uses mock client — DoD: test fails; ref ADR-0005 / AW-E3
-- [ ] **P0** `PHASE3-102` gatekeeper: GREEN — implement mock-client selection when key absent — DoD: test passes
-- [ ] **P0** `PHASE3-103` gatekeeper: RED — test the provider API key (env var named by `config/agent.json` `api_key_env`) is read from `os.environ` only (never from config files) — DoD: test fails; ref CLAUDE.md §3
-- [ ] **P0** `PHASE3-104` gatekeeper: GREEN — implement env-only secret read — DoD: test passes
-- [ ] **P1** `PHASE3-105` gatekeeper: RED — test retry-with-backoff on simulated rate-limit error — DoD: test fails
-- [ ] **P1** `PHASE3-106` gatekeeper: GREEN — implement retry/backoff per config — DoD: test passes
-- [ ] **P1** `PHASE3-107` gatekeeper: RED — test request queueing respects rate-limit config — DoD: test fails
-- [ ] **P1** `PHASE3-108` gatekeeper: GREEN — implement queue/rate-limit — DoD: test passes
-- [ ] **P1** `PHASE3-109` gatekeeper: RED — test structured log entry per call — DoD: test fails
-- [ ] **P1** `PHASE3-110` gatekeeper: GREEN — implement structured logging — DoD: test passes
-- [ ] **P1** `PHASE3-111` gatekeeper: RED — test no module bypasses gatekeeper (single seam assertion) — DoD: test fails
-- [ ] **P1** `PHASE3-112` gatekeeper: GREEN — document/assert single choke point — DoD: test passes; ref ADR-0002
-- [ ] **P1** `PHASE3-113` gatekeeper: REFACTOR — keep `client.py` + `token_log.py` ≤150 lines each — DoD: file budget honored
-- [ ] **P1** `PHASE3-114` gatekeeper: verify — mypy/ruff clean, coverage ≥90% on gatekeeper — DoD: gates green
-- [ ] **P1** `PHASE3-115` gatekeeper: commit — `feat: gatekeeper choke point + token logging (ADR-0002)` — DoD: tests with code
+- [x] **P0** `PHASE3-091` gatekeeper: RED — test `TokenRecord` dataclass has run_id/run_type/node/input_tokens/output_tokens/model — DoD: test fails; ref PLAN.md §4.5
+- [x] **P0** `PHASE3-092` gatekeeper: GREEN — implement `TokenRecord` — DoD: test passes
+- [x] **P0** `PHASE3-093` gatekeeper: RED — test `TokenLogger.record(r)` appends a record — DoD: test fails
+- [x] **P0** `PHASE3-094` gatekeeper: GREEN — implement `TokenLogger.record` — DoD: test passes
+- [x] **P0** `PHASE3-095` gatekeeper: RED — test `TokenLogger.dump(path)` writes JSONL to `artifacts/runs/<run_id>.jsonl` — DoD: test fails
+- [x] **P0** `PHASE3-096` gatekeeper: GREEN — implement `TokenLogger.dump` — DoD: test passes
+- [x] **P0** `PHASE3-097` gatekeeper: RED — test `Gatekeeper(cfg, logger)` constructs from `config/agent.json` — DoD: test fails
+- [x] **P0** `PHASE3-098` gatekeeper: GREEN — implement `Gatekeeper.__init__` (model/rate-limit/retry from config) — DoD: test passes
+- [x] **P0** `PHASE3-099` gatekeeper: RED — test `call(messages, system, run_id, node)` returns LLMResponse and records tokens — DoD: test fails (mocked client)
+- [x] **P0** `PHASE3-100` gatekeeper: GREEN — implement `call()` wrapping the (mocked) provider client behind a provider-agnostic interface, recording TokenRecord tagged {run_type,node} — DoD: test passes; ref ADR-0002
+- [x] **P0** `PHASE3-101` gatekeeper: RED — test keyless mode (no provider key present) injects/uses mock client — DoD: test fails; ref ADR-0005 / AW-E3
+- [x] **P0** `PHASE3-102` gatekeeper: GREEN — implement mock-client selection when key absent — DoD: test passes
+- [x] **P0** `PHASE3-103` gatekeeper: RED — test the provider API key (env var named by `config/agent.json` `api_key_env`) is read from `os.environ` only (never from config files) — DoD: test fails; ref CLAUDE.md §3
+- [x] **P0** `PHASE3-104` gatekeeper: GREEN — implement env-only secret read — DoD: test passes
+- [x] **P1** `PHASE3-105` gatekeeper: RED — test retry-with-backoff on simulated rate-limit error — DoD: test fails
+- [x] **P1** `PHASE3-106` gatekeeper: GREEN — implement retry/backoff per config — DoD: test passes
+- [x] **P1** `PHASE3-107` gatekeeper: RED — test request queueing respects rate-limit config — DoD: test fails
+- [x] **P1** `PHASE3-108` gatekeeper: GREEN — implement queue/rate-limit — DoD: test passes
+- [x] **P1** `PHASE3-109` gatekeeper: RED — test structured log entry per call — DoD: test fails
+- [x] **P1** `PHASE3-110` gatekeeper: GREEN — implement structured logging — DoD: test passes
+- [x] **P1** `PHASE3-111` gatekeeper: RED — test no module bypasses gatekeeper (single seam assertion) — DoD: test fails
+- [x] **P1** `PHASE3-112` gatekeeper: GREEN — document/assert single choke point — DoD: test passes; ref ADR-0002
+- [x] **P1** `PHASE3-113` gatekeeper: REFACTOR — keep `client.py` + `token_log.py` ≤150 lines each — DoD: file budget honored
+- [x] **P1** `PHASE3-114` gatekeeper: verify — mypy/ruff clean, coverage ≥90% on gatekeeper — DoD: gates green
+- [x] **P1** `PHASE3-115` gatekeeper: commit — `feat: gatekeeper choke point + token logging (ADR-0002)` — DoD: tests with code
 - [ ] **P2** `PHASE3-116` weakness_detector: RED — test `detect()` is deterministic across runs (stable ordering) — DoD: test fails
 - [ ] **P2** `PHASE3-117` weakness_detector: GREEN — ensure deterministic ordering — DoD: test passes
 - [ ] **P2** `PHASE3-118` weakness_detector: RED — test full six-signal convergence on the Polygon root cause (integration) — DoD: signals {1,5,6} all point at polygons.py; ref R4.5
@@ -537,47 +540,47 @@
 > `obsidian_writer` already unit-tested (Phase 2). Phase 4 = generate the real PRE-FIX
 > `obsidian/hot.md`, verify wikilink consistency with existing vault, commit it as an artifact.
 
-- [ ] **P0** `PHASE4-001` vault: run `ObsidianWriter.write_hot_md()` against PRE-FIX `artifacts/graphify/graph.json` → `obsidian/hot.md` — DoD: file created; ref R5.1.4
-- [ ] **P0** `PHASE4-002` vault: verify `hot.md` top entry is `[[polygons_polygons_polygon|Polygon]]` (degree 4) — DoD: matches OW-T1; ref R5.6.1
-- [ ] **P0** `PHASE4-003` vault: verify `hot.md` discloses the ranking metric (degree DESC, betweenness DESC) — DoD: metric line present; ref R5.6.1
-- [ ] **P0** `PHASE4-004` vault: verify every wikilink in `hot.md` resolves to an existing `obsidian/<id>.md` note — DoD: all 5 targets exist; no dangling links
-- [ ] **P0** `PHASE4-005` vault: verify `hot.md` is distinct from `index.md` (prioritized subset, not a copy) — DoD: content differs; ref R5.1.4
-- [ ] **P0** `PHASE4-006` vault: confirm PRE-FIX baselines (`graph.json`, `GRAPH_REPORT.md`, `index.md`, per-node notes) unmodified by the run — DoD: mtime/hash unchanged; ref brief §6
-- [ ] **P1** `PHASE4-007` vault: verify `index.md` lists all 6 communities (0–5) — DoD: each community section present; ref R5.1.3
-- [ ] **P1** `PHASE4-008` vault: verify `index.md` lists all 23 nodes as wikilinks — DoD: 23 `[[...]]` entries; ref R5.1.2
-- [ ] **P1** `PHASE4-009` vault: spot-check per-node note `polygons_polygons_polygon.md` has wikilinks to its 4 neighbors — DoD: neighbor links present; ref R5.1.2
-- [ ] **P1** `PHASE4-010` vault: cross-check `hot.md` node count == `top_k` config value — DoD: matches config
-- [ ] **P1** `PHASE4-011` vault: write a `scripts/check_vault_consistency.py` that asserts every `[[id]]` in index/hot resolves to a note file — DoD: script exits 0; ref CLAUDE.md vault-consistency TODO
-- [ ] **P1** `PHASE4-012` vault: add the consistency check to CI / pre-commit (keyless) — DoD: check runs in CI
-- [ ] **P1** `PHASE4-013` vault: RED — test consistency checker flags an intentionally-dangling wikilink — DoD: test fails then checker catches it
-- [ ] **P1** `PHASE4-014` vault: GREEN — checker correctly reports dangling link — DoD: test passes
-- [ ] **P0** `PHASE4-015` vault: commit `obsidian/hot.md` as a graded artifact — DoD: committed; `docs: add PRE-FIX hot.md (R5.1.4)`
-- [ ] **P1** `PHASE4-016` vault: document the hot.md metric in README §R8.3 stub — DoD: metric described
-- [ ] **P1** `PHASE4-017` vault: verify `hot.md` includes per-item `degree/bw/community/source_file:loc` metadata — DoD: present
-- [ ] **P1** `PHASE4-018` vault: confirm null `source_location` nodes (e.g. license) render gracefully if they appear — DoD: no `:None`
-- [ ] **P1** `PHASE4-019` vault: confirm `hot.md` excludes the isolated `license_mit_license` from the top-k (degree 1) unless k is large — DoD: ranking correct
+- [x] **P0** `PHASE4-001` vault: run `ObsidianWriter.write_hot_md()` against PRE-FIX `artifacts/graphify/graph.json` → `obsidian/hot.md` — DoD: file created; ref R5.1.4
+- [x] **P0** `PHASE4-002` vault: verify `hot.md` top entry is `[[polygons_polygons_polygon|Polygon]]` (degree 4) — DoD: matches OW-T1; ref R5.6.1
+- [x] **P0** `PHASE4-003` vault: verify `hot.md` discloses the ranking metric (degree DESC, betweenness DESC) — DoD: metric line present; ref R5.6.1
+- [x] **P0** `PHASE4-004` vault: verify every wikilink in `hot.md` resolves to an existing `obsidian/<id>.md` note — DoD: all 5 targets exist; no dangling links
+- [x] **P0** `PHASE4-005` vault: verify `hot.md` is distinct from `index.md` (prioritized subset, not a copy) — DoD: content differs; ref R5.1.4
+- [x] **P0** `PHASE4-006` vault: confirm PRE-FIX baselines (`graph.json`, `GRAPH_REPORT.md`, `index.md`, per-node notes) unmodified by the run — DoD: mtime/hash unchanged; ref brief §6
+- [x] **P1** `PHASE4-007` vault: verify `index.md` lists all 6 communities (0–5) — DoD: each community section present; ref R5.1.3
+- [x] **P1** `PHASE4-008` vault: verify `index.md` lists all 23 nodes as wikilinks — DoD: 23 `[[...]]` entries; ref R5.1.2
+- [x] **P1** `PHASE4-009` vault: spot-check per-node note `polygons_polygons_polygon.md` has wikilinks to its 4 neighbors — DoD: neighbor links present; ref R5.1.2
+- [x] **P1** `PHASE4-010` vault: cross-check `hot.md` node count == `top_k` config value — DoD: matches config
+- [x] **P1** `PHASE4-011` vault: write a `scripts/check_vault_consistency.py` that asserts every `[[id]]` in index/hot resolves to a note file — DoD: script exits 0; ref CLAUDE.md vault-consistency TODO
+- [x] **P1** `PHASE4-012` vault: add the consistency check to CI / pre-commit (keyless) — DoD: check runs in CI
+- [x] **P1** `PHASE4-013` vault: RED — test consistency checker flags an intentionally-dangling wikilink — DoD: test fails then checker catches it
+- [x] **P1** `PHASE4-014` vault: GREEN — checker correctly reports dangling link — DoD: test passes
+- [x] **P0** `PHASE4-015` vault: commit `obsidian/hot.md` as a graded artifact — DoD: committed; `docs: add PRE-FIX hot.md (R5.1.4)`
+- [x] **P1** `PHASE4-016` vault: document the hot.md metric in README §R8.3 stub — DoD: metric described
+- [x] **P1** `PHASE4-017` vault: verify `hot.md` includes per-item `degree/bw/community/source_file:loc` metadata — DoD: present
+- [x] **P1** `PHASE4-018` vault: confirm null `source_location` nodes (e.g. license) render gracefully if they appear — DoD: no `:None`
+- [x] **P1** `PHASE4-019` vault: confirm `hot.md` excludes the isolated `license_mit_license` from the top-k (degree 1) unless k is large — DoD: ranking correct
 - [ ] **P2** `PHASE4-020` vault: regenerate per-node notes to a SCRATCH dir and diff vs committed baseline (consistency, no overwrite) — DoD: scratch matches baseline structure
 - [ ] **P2** `PHASE4-021` vault: confirm `obsidian_writer.write_hot_md` targets `obsidian/` for PRE-FIX and post-fix path for POST-FIX — DoD: path config-driven
-- [ ] **P1** `PHASE4-022` vault: verify deterministic re-render (byte-equal) supports clean R5.6.3 diff later — DoD: two renders identical; ref OW-T4
-- [ ] **P0** `PHASE4-023` vault: wire `generate_hot()` into `sdk.py` + `cli.py` command `ex04 hot` — DoD: `uv run ex04 hot` writes hot.md
-- [ ] **P1** `PHASE4-024` vault: RED — test `cli.py` `hot` command delegates to sdk only (zero logic) — DoD: test fails
-- [ ] **P1** `PHASE4-025` vault: GREEN — implement thin `hot` CLI command — DoD: test passes; ref SDK-first
-- [ ] **P1** `PHASE4-026` vault: verify `ex04 hot` is keyless (no LLM) — DoD: runs without API key
-- [ ] **P1** `PHASE4-027` vault: README link to `obsidian/index.md` + `obsidian/hot.md` — DoD: links present (R8.3)
+- [x] **P1** `PHASE4-022` vault: verify deterministic re-render (byte-equal) supports clean R5.6.3 diff later — DoD: two renders identical; ref OW-T4
+- [x] **P0** `PHASE4-023` vault: wire `generate_hot()` into `sdk.py` + `cli.py` command `ex04 hot` — DoD: `uv run ex04 hot` writes hot.md
+- [x] **P1** `PHASE4-024` vault: RED — test `cli.py` `hot` command delegates to sdk only (zero logic) — DoD: test fails
+- [x] **P1** `PHASE4-025` vault: GREEN — implement thin `hot` CLI command — DoD: test passes; ref SDK-first
+- [x] **P1** `PHASE4-026` vault: verify `ex04 hot` is keyless (no LLM) — DoD: runs without API key
+- [x] **P1** `PHASE4-027` vault: README link to `obsidian/index.md` + `obsidian/hot.md` — DoD: links present (R8.3)
 - [ ] **P2** `PHASE4-028` vault: confirm wikilink format matches real vault (`[[id|Label]]`) exactly — DoD: spot-check 3 notes
 - [ ] **P2** `PHASE4-029` vault: confirm no duplicate-label collisions in hot.md (id-keyed) — DoD: ids unique
-- [ ] **P1** `PHASE4-030` vault: verify `hot.md` ranks Community-4 abstractions above mathsquiz nodes — DoD: Polygon/calc_polygon_details rank high
-- [ ] **P1** `PHASE4-031` vault: confirm `hot.md` answers "where to look first" → polygons community — DoD: top entries all polygons; ref R1.4
-- [ ] **P1** `PHASE4-032` vault: commit consistency script + tests — DoD: `test: vault wikilink consistency`
+- [x] **P1** `PHASE4-030` vault: verify `hot.md` ranks Community-4 abstractions above mathsquiz nodes — DoD: Polygon/calc_polygon_details rank high
+- [x] **P1** `PHASE4-031` vault: confirm `hot.md` answers "where to look first" → polygons community — DoD: top entries all polygons; ref R1.4
+- [x] **P1** `PHASE4-032` vault: commit consistency script + tests — DoD: `test: vault wikilink consistency`
 - [ ] **P2** `PHASE4-033` vault: add an Obsidian graph-view note to README pointing at hot.md as entry — DoD: described (R10.3)
-- [ ] **P1** `PHASE4-034` vault: verify `hot.md` heading is `# Hot — Where to look first` — DoD: heading matches behavior §3
-- [ ] **P1** `PHASE4-035` vault: confirm `obsidian_writer` does NOT touch `graph.json` during hot generation — DoD: read-only on graph
+- [x] **P1** `PHASE4-034` vault: verify `hot.md` heading is `# Hot — Where to look first` — DoD: heading matches behavior §3
+- [x] **P1** `PHASE4-035` vault: confirm `obsidian_writer` does NOT touch `graph.json` during hot generation — DoD: read-only on graph
 - [ ] **P2** `PHASE4-036` vault: snapshot-test `hot.md` content for regression — DoD: golden file committed
-- [ ] **P1** `PHASE4-037` vault: ensure `hot.md` is reproducible from repo alone (config paths) — DoD: third-party rerun works; ref R1.5
-- [ ] **P1** `PHASE4-038` vault: document hot.md generation step in the end-to-end pipeline (R5.5.1) — DoD: pipeline stage 3 covered
+- [x] **P1** `PHASE4-037` vault: ensure `hot.md` is reproducible from repo alone (config paths) — DoD: third-party rerun works; ref R1.5
+- [x] **P1** `PHASE4-038` vault: document hot.md generation step in the end-to-end pipeline (R5.5.1) — DoD: pipeline stage 3 covered
 - [ ] **P2** `PHASE4-039` vault: verify `hot.md` proximity-to-bug interpretation noted (betweenness as bridge proxy) — DoD: noted in metric disclosure
-- [ ] **P1** `PHASE4-040` vault: final keyless smoke: `ex04 hot` + consistency check both green — DoD: both pass
-- [ ] **P1** `PHASE4-041` vault: commit `feat: Phase 4 vault build complete` — DoD: hot.md + checks committed
+- [x] **P1** `PHASE4-040` vault: final keyless smoke: `ex04 hot` + consistency check both green — DoD: both pass
+- [x] **P1** `PHASE4-041` vault: commit `feat: Phase 4 vault build complete` — DoD: hot.md + checks committed
 
 ---
 

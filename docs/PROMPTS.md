@@ -88,6 +88,33 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-15 — Phases 3 & 4 (code review, Option B, reconcile + merge)
+
+- **Prompt summary:** Owner ran an **"Antigravity" code review** on both PRs (3 performance
+  findings each) and directed the orchestrator to (a) address the findings on each PR branch,
+  (b) decide the `hot.md` ranking — owner chose **Option B**, (c) keep `docs/TODO.md`,
+  `docs/PROMPTS.md`, and `README.md` in sync with the work, (d) resolve the `sdk.py` conflict,
+  and (e) merge PR #3 once green. Because this harness can't resume the original subagents,
+  the orchestrator applied the fixes **inline** in each PR's worktree (cheaper than a
+  cold-start re-spawn) under the `receiving-code-review` discipline (each finding verified
+  against the code before implementing — e.g. the god_node fix was checked to preserve the
+  file-root exclusion, caught by a regression test).
+  - **PR #2 (Phase 3):** exponential backoff + full jitter; god_node degree-floor filter;
+    `__dict__` token-log dump. → merged to `main`.
+  - **PR #3 (Phase 4):** **Option B re-rank** (`obsidian_writer/ranking.py` — centrality ×
+    proximity-to-bug via BFS; config-driven bug-node id; `obsidian/hot.md` regenerated so all
+    top-8 are the polygons subgraph); `@functools.cache` on config; set-based wikilink check.
+    Then `main` was merged in and the `sdk.py` overlap reconciled into one `Ex04Sdk` class
+    (`detect_weaknesses` + `generate_hot`, PLAN §4.7), the Phase-3 façade test updated to call
+    it. → merged to `main`.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, inline revisions + merge).
+- **AI-generated vs. human-reviewed/edited:** Fixes/reconciliation AI-authored under the gates
+  (ruff 0, mypy 0, **117 tests @ 97%**, all gate scripts incl. vault-consistency). The
+  **human owner** supplied the Antigravity review, made the Option B ranking decision, and
+  approved both merges. Review replies were posted on each PR documenting the fixes.
+
+---
+
 ## Template for future entries
 
 ```markdown
