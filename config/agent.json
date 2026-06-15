@@ -1,0 +1,12 @@
+{
+  "provider": "gemini",
+  "model": "",
+  "api_key_env": "GEMINI_API_KEY",
+  "temperature": 0.0,
+  "max_output_tokens": 4096,
+  "max_findings_tried": 3,
+  "max_validation_attempts": 1,
+  "rate_limit_per_minute": 30,
+  "retry": { "max_attempts": 3, "backoff_seconds": 2.0 },
+  "_notes": "model is intentionally empty (D6): provider/model are decided at run time and never hardcoded; a non-empty model must be set before the Phase-6 real run. provider is config-driven; the gatekeeper is provider-agnostic."
+}

@@ -1,0 +1,36 @@
+# Pre-commit gates (mirrors agent-debate). Run: uv run pre-commit run --all-files
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: mypy-strict
+        name: mypy --strict src/
+        entry: uv run mypy --strict src/
+        language: system
+        pass_filenames: false
+      - id: check-file-sizes
+        name: file-size gate (<=150 lines)
+        entry: uv run python scripts/check_file_sizes.py
+        language: system
+        pass_filenames: false
+      - id: check-no-hardcoded
+        name: no-hardcoded gate
+        entry: uv run python scripts/check_no_hardcoded.py
+        language: system
+        pass_filenames: false
+      - id: check-anti-patterns
+        name: anti-pattern gate
+        entry: uv run python scripts/check_anti_patterns.py
+        language: system
+        pass_filenames: false

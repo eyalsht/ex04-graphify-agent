@@ -1,0 +1,13 @@
+{
+  "graph_json": "artifacts/graphify/graph.json",
+  "graph_report": "artifacts/graphify/GRAPH_REPORT.md",
+  "obsidian_dir": "obsidian",
+  "hot_md": "obsidian/hot.md",
+  "index_md": "obsidian/index.md",
+  "data_repo_root": "data/broken-python",
+  "target_source": "data/broken-python/polygons/polygons.py",
+  "reports_dir": "reports",
+  "runs_log_dir": "artifacts/runs",
+  "graphify_post_fix_dir": "artifacts/graphify_post_fix",
+  "evidence_dir": "docs/evidence"
+}

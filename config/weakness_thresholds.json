@@ -1,0 +1,9 @@
+{
+  "god_node_min_degree": 4,
+  "ambiguous_confidence_max": 0.85,
+  "isolated_cluster_max_edges": 1,
+  "semantic_duplicate_min_score": 0.75,
+  "missing_path_check": true,
+  "hot_md_weights": { "degree": 0.6, "betweenness": 0.4 },
+  "hot_md_top_k": 8
+}
