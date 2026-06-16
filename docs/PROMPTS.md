@@ -184,6 +184,33 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-16 — Phase 7 (reports, diagrams, before/after diff, POST-FIX graph)
+
+- **Prompt summary:** Owner directed the orchestrator to start Phase 7 on a new branch off
+  `main`, follow CLAUDE.md/PRD/ADRs, use "grill me" for any decision, use subagents *only* if
+  they would save tokens, run Graphify to produce what's needed, ask for an API key before
+  any keyed run, and update PROMPTS/TODO/README. The orchestrator first surfaced that Phase 7
+  was blocked on Phases 5 & 6 (approved but unmerged) and used a structured question to
+  resolve it; owner confirmed `main` already had them (PR #6), so the orchestrator pulled and
+  branched `phase7/reports`.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline).
+- **Subagent decision (token-aware, per the owner's instruction):** the orchestrator
+  *declined* to spawn subagents. The eight reports share one deep context (the bug, the
+  graph.json structure, the agent topology, the fix) that the orchestrator already held;
+  cold subagents would have re-derived it, a net token *loss*. So Phase 7 was done inline.
+- **AI-generated vs. human-reviewed/edited:** AI-authored. The orchestrator applied the
+  canonical correctness-gated fix to `polygons.py` (verified `check_correctness == True`,
+  not hand-waved), re-ran **Graphify v0.8.39** keylessly for the POST-FIX graph, reused the
+  existing `diff_graphs`/`render_graph_diff` and `agent_workflow.context` modules to produce
+  *evidence-based* numbers (graph-diff, 76.7% token reduction) rather than estimates
+  (CLAUDE.md §4), and verified diagram topology against `build_graph` and report links
+  programmatically. Two deliverables are explicitly **deferred to the owner** with
+  instructions: the Obsidian app screenshots (R5.4.1/R7.9) and the keyed full-table token run
+  (ADR-0005) — both tracked in KNOWN_LIMITATIONS. Honest note: report prose is AI-drafted and
+  should get a human read-through before final submission (R10.1).
+
+---
+
 ## Template for future entries
 
 ```markdown

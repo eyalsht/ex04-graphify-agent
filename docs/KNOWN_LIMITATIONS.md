@@ -42,23 +42,31 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
    reported honestly rather than tuning the metric to force an "all polygons" outcome that
    the real graph data does not support.
 
-5. **Token-comparison numbers are placeholders.** The real numbers required by R5.6.2/
-   R5.6.4/R7.8 (input/output tokens and call counts for the graph-guided run vs. the naive
-   baseline run) require one live LLM run per ADR-0005, using whichever provider is set in
-   `config/agent.json` (the provider/model is config-driven and not yet finalized — likely
-   Google Gemini, since a Gemini key already exists in the Graphify environment; D6). No
-   such run has been performed yet; no numbers exist to report, and the committed numbers
-   (once produced) will reflect that one specific provider/model.
+5. **Token-comparison: keyless layer done; keyed layer pending (Phase 7).** The *input-
+   context* reduction — the independent variable of the thesis (R4.1) — is measured keylessly
+   and committed: **76.7%** (graph-guided 406 vs naive 1743 input tokens), reproducible via
+   `uv run pytest -m eval` and documented in `reports/token_comparison.md`. The **full keyed
+   table** (output tokens, # LLM calls, duration, end-to-end correctness; R5.6.2/R5.6.4/R7.8)
+   still requires one live run per ADR-0005, via the provider set in `config/agent.json` (the
+   `model` field is intentionally empty, D6 — must be set first; likely Google Gemini). That
+   run (`uv run python scripts/run_comparison.py`, needs `GEMINI_API_KEY`) has **not** been
+   performed; its numbers, once produced, will reflect that one specific provider/model and
+   will overwrite the "Layer 2" table in `reports/token_comparison.md`.
 
 6. **Duplicate `broken-python/` clone.** A pristine clone of `martinpeck/broken-python`
    (with its own `.git` history) currently sits alongside the vendored copy at
    `data/broken-python/`. This needs cleanup (removal or `.gitignore`) before submission so
    the project tree does not contain two competing git histories.
 
-7. **Graphify re-run for the POST-FIX graph is unverified.** Producing the post-fix
-   `artifacts/graphify_post_fix/graph.json` and `GRAPH_REPORT.md` (R5.6.3, R7.4) depends on
-   the Graphify CLI tool being available and runnable in the dev environment. This has not
-   yet been confirmed.
+7. **Graphify re-run for the POST-FIX graph — done (Phase 7).** The Graphify CLI (v0.8.39)
+   was confirmed available and the post-fix `artifacts/graphify_post_fix/graph.json`,
+   `GRAPH_REPORT.md`, and `graph.html` were produced keylessly via
+   `graphify update data/broken-python` (AST extraction, 0 tokens) after applying the fix
+   (R5.6.3, R7.4). Caveat: this re-run's *document* extraction split the READMEs into section
+   nodes and dropped the phantom `mathsquiz-final.py` node, so the PRE/POST node-id sets
+   differ on the document side; the **code-graph** diff (the part that matters) is clean and
+   analyzed in `reports/graph_diff.md`. The PRE-FIX baseline under `artifacts/graphify/` was
+   not modified.
 
 8. **`draw_polygon`'s `turtle` dependency.** The `turtle` module requires a display/GUI
    environment, which is unavailable in CI or headless test runs. Per
@@ -76,6 +84,16 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
    enforced protection the moment the repo goes public (R7.1, at submission) or onto Pro,
    run `bash scripts/enable_branch_protection.sh` (a one-command ruleset that requires a PR
    + the `quality` check and blocks force-push/deletion).
+
+10. **Obsidian app screenshots pending (Phase 7, owner action).** R5.4.1/R7.9/R10.3 ask for
+    screenshots of the Obsidian **app** (graph view, the `Polygon` god node, `hot.md`,
+    `index.md`). These require the Obsidian desktop app and a human capture; exact filenames
+    and step-by-step instructions are in `reports/screenshots.md` §2. As a committed,
+    reproducible substitute for reviewers without Obsidian, `scripts/render_graph.py` produces
+    static PRE/POST graph PNGs (`reports/img/graph_pre_fix.png`, `graph_post_fix.png`) with the
+    `Polygon` god node ringed, and Graphify's interactive `graph.html` is committed under
+    `artifacts/graphify_post_fix/`. The four Obsidian PNGs remain to be captured before
+    final submission.
 
 ## Self-grade
 

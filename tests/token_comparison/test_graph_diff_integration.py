@@ -7,10 +7,12 @@ from pathlib import Path
 from ex04_graphify_agent.token_comparison.runner import TokenComparison
 
 
-def test_diff_graphs_section_pending_when_post_fix_absent() -> None:
-    """TC-E3: the real artifacts/graphify_post_fix/graph.json does not exist yet."""
+def test_diff_graphs_section_pending_when_post_fix_absent(tmp_path: Path) -> None:
+    """TC-E3: an absent POST-FIX graph renders the "pending re-run" section, not a fabricated
+    diff. (The real artifacts/graphify_post_fix/graph.json now exists post-Phase-7, so this
+    points at a guaranteed-absent path to exercise the pending branch deterministically.)"""
     tc = TokenComparison()
-    section = tc.graph_diff_section()
+    section = tc.graph_diff_section(post_fix_path=tmp_path / "no_post_fix_graph.json")
     assert "pending re-run" in section.lower()
 
 
