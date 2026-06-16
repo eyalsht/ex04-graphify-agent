@@ -10,17 +10,19 @@ reverse-engineers and fixes a bug in
 **Obsidian** vault (`index.md` / `hot.md`) as its navigation layer — and proves token
 savings versus a naive "dump every file" baseline.
 
-> **Status: Phases 0–6 complete** (graph_reader, weakness_detector + gatekeeper, obsidian
-> vault + `hot.md`, the LangGraph `agent_workflow`, and `token_comparison` — graph-guided vs
-> naive metrics, automated fix-correctness check, and the PRE/POST-FIX graph diff; a keyless
-> structural eval shows the graph-guided fix-context uses ~74% fewer tokens).
+> **Status: Phases 0–7 complete** (graph_reader, weakness_detector + gatekeeper, obsidian
+> vault + `hot.md`, the LangGraph `agent_workflow`, `token_comparison`, and the **Phase-7
+> reports**). The bug is fixed (`data/broken-python/polygons/polygons.py` passes the 3-part
+> correctness gate), the POST-FIX graph is regenerated under `artifacts/graphify_post_fix/`,
+> and a keyless structural eval shows the graph-guided fix-context uses **77.3% fewer input
+> tokens** than the naive dump.
 >
-> The real R5.6/R7.8 token numbers come from a manual key-gated run (`scripts/run_comparison.py`).
-> Phase 5 and 6 PRs have passed strict "Antigravity" code review (which enforced dynamic
-> targets and mandatory token ledger cross-checks) and are awaiting merge.
-> Phase 7 (reports) next. This README is still a placeholder; the full README (setup, results,
-> root-cause, token numbers, OOP summary, AI-usage disclosure) is built in Phase 8 per
-> `docs/ASSIGNMENT.md` §8. See `docs/PRD.md`, `docs/PLAN.md`, `docs/TODO.md`.
+> The full R5.6/R7.8 keyed numbers (output tokens, LLM calls, duration) come from a manual
+> key-gated run (`scripts/run_comparison.py`) and the Obsidian app screenshots are an owner
+> capture — both tracked as open items in [`reports/README.md`](reports/README.md) and
+> `docs/KNOWN_LIMITATIONS.md`. The full README (setup, results, AI-usage disclosure) is
+> assembled in Phase 8 per `docs/ASSIGNMENT.md` §8. See `docs/PRD.md`, `docs/PLAN.md`,
+> `docs/TODO.md`.
 
 ## Quickstart (keyless)
 
@@ -47,6 +49,22 @@ times `1 / (1 + graph distance)` to the bug node. The top entry,
 every top-8 entry lives in `polygons/polygons.py` — the disconnected mathsquiz/README nodes
 score 0 proximity and drop out. The metric is config-driven (`config/weakness_thresholds.json`)
 and disclosed in the note itself.
+
+## Reports & evidence (Phase 7)
+
+The [`reports/`](reports/README.md) directory holds the graph-guided fix evidence — start at
+[`reports/README.md`](reports/README.md):
+
+- [Root-cause narrative](reports/root_cause.md) — one root cause (half-finished `Polygon`),
+  five symptoms, localized via the graph (R4.5/R5.5.3).
+- [Before/after diff](reports/diff_polygons.md) — the literal `polygons.py` fix (R5.2.4/R7.6).
+- [OOP-improvement summary](reports/oop_improvement.md) — `Polygon` as single source of truth
+  (R3.4/R7.7).
+- [Graph diff](reports/graph_diff.md) — PRE vs POST structure (R5.6.3).
+- [Token comparison](reports/token_comparison.md) — 77.3% input-context reduction, keyless (R4.1/R7.8).
+- [Diagrams](reports/diagrams.md) — C4 + both agent routes (Mermaid, topology-verified, R5.4.2).
+- [Pipeline & research questions](reports/pipeline.md) — R4.3/R4.6/R4.7, six-signal convergence.
+- [Graph renders + Obsidian screenshot guide](reports/screenshots.md) — R5.4.1/R7.9/R10.3.
 
 ## License
 
