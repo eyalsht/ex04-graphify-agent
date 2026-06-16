@@ -10,10 +10,12 @@ reverse-engineers and fixes a bug in
 **Obsidian** vault (`index.md` / `hot.md`) as its navigation layer — and proves token
 savings versus a naive "dump every file" baseline.
 
-> **Status: Phases 0–4 complete** (graph_reader, weakness_detector + gatekeeper, obsidian
-> vault + `hot.md`); Phase 5 (LangGraph agent) next. This README is still a placeholder; the
-> full README (setup, results, root-cause, token numbers, OOP summary, AI-usage disclosure)
-> is built in Phase 8 per `docs/ASSIGNMENT.md` §8. See `docs/PRD.md`, `docs/PLAN.md`,
+> **Status: Phases 0–5 complete** (graph_reader, weakness_detector + gatekeeper, obsidian
+> vault + `hot.md`, and the LangGraph `agent_workflow` — graph-guided + naive runs with a
+> keyless structural eval showing the graph-guided fix-context uses ~74% fewer tokens);
+> Phase 6 (token comparison + evidence) next. This README is still a placeholder; the full
+> README (setup, results, root-cause, token numbers, OOP summary, AI-usage disclosure) is
+> built in Phase 8 per `docs/ASSIGNMENT.md` §8. See `docs/PRD.md`, `docs/PLAN.md`,
 > `docs/TODO.md`.
 
 ## Quickstart (keyless)

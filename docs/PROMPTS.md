@@ -115,6 +115,29 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-16 — Phase 5 (LangGraph agent_workflow + structural evals)
+
+- **Prompt summary:** Owner directed the orchestrator to drive Phases 5 & 6 (sequential —
+  Phase 6's `token_comparison` measures Phase 5's agent), choosing the model by difficulty.
+  Phase 5 → **Opus subagent** in its own worktree, building `agent_workflow/` (one
+  parameterized LangGraph: graph-guided + naive routes, bounded validate→hypothesize loop)
+  strictly via TDD against `docs/PRD_agent_workflow.md` (AW-T1..8 / AW-E1..5), plus the
+  keyless `tests/evals/` token-delta thesis-eval and a thin `Ex04Sdk.run_agent` façade.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator + Phase 5 subagent).
+- **AI-generated vs. human-reviewed/edited:** The Opus subagent built the typed `AgentState`,
+  config-driven paths/limits, prompts, context-assembly helpers, and all node functions
+  (state/prompts/nodes committed), **but was cut off mid-task by a session limit** before
+  finishing `build_graph`, the structural eval, and the sdk wiring. The **orchestrator
+  finished it inline**: `build_graph` mypy typing (`StateGraph[AgentState]`; one centralized
+  `# type: ignore[call-overload]` for langgraph's stub node-narrowing), the end-to-end
+  run/routing tests, `Ex04Sdk.run_agent` (keyless-by-default; scratch-only fix write), and
+  the **AW-T1 eval** (graph-guided 458 vs naive 1795 tokens, ~74% fewer). Honest TDD note:
+  the orchestrator-added parts were written tests+code together, not strict RED-first; the
+  subagent's earlier units did follow RED→GREEN. Gates green: ruff 0, mypy 0 (42 files),
+  165 tests @ 98%, `-m eval` 4 passed, all gate scripts. Disclosed in the PR #4 body.
+
+---
+
 ## Template for future entries
 
 ```markdown
