@@ -13,8 +13,11 @@ savings versus a naive "dump every file" baseline.
 > **Status: Phases 0–6 complete** (graph_reader, weakness_detector + gatekeeper, obsidian
 > vault + `hot.md`, the LangGraph `agent_workflow`, and `token_comparison` — graph-guided vs
 > naive metrics, automated fix-correctness check, and the PRE/POST-FIX graph diff; a keyless
-> structural eval shows the graph-guided fix-context uses ~74% fewer tokens). The real
-> R5.6/R7.8 token numbers come from a manual key-gated run (`scripts/run_comparison.py`).
+> structural eval shows the graph-guided fix-context uses ~74% fewer tokens).
+>
+> The real R5.6/R7.8 token numbers come from a manual key-gated run (`scripts/run_comparison.py`).
+> Phase 5 and 6 PRs have passed strict "Antigravity" code review (which enforced dynamic
+> targets and mandatory token ledger cross-checks) and are awaiting merge.
 > Phase 7 (reports) next. This README is still a placeholder; the full README (setup, results,
 > root-cause, token numbers, OOP summary, AI-usage disclosure) is built in Phase 8 per
 > `docs/ASSIGNMENT.md` §8. See `docs/PRD.md`, `docs/PLAN.md`, `docs/TODO.md`.

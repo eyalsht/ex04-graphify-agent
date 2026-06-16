@@ -798,15 +798,15 @@
 - [x] **P1** `PHASE5-121` agent: GREEN — implement scratch-write in test mode — DoD: test passes
 - [x] **P1** `PHASE5-122` agent: RED — test graph compiles with LangGraph StateGraph API — DoD: test fails; ref R5.3.1
 - [x] **P1** `PHASE5-123` agent: GREEN — confirm StateGraph compilation — DoD: test passes
-- [ ] **P2** `PHASE5-124` agent: RED — test workflow node order matches documented Plan→Retrieve→Hypothesize→Validate→Fix→Report — DoD: test fails; ref R5.3.3
-- [ ] **P2** `PHASE5-125` agent: GREEN — assert node order — DoD: test passes
+- [x] **P2** `PHASE5-124` agent: RED — test workflow node order matches documented Plan→Retrieve→Hypothesize→Validate→Fix→Report — DoD: test fails; ref R5.3.3
+- [x] **P2** `PHASE5-125` agent: GREEN — assert node order — DoD: test passes
 - [x] **P1** `PHASE5-126` agent: REFACTOR — extract shared fix/report logic used by both routes — DoD: no duplication (AW-T8 spirit)
 - [x] **P1** `PHASE5-127` agent: RED — test gatekeeper is the only LLM-provider seam used by agent (no direct provider-SDK calls) — DoD: test fails; ref ADR-0002
 - [x] **P1** `PHASE5-128` agent: GREEN — confirm no direct SDK calls in nodes — DoD: test passes
-- [ ] **P2** `PHASE5-129` agent: RED — test `plan` records run_id for log correlation — DoD: test fails
-- [ ] **P2** `PHASE5-130` agent: GREEN — set run_id in plan — DoD: test passes
-- [ ] **P2** `PHASE5-131` agent: RED — test deterministic node sequencing under mocked client — DoD: test fails
-- [ ] **P2** `PHASE5-132` agent: GREEN — ensure deterministic sequencing — DoD: test passes
+- [x] **P2** `PHASE5-129` agent: RED — test `plan` records run_id for log correlation — DoD: test fails
+- [x] **P2** `PHASE5-130` agent: GREEN — set run_id in plan — DoD: test passes
+- [x] **P2** `PHASE5-131` agent: RED — test deterministic node sequencing under mocked client — DoD: test fails
+- [x] **P2** `PHASE5-132` agent: GREEN — ensure deterministic sequencing — DoD: test passes
 - [x] **P1** `PHASE5-133` agent: verify — agent_workflow files all ≤150 lines — DoD: budget audit passes
 - [x] **P1** `PHASE5-134` agent: verify — no `NotImplementedError` in any node shipped to main — DoD: grep clean; ref CLAUDE.md §3
 - [x] **P1** `PHASE5-135` agent: verify — no mock class shadows a real import — DoD: audit clean; ref CLAUDE.md §3
@@ -929,7 +929,7 @@
 - [x] **P1** `PHASE6-081` evidence: commit all real artifacts (logs, reports, post-fix graph, post-fix hot.md) — DoD: `docs: commit real comparison artifacts (R5.6/R7.8)`
 - [x] **P1** `PHASE6-082` evidence: note in KNOWN_LIMITATIONS that numbers reflect a specific model/run (D6) — DoD: disclosed; ref ADR-0005
 - [x] **P1** `PHASE6-083` evidence: verify grader can read R5.6/R7.8 numbers without a key (static artifacts) — DoD: artifacts self-contained
-- [ ] **P2** `PHASE6-084` evidence: capture wall-clock duration per run into report — DoD: duration_s present
+- [x] **P2** `PHASE6-084` evidence: capture wall-clock duration per run into report — DoD: duration_s present
 - [x] **P1** `PHASE6-085` evidence: cross-check report numbers trace to gatekeeper log entries — DoD: every number sourced; ref R10.5
 - [x] **P1** `PHASE6-086` evidence: keep PRE-FIX `obsidian/hot.md` and POST-FIX hot.md both retained — DoD: both committed for diff story
 

@@ -162,6 +162,28 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-16 — Phases 5 & 6 (code review, dynamic target, mandatory cross-check)
+
+- **Prompt summary:** Owner ran a ruthless **"Antigravity" code review** on PR #4 and PR #5.
+  The review caught a major architectural shortcut: the graph-guided route ignored the
+  `WeaknessDetector`'s `source_file` and hardcoded the target to `polygons/polygons.py`,
+  faking the context-minimization thesis. It also flagged the TC-E5 gatekeeper cross-check
+  as an optional parameter rather than a mandatory ledger verification. The orchestrator
+  was directed to tear down the hardcoding and enforce the cross-check.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, inline revisions).
+- **AI-generated vs. human-reviewed/edited:** Fixes were AI-authored under strict gates.
+  In PR #4, the crutch `config.target_source_path()` was deleted and replaced with a
+  dynamic `repo_path(hyp.source_file)` resolver. `target_file` now correctly drives the
+  `fix` node and scratch writer. In PR #5, the branch was rebased onto the dynamic fix,
+  `Ex04Sdk.run_agent` was modified to accept an injectable `TokenLogger`, and the
+  `_assert_logs_agree` cross-check was made **mandatory** in `run_both` with a new
+  fail-loud test. LangGraph's `# type: ignore[call-overload]` was defended as unavoidable
+  due to protocol limitations. All tests passed (219 tests @ 98% coverage). The **human
+  owner (Antigravity)** explicitly approved the fixes as addressing the demands to the
+  highest standards and marked both PRs ready for merge.
+
+---
+
 ## Template for future entries
 
 ```markdown
