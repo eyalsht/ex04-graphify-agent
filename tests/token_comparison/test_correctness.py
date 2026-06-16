@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ex04_graphify_agent.agent_workflow.config import repo_path
 from ex04_graphify_agent.token_comparison.correctness import check_correctness
 
 _FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -21,7 +20,9 @@ def _fixed_source() -> str:
 
 
 def _broken_source() -> str:
-    return repo_path("polygons/polygons.py").read_text(encoding="utf-8")
+    # Pinned to the PRE-FIX fixture: the live data/broken-python/polygons/polygons.py is now
+    # the POST-FIX deliverable (Phase 7), so TC-T5 reads the committed original instead.
+    return (_FIXTURES / "polygons_broken.txt").read_text(encoding="utf-8")
 
 
 def test_check_correctness_true_for_fixed_source() -> None:
