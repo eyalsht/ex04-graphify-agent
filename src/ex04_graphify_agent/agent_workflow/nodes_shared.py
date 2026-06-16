@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from ex04_graphify_agent.agent_workflow import context, prompts
+from ex04_graphify_agent.agent_workflow import context, fix_target, prompts
 from ex04_graphify_agent.agent_workflow.deps import NodeDeps
 from ex04_graphify_agent.agent_workflow.state import AgentState, RunType, TokenRecord
 from ex04_graphify_agent.gatekeeper import LLMResponse
@@ -31,6 +31,7 @@ def initial_state(run_type: RunType) -> AgentState:
         validated=False,
         findings_tried=0,
         files_read=[],
+        target_file=None,
         fix_diff=None,
         token_usage=[],
     )
@@ -78,13 +79,15 @@ def make_fix(deps: NodeDeps) -> Node:
     def fix(state: AgentState) -> dict[str, Any]:
         prompt = _fix_prompt(state)
         response = call_llm(deps, state, "fix", prompts.FIX_SYSTEM, prompt)
-        original = _original_source(deps, state)
-        fixed = response.text if response.text else original
-        diff = context.make_diff(original, fixed, "polygons/polygons.py")
-        _write_scratch(deps, fixed)
+        target = fix_target.target_file(state, response.text)
+        original = fix_target.original_source(state, target)
+        fixed = fix_target.fixed_content(state, response.text)
+        diff = context.make_diff(original, fixed, target) if target else ""
+        _write_scratch(deps, target, fixed)
         message = {"role": "assistant", "node": "fix", "prompt": prompt, "content": response.text}
         return {
             "messages": [*state["messages"], message],
+            "target_file": target,
             "fix_diff": diff or None,
             "token_usage": [*state["token_usage"], token_record("fix", response)],
         }
@@ -108,23 +111,16 @@ def _fix_prompt(state: AgentState) -> str:
         return prompts.NAIVE_FIX_USER_TEMPLATE.format(dump=state["dumped_context"])
     hyp = state["current_hypothesis"]
     return prompts.FIX_USER_TEMPLATE.format(
+        filename=fix_target.graph_target(state),
         context=state["vault_context"],
         source=state["validated_source"] or "",
         hypothesis=hyp.hypothesis if hyp else "",
     )
 
 
-def _original_source(deps: NodeDeps, state: AgentState) -> str:
-    from ex04_graphify_agent.agent_workflow.config import target_source_path
-
-    if state["run_type"] == "graph_guided" and state["validated_source"] is not None:
-        return state["validated_source"]
-    return target_source_path().read_text(encoding="utf-8")
-
-
-def _write_scratch(deps: NodeDeps, fixed: str) -> None:
-    if deps.scratch_dir is not None:
-        (deps.scratch_dir / "polygons_fixed.py").write_text(fixed, encoding="utf-8")
+def _write_scratch(deps: NodeDeps, target: str | None, fixed: str) -> None:
+    if deps.scratch_dir is not None and target:
+        (deps.scratch_dir / fix_target.scratch_name(target)).write_text(fixed, encoding="utf-8")
 
 
 def _render_report(state: AgentState) -> str:

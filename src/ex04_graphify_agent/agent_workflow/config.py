@@ -70,10 +70,14 @@ def hot_md_path() -> Path:
 
 
 def data_repo_root() -> Path:
-    """``data/broken-python`` root (naive dump source)."""
+    """``data/broken-python`` root (naive dump source / source-file resolution root)."""
     return _path("data_repo_root")
 
 
-def target_source_path() -> Path:
-    """``data/broken-python/polygons/polygons.py`` (the single validated source file)."""
-    return _path("target_source")
+def repo_path(relative: str) -> Path:
+    """Resolve a repo-relative source path (e.g. a finding's ``source_file``) under the repo.
+
+    The validate/fix nodes resolve whatever file the hypothesis (or the naive LLM) names —
+    there is no hardcoded target file in node logic (CLAUDE.md §3).
+    """
+    return data_repo_root() / relative

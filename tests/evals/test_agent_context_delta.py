@@ -10,13 +10,17 @@ from __future__ import annotations
 import pytest
 
 from ex04_graphify_agent.agent_workflow import config, context
+from ex04_graphify_agent.graph_reader import GraphReader
+from ex04_graphify_agent.weakness_detector import WeaknessDetector
 
 pytestmark = pytest.mark.eval
 
 
 def test_graph_guided_context_is_far_smaller_than_naive() -> None:
     vault, _ = context.read_vault_text(config.index_md_path(), config.hot_md_path())
-    source = config.target_source_path().read_text(encoding="utf-8")
+    # Follow the graph: the one source file is the top finding's source_file (not hardcoded).
+    bug_file = WeaknessDetector(GraphReader()).detect()[0].source_file
+    source = config.repo_path(bug_file).read_text(encoding="utf-8")
     graph_guided = context.count_tokens(vault + source)
 
     dump, _ = context.dump_repo_text(config.data_repo_root())

@@ -36,5 +36,6 @@ class AgentState(TypedDict):
     validated: bool
     findings_tried: int
     files_read: list[str]
+    target_file: str | None  # repo-relative path the run is fixing (from the hypothesis / LLM)
     fix_diff: str | None
     token_usage: list[TokenRecord]

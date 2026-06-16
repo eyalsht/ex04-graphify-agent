@@ -26,4 +26,10 @@ def test_resolves_vault_and_repo_paths() -> None:
     assert config.index_md_path().name == "index.md"
     assert config.hot_md_path().name == "hot.md"
     assert config.data_repo_root().name == "broken-python"
-    assert config.target_source_path().name == "polygons.py"
+
+
+def test_repo_path_resolves_relative_source_dynamically() -> None:
+    # No hardcoded target: a finding's repo-relative source_file resolves under the repo root.
+    resolved = config.repo_path("polygons/polygons.py")
+    assert resolved.name == "polygons.py"
+    assert resolved.parent == config.data_repo_root() / "polygons"

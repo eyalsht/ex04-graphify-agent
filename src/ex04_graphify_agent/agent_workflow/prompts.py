@@ -27,11 +27,12 @@ FIX_SYSTEM = (
 FIX_USER_TEMPLATE = (
     "Graph map (where to look first):\n{context}\n\n"
     "Hypothesis:\n{hypothesis}\n\n"
-    "Source file to fix (polygons/polygons.py):\n{source}\n\n"
+    "Source file to fix ({filename}):\n{source}\n\n"
     "Return the corrected full file contents."
 )
 
 NAIVE_FIX_USER_TEMPLATE = (
     "Here is the entire repository. Find the bug and fix it.\n\n{dump}\n\n"
-    "Return the corrected full contents of polygons/polygons.py."
+    "Begin your answer with a line `FILE: <relative path>` naming the file you fixed, then "
+    "return that file's corrected full contents."
 )

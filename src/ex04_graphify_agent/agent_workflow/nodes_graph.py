@@ -52,7 +52,9 @@ def make_validate(deps: NodeDeps) -> Node:
         hyp = state["current_hypothesis"]
         if hyp is None:
             return {"validated": False}
-        source = config.target_source_path().read_text(encoding="utf-8")
+        # Follow the hypothesis: open exactly the file it named, resolved under the repo root.
+        source_path = config.repo_path(hyp.source_file)
+        source = source_path.read_text(encoding="utf-8")
         confirmed = _confirms(hyp, source)
         hyp.source_validation = SourceValidation(
             confirmed=confirmed,
@@ -62,8 +64,9 @@ def make_validate(deps: NodeDeps) -> Node:
             "validated_source": source,
             "validated": confirmed,
             "current_hypothesis": hyp,
+            "target_file": hyp.source_file,
             "findings_tried": state["findings_tried"] + 1,
-            "files_read": [*state["files_read"], str(config.target_source_path())],
+            "files_read": [*state["files_read"], str(source_path)],
         }
 
     return validate

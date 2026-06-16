@@ -49,7 +49,10 @@ def build_graph(run_type: RunType, deps: NodeDeps) -> CompiledStateGraph[AgentSt
 
 
 def _add(builder: _Builder, name: str, node: nodes.Node) -> None:
-    """Register a node — centralizes the langgraph stub narrowing (nodes return partial state)."""
+    """Register a node. LangGraph 0.x ``add_node`` overloads only accept its internal
+    ``_Node``/``Runnable`` protocol types, not a plain partial-update ``Callable``; this one
+    precise, centralized ignore is the correct idiom (cleaner than a blanket ``cast(Any)``).
+    """
     builder.add_node(name, node)  # type: ignore[call-overload]
 
 
