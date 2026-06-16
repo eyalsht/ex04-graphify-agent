@@ -1,0 +1,412 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "mathsquiz-step1.py",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step1.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step1",
+      "community": 6,
+      "norm_label": "mathsquiz-step1.py"
+    },
+    {
+      "label": "mathsquiz-step2.py",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step2",
+      "community": 2,
+      "norm_label": "mathsquiz-step2.py"
+    },
+    {
+      "label": "welcome_message()",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step2_welcome_message",
+      "community": 2,
+      "norm_label": "welcome_message()"
+    },
+    {
+      "label": "ask_question()",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step2_ask_question",
+      "community": 2,
+      "norm_label": "ask_question()"
+    },
+    {
+      "label": "print_final_scores()",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step2_print_final_scores",
+      "community": 2,
+      "norm_label": "print_final_scores()"
+    },
+    {
+      "label": "mathsquiz-step3.py",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step3",
+      "community": 3,
+      "norm_label": "mathsquiz-step3.py"
+    },
+    {
+      "label": "welcome_message()",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step3_welcome_message",
+      "community": 3,
+      "norm_label": "welcome_message()"
+    },
+    {
+      "label": "ask_question()",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step3_ask_question",
+      "community": 3,
+      "norm_label": "ask_question()"
+    },
+    {
+      "label": "print_final_scores()",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz_step3_print_final_scores",
+      "community": 3,
+      "norm_label": "print_final_scores()"
+    },
+    {
+      "label": "mathsquiz.py",
+      "file_type": "code",
+      "source_file": "mathsquiz/mathsquiz.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mathsquiz_mathsquiz",
+      "community": 5,
+      "norm_label": "mathsquiz.py"
+    },
+    {
+      "label": "polygons.py",
+      "file_type": "code",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "polygons_polygons",
+      "community": 0,
+      "norm_label": "polygons.py"
+    },
+    {
+      "label": "Polygon",
+      "file_type": "code",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "polygons_polygons_polygon",
+      "community": 0,
+      "norm_label": "polygon"
+    },
+    {
+      "label": "object",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "object",
+      "community": 0,
+      "norm_label": "object"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "polygons_polygons_polygon_init",
+      "community": 0,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "calc_polygon_details()",
+      "file_type": "code",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "polygons_polygons_calc_polygon_details",
+      "community": 0,
+      "norm_label": "calc_polygon_details()"
+    },
+    {
+      "label": "draw_polygon()",
+      "file_type": "code",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "polygons_polygons_draw_polygon",
+      "community": 0,
+      "norm_label": "draw_polygon()"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme",
+      "community": 4,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "broken-python",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme_broken_python",
+      "community": 4,
+      "norm_label": "broken-python"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mathsquiz_readme",
+      "community": 1,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Maths Quiz",
+      "file_type": "document",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "mathsquiz_readme_maths_quiz",
+      "community": 1,
+      "norm_label": "maths quiz"
+    },
+    {
+      "label": "Introduction",
+      "file_type": "document",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "mathsquiz_readme_introduction",
+      "community": 1,
+      "norm_label": "introduction"
+    },
+    {
+      "label": "Objectives",
+      "file_type": "document",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "mathsquiz_readme_objectives",
+      "community": 1,
+      "norm_label": "objectives"
+    },
+    {
+      "label": "The Files",
+      "file_type": "document",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "mathsquiz_readme_the_files",
+      "community": 1,
+      "norm_label": "the files"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "mathsquiz_mathsquiz_step2",
+      "target": "mathsquiz_mathsquiz_step2_ask_question",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "mathsquiz_mathsquiz_step2",
+      "target": "mathsquiz_mathsquiz_step2_print_final_scores",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/mathsquiz-step2.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "mathsquiz_mathsquiz_step2",
+      "target": "mathsquiz_mathsquiz_step2_welcome_message",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "mathsquiz_mathsquiz_step3",
+      "target": "mathsquiz_mathsquiz_step3_ask_question",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "mathsquiz_mathsquiz_step3",
+      "target": "mathsquiz_mathsquiz_step3_print_final_scores",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/mathsquiz-step3.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "mathsquiz_mathsquiz_step3",
+      "target": "mathsquiz_mathsquiz_step3_welcome_message",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "polygons_polygons",
+      "target": "polygons_polygons_calc_polygon_details",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "polygons_polygons",
+      "target": "polygons_polygons_draw_polygon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "polygons_polygons",
+      "target": "polygons_polygons_polygon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "polygons_polygons_calc_polygon_details",
+      "target": "polygons_polygons_polygon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "polygons_polygons_polygon",
+      "target": "object",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "polygons/polygons.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "polygons_polygons_polygon",
+      "target": "polygons_polygons_polygon_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "readme_broken_python",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "mathsquiz_readme",
+      "target": "mathsquiz_readme_maths_quiz",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "mathsquiz_readme_maths_quiz",
+      "target": "mathsquiz_readme_introduction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "mathsquiz_readme_maths_quiz",
+      "target": "mathsquiz_readme_objectives",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "mathsquiz/README.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "mathsquiz_readme_maths_quiz",
+      "target": "mathsquiz_readme_the_files",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "5973e08a8698f92e2ae11d351dd927d1a0178e81"
+}
