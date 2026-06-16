@@ -48,10 +48,10 @@
 > Phase 5 ✅ (PR #4 merged) · Phase 6 ✅ (PR #6 merged) · **Phase 7 ✅ (branch `phase7/reports`)**.
 > Repo live & **private** at `github.com/eyalsht/ex04-graphify-agent`. Branch protection
 > enabler-ready (`scripts/enable_branch_protection.sh`) — blocked on GitHub free-private tier
-> (see KNOWN_LIMITATIONS #9). All P0/P1 items for Phases 2.9–7 are ticked below; remaining
-> unchecked items are P2 stretch and the two owner-only Phase-7 items (Obsidian app
-> screenshots PHASE7-018..021; the keyed token run feeding PHASE7-030) — tracked in
-> KNOWN_LIMITATIONS #5/#10. Phase 8 (README + self-grade) is next.
+> (see KNOWN_LIMITATIONS #9). All P0/P1 items for Phases 2.9–7 are ticked below; the Obsidian
+> app screenshots (PHASE7-018..021) are now captured (Figs 3–6 in reports/screenshots.md). The
+> one remaining owner-only item is the keyed token run feeding PHASE7-030 (KNOWN_LIMITATIONS
+> #5). Phase 8 (README + self-grade) is next.
 >
 > **Phase 2 (graph_reader) ✅ — PR #1 merged.** GR-T1..T7 typed query layer; review fixes:
 > cached rankings, streamed JSON.

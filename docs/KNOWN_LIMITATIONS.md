@@ -85,15 +85,13 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
    run `bash scripts/enable_branch_protection.sh` (a one-command ruleset that requires a PR
    + the `quality` check and blocks force-push/deletion).
 
-10. **Obsidian app screenshots pending (Phase 7, owner action).** R5.4.1/R7.9/R10.3 ask for
-    screenshots of the Obsidian **app** (graph view, the `Polygon` god node, `hot.md`,
-    `index.md`). These require the Obsidian desktop app and a human capture; exact filenames
-    and step-by-step instructions are in `reports/screenshots.md` §2. As a committed,
-    reproducible substitute for reviewers without Obsidian, `scripts/render_graph.py` produces
-    static PRE/POST graph PNGs (`reports/img/graph_pre_fix.png`, `graph_post_fix.png`) with the
-    `Polygon` god node ringed, and Graphify's interactive `graph.html` is committed under
-    `artifacts/graphify_post_fix/`. The four Obsidian PNGs remain to be captured before
-    final submission.
+10. **Obsidian app screenshots — done (Phase 7).** R5.4.1/R7.9/R10.3 are satisfied: the four
+    Obsidian-app screenshots (graph view, the `Polygon` god node, `hot.md`, `index.md`) are
+    committed as `reports/img/obsidian_{graph_view,polygon_node,hot,index}.png` and embedded
+    as Figures 3–6 in `reports/screenshots.md` §2. They were captured from a local scratch
+    vault (`obsidian/HW4/`, gitignored) populated with copies of the deliverable `obsidian/`
+    notes, so they reflect the committed vault. `scripts/render_graph.py` static PNGs +
+    Graphify's `graph.html` remain as reproducible, keyless companions.
 
 ## Self-grade
 

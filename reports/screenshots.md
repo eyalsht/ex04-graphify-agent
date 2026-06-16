@@ -3,10 +3,9 @@
 This page has two kinds of visual evidence:
 
 1. **Committed, reproducible renders** of the Graphify graph (generated keylessly by
-   `scripts/render_graph.py` — no Obsidian, no API key). These are in the repo now.
-2. **Obsidian app screenshots** (R5.4.1 / R7.9) — these *must* be captured by a human from
-   the Obsidian desktop app and dropped into `reports/img/`. Placeholders + exact
-   instructions are below. **Status: PENDING owner action.**
+   `scripts/render_graph.py` — no Obsidian, no API key).
+2. **Obsidian app screenshots** (R5.4.1 / R7.9 / R10.3) — captured from the vault open in the
+   Obsidian desktop app. **Status: done** (Figures 3–6 below).
 
 ---
 
@@ -44,33 +43,50 @@ now exists. See [`graph_diff.md`](graph_diff.md).*
 
 ---
 
-## 2. Obsidian screenshots — PENDING owner action
+## 2. Obsidian app screenshots (captured)
 
-These are required deliverables (R5.4.1 graph view, R7.9 committed images, R10.3 `hot.md`).
-The renders above are a substitute for reviewers without Obsidian; the assignment still asks
-for the real Obsidian UI. Please capture the four PNGs below.
+The required Obsidian-UI deliverables (R5.4.1 graph view, R7.9 committed images, R10.3
+`hot.md`), captured from the vault open in the Obsidian desktop app.
 
-### How to capture (≈5 minutes)
+### Graph View (R5.4.1 / R7.9)
 
-1. Open Obsidian → **Open folder as vault** → select the repo's `obsidian/` directory.
-2. For each shot, use your OS screenshot tool and save into `reports/img/` with the exact
-   filename listed, then commit. (Windows: `Win+Shift+S`; macOS: `Cmd+Shift+4`.)
+![Obsidian Graph View of the EX04 vault: 23 note-nodes plus the 6 community hubs and the
+index/hot map-notes, force-laid-out into the polygons and mathsquiz clusters around the
+central index hub.](img/obsidian_graph_view.png)
 
-| # | Filename to save | What to show | Requirement |
-|---|---|---|---|
-| 1 | `reports/img/obsidian_graph_view.png` | The **Graph View** (ribbon → "Open graph view"). Let it settle so clusters are visible. | R5.4.1 / R7.9 |
-| 2 | `reports/img/obsidian_polygon_node.png` | Graph View **zoomed/focused on the `polygons_polygons_polygon` (Polygon) node** so its 4 links are visible — the god node. | R4.6 |
-| 3 | `reports/img/obsidian_hot.png` | `hot.md` open in **reading view** (the ranked "where to look first" list). | R10.3 |
-| 4 | `reports/img/obsidian_index.png` | `index.md` open, showing the 6-community navigation. | R5.1.3 |
+*Figure 3 — Obsidian Graph View. `index` is the central map-note linking every node; the
+polygons subgraph (top-left) and the mathsquiz subgraph (bottom) separate naturally.*
 
-### After capturing
+### The Polygon god node (R4.6)
 
-Once the four files exist, add them under section 1's style with captions, and tick
-PHASE7-018..021 + PHASE8-053 in `docs/TODO.md`. Until then these requirements are tracked as
-**open** in `docs/KNOWN_LIMITATIONS.md`.
+![Obsidian Graph View focused on polygons_polygons_polygon: the node is highlighted and its
+incident links to index, hot, polygons_polygons, calc_polygon_details, object and
+polygon_init are drawn in colour while the rest of the graph fades.](img/obsidian_polygon_node.png)
 
-> Tip: Obsidian's Graph View colour-groups can be set to match communities via
-> Settings → Graph → Groups (optional polish for shot #1).
+*Figure 4 — `polygons_polygons_polygon` (the Polygon god node) selected. Its highlighted
+links fan out to the module, `hot`, and the functions that use it — the coupling surface the
+fix targeted. This is the "follow the links from the hottest node" path made visual.*
+
+### hot.md — "where to look first" (R10.3)
+
+![Obsidian reading view of hot.md: the ranked list with Polygon at #1 (degree 4, bw 0.0563),
+calc_polygon_details #2, then the rationale TODO nodes, each annotated with its metric and
+source location.](img/obsidian_hot.png)
+
+*Figure 5 — `hot.md` in reading view. Ranked by centrality × proximity-to-bug; `Polygon` is
+#1 and every entry is a clickable wikilink to its node note.*
+
+### index.md — community navigation (R5.1.3)
+
+![Obsidian reading view of index.md: a Graph Index listing the 6 communities as links
+followed by an All Nodes list of every node as a wikilink.](img/obsidian_index.png)
+
+*Figure 6 — `index.md` in reading view: the 6 communities and the full node list, all
+wikilinked.*
+
+> Capture note: taken from a local scratch vault (`obsidian/HW4/`, gitignored) populated with
+> copies of the 31 notes from the deliverable `obsidian/` vault, so these screenshots reflect
+> the committed vault exactly.
 
 ---
 
