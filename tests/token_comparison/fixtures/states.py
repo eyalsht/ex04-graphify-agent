@@ -35,6 +35,7 @@ def graph_guided_state(input_tokens: int = 1_200, output_tokens: int = 80) -> Ag
             "obsidian/hot.md",
             "data/broken-python/polygons/polygons.py",
         ],
+        target_file="polygons/polygons.py",
         fix_diff="--- a\n+++ b\n",
         token_usage=token_usage,  # type: ignore[typeddict-item]
     )
@@ -61,6 +62,7 @@ def naive_state(input_tokens: int = 8_000, output_tokens: int = 80) -> AgentStat
         validated=False,
         findings_tried=0,
         files_read=files,
+        target_file="polygons/polygons.py",
         fix_diff="--- a\n+++ b\n",
         token_usage=token_usage,  # type: ignore[typeddict-item]
     )

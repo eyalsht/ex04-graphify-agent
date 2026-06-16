@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ex04_graphify_agent.agent_workflow.config import target_source_path
+from ex04_graphify_agent.agent_workflow.config import repo_path
 from ex04_graphify_agent.token_comparison.correctness import check_correctness
 
 _FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -21,7 +21,7 @@ def _fixed_source() -> str:
 
 
 def _broken_source() -> str:
-    return target_source_path().read_text(encoding="utf-8")
+    return repo_path("polygons/polygons.py").read_text(encoding="utf-8")
 
 
 def test_check_correctness_true_for_fixed_source() -> None:

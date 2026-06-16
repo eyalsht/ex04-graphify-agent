@@ -14,6 +14,7 @@ from .weakness_detector import WeaknessDetector, WeaknessFinding
 
 if TYPE_CHECKING:
     from .agent_workflow.state import AgentState, RunType
+    from .gatekeeper import TokenLogger
 
 
 class Ex04Sdk:
@@ -37,12 +38,19 @@ class Ex04Sdk:
         writer = ObsidianWriter(reader, vault_dir=vault_dir)
         return writer.write_hot_md()
 
-    def run_agent(self, run_type: str, scratch_dir: str | Path | None = None) -> AgentState:
+    def run_agent(
+        self,
+        run_type: str,
+        scratch_dir: str | Path | None = None,
+        logger: TokenLogger | None = None,
+    ) -> AgentState:
         """Build + invoke the LangGraph agent for ``run_type`` and return the final state.
 
         Keyless by default (the gatekeeper injects its MockClient when no key is set).
         ``scratch_dir`` is where the fix node writes the corrected file; when ``None`` the
         node computes the diff without touching the vendored baseline (CLAUDE.md §4).
+        Pass a ``logger`` to capture the gatekeeper's authoritative per-call token ledger
+        (ADR-0002) — ``token_comparison`` uses it to cross-check ``token_usage`` (TC-E5).
         """
         if run_type not in ("graph_guided", "naive"):
             msg = f"unknown run_type: {run_type!r} (expected 'graph_guided' or 'naive')"
@@ -51,7 +59,8 @@ class Ex04Sdk:
         from .agent_workflow.deps import NodeDeps
         from .gatekeeper import Gatekeeper, TokenLogger
 
-        gatekeeper = Gatekeeper(config.agent_config(), TokenLogger())
+        log = logger if logger is not None else TokenLogger()
+        gatekeeper = Gatekeeper(config.agent_config(), log)
         deps = NodeDeps(
             gatekeeper=gatekeeper,
             run_id=run_type,

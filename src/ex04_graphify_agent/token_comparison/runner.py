@@ -10,14 +10,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from ex04_graphify_agent.agent_workflow.config import target_source_path
 from ex04_graphify_agent.agent_workflow.state import AgentState
 from ex04_graphify_agent.gatekeeper.config import load_agent_config, repo_root
+from ex04_graphify_agent.token_comparison import run_helpers
 from ex04_graphify_agent.token_comparison.comparison import compare_metrics
 from ex04_graphify_agent.token_comparison.correctness import check_correctness
 from ex04_graphify_agent.token_comparison.metrics import build_run_metrics
 from ex04_graphify_agent.token_comparison.models import ComparisonResult, RunMetrics
-from ex04_graphify_agent.token_comparison.patch import apply_unified_diff
 
 _DEFAULT_AGENT_CONFIG = "config/agent.json"
 
@@ -62,10 +61,10 @@ class TokenComparison:
         graph_metrics = self.metrics_from_state(
             graph_guided,
             wall.get("graph_guided", 0.0),
-            _fixed_source_for_state(graph_guided),
+            run_helpers.fixed_source_for_state(graph_guided),
         )
         naive_metrics = self.metrics_from_state(
-            naive, wall.get("naive", 0.0), _fixed_source_for_state(naive)
+            naive, wall.get("naive", 0.0), run_helpers.fixed_source_for_state(naive)
         )
         return self.compare_metrics(graph_metrics, naive_metrics)
 
@@ -82,19 +81,31 @@ class TokenComparison:
         return write_report(result, path)
 
     def run_both(self, sdk: Any, scratch_dir: str | Path | None = None) -> ComparisonResult:
-        """Drive ``sdk.run_agent`` for both run types, time each, and compare (R5.6.2)."""
+        """Drive ``sdk.run_agent`` for both runs and compare, cross-checking each run's
+        ``token_usage`` against the gatekeeper's own ledger (TC-E5, mandatory — R10.5)."""
+        graph, graph_secs, graph_log = self._timed_run(sdk, "graph_guided", scratch_dir)
+        naive, naive_secs, naive_log = self._timed_run(sdk, "naive", scratch_dir)
+        graph_metrics = self.metrics_from_state(
+            graph, graph_secs, run_helpers.fixed_source_for_state(graph), graph_log
+        )
+        naive_metrics = self.metrics_from_state(
+            naive, naive_secs, run_helpers.fixed_source_for_state(naive), naive_log
+        )
+        return self.compare_metrics(graph_metrics, naive_metrics)
+
+    @staticmethod
+    def _timed_run(
+        sdk: Any, run_type: str, scratch_dir: str | Path | None
+    ) -> tuple[AgentState, float, list[dict[str, Any]]]:
+        """Run one route with an injected gatekeeper logger; return (state, seconds, log)."""
         import time
 
-        start = time.monotonic()
-        graph_guided = sdk.run_agent("graph_guided", scratch_dir=scratch_dir)
-        graph_duration = time.monotonic() - start
+        from ex04_graphify_agent.gatekeeper import TokenLogger
 
+        logger = TokenLogger()
         start = time.monotonic()
-        naive = sdk.run_agent("naive", scratch_dir=scratch_dir)
-        naive_duration = time.monotonic() - start
-
-        durations = {"graph_guided": graph_duration, "naive": naive_duration}
-        return self.compare(graph_guided, naive, durations=durations)
+        state: AgentState = sdk.run_agent(run_type, scratch_dir=scratch_dir, logger=logger)
+        return state, time.monotonic() - start, run_helpers.ledger(logger)
 
     def graph_diff_section(
         self,
@@ -110,29 +121,10 @@ class TokenComparison:
         )
 
         pre = Path(pre_fix_path) if pre_fix_path is not None else default_graph_path()
-        post = Path(post_fix_path) if post_fix_path is not None else _default_post_fix_path()
+        post = Path(post_fix_path) if post_fix_path is not None else None
+        if post is None:
+            post = run_helpers.default_post_fix_path()
         try:
             return render_graph_diff(diff_graphs(pre, post))
         except FileNotFoundError:
             return render_graph_diff_pending()
-
-
-def _default_post_fix_path() -> Path:
-    """``artifacts/graphify_post_fix/graph.json`` from ``config/paths.json`` (TC-E3)."""
-    import json
-
-    paths = json.loads((repo_root() / "config" / "paths.json").read_text(encoding="utf-8"))
-    return repo_root() / str(paths["graphify_post_fix_dir"]) / "graph.json"
-
-
-def _fixed_source_for_state(state: AgentState) -> str:
-    """Reconstruct the post-fix ``polygons.py`` text for ``check_correctness`` (R10.5).
-
-    Applies ``state['fix_diff']`` (a unified diff from ``context.make_diff``) to the
-    original ``target_source_path`` content. An empty/absent diff means no fix was
-    produced, so the original (still-broken) source is checked - correctly yielding
-    ``correctness=False``.
-    """
-    original = target_source_path().read_text(encoding="utf-8")
-    diff = state["fix_diff"] or ""
-    return apply_unified_diff(original, diff)
