@@ -41,3 +41,14 @@ def test_hot_command_is_keyless() -> None:
     result = runner.invoke(app, ["hot"])
     assert result.exit_code == 0
     assert "hot.md" in result.output
+
+
+def test_compare_command_delegates_to_sdk(tmp_path: Path) -> None:
+    expected = tmp_path / "token_comparison.md"
+    with patch("ex04_graphify_agent.cli.Ex04Sdk") as mock_sdk_cls:
+        mock_sdk_cls.return_value.compare_tokens.return_value = expected
+        result = runner.invoke(app, ["compare"])
+
+    assert result.exit_code == 0
+    mock_sdk_cls.return_value.compare_tokens.assert_called_once_with()
+    assert str(expected) in result.output

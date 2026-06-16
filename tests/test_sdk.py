@@ -42,3 +42,16 @@ def test_run_agent_graph_guided_returns_validated_fix(
 def test_run_agent_rejects_unknown_run_type() -> None:
     with pytest.raises(ValueError, match="unknown run_type"):
         Ex04Sdk().run_agent("bogus")
+
+
+def test_compare_tokens_writes_report(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Phase 6: compare_tokens drives both runs (keyless) and writes the report (R5.6)."""
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    out = tmp_path / "token_comparison.md"
+    path = Ex04Sdk().compare_tokens(report_path=out)
+    assert path == out
+    text = out.read_text(encoding="utf-8")
+    assert "graph_guided" in text
+    assert "naive" in text
+    assert "Files read" in text
+    assert "Iterations" in text
