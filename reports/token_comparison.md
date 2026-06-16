@@ -15,10 +15,10 @@ later bills), via the `tests/evals/test_agent_context_delta.py` structural eval:
 
 | Route | Input context tokens | Files read | What entered context |
 |---|---|---|---|
-| **graph-guided** | **392** | 1 source (+ index.md + hot.md) | `obsidian/index.md`, `obsidian/hot.md`, `polygons/polygons.py` |
-| **naive** | **1729** | 8 | all of `data/broken-python/**` |
+| **graph-guided** | **406** | 1 source (+ index.md + hot.md) | `obsidian/index.md`, `obsidian/hot.md`, `polygons/polygons.py` |
+| **naive** | **1743** | 8 | all of `data/broken-python/**` |
 
-- **Input-token reduction: 77.3%** `(1729 − 392) / 1729`.
+- **Input-token reduction: 76.7%** `(1743 − 406) / 1743`.
 - Comfortably clears the R4.1 bar (the eval asserts ≥ 50%).
 
 Reproduce (no API key):

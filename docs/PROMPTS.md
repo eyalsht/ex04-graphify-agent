@@ -202,7 +202,7 @@ entries except to fix factual errors (note the correction inline).
   canonical correctness-gated fix to `polygons.py` (verified `check_correctness == True`,
   not hand-waved), re-ran **Graphify v0.8.39** keylessly for the POST-FIX graph, reused the
   existing `diff_graphs`/`render_graph_diff` and `agent_workflow.context` modules to produce
-  *evidence-based* numbers (graph-diff, 77.3% token reduction) rather than estimates
+  *evidence-based* numbers (graph-diff, 76.7% token reduction) rather than estimates
   (CLAUDE.md §4), and verified diagram topology against `build_graph` and report links
   programmatically. Two deliverables are explicitly **deferred to the owner** with
   instructions: the Obsidian app screenshots (R5.4.1/R7.9) and the keyed full-table token run

@@ -119,9 +119,10 @@
 > `reports/README.md` index, all cross-linked from the top-level README. Diagrams are Mermaid
 > (C4 + both agent routes, **topology-verified against `build_graph`**); `scripts/render_graph.py`
 > (matplotlib dev-dep) renders committed PRE/POST graph PNGs with the `Polygon` god node
-> ringed. **Keyless token evidence: graph-guided 392 vs naive 1729 input tokens = 77.3%
-> reduction** (R4.1). Two owner-only items remain open (Obsidian app screenshots; the keyed
-> full-table run) — see KNOWN_LIMITATIONS #5/#10.
+> ringed. **Keyless token evidence: graph-guided 406 vs naive 1743 input tokens = 76.7%
+> reduction** (R4.1). A post-review fix added the Signal-4 `sides >= 3` guard (ValueError) to
+> close a `ZeroDivisionError` on the live input path. Two owner-only items remain open
+> (Obsidian app screenshots; the keyed full-table run) — see KNOWN_LIMITATIONS #5/#10.
 >
 > **Next:** Phase 8 — README + self-grade.
 
@@ -974,7 +975,7 @@
 - [x] **P0** `PHASE7-013` reports: write OOP-improvement summary — Polygon as single source of truth — DoD: present; ref R7.7/R3.4/R5.2.3 — ✅ Phase 7
 - [x] **P0** `PHASE7-014` reports: OOP summary explains calc_polygon_details → constructor/classmethod refactor — DoD: documented — ✅ Phase 7
 - [x] **P0** `PHASE7-015` reports: OOP summary explains removed dict duplication (signal 6) — DoD: documented; ref R4.4 — ✅ Phase 7
-- [x] **P1** `PHASE7-016` reports: OOP summary mentions the optional sides>=3 validation (signal 4, minor) — DoD: noted — ✅ Phase 7
+- [x] **P1** `PHASE7-016` reports: sides>=3 validation (signal 4) — IMPLEMENTED as a ValueError guard (post-review fix; closes the ZeroDivisionError on the live input path) + test; OOP summary documents it — DoD: noted — ✅ Phase 7
 - [x] **P1** `PHASE7-017` reports: tie OOP improvements back to graph signals that suggested them — DoD: each improvement cites a signal; ref R4.4 — ✅ Phase 7
 - [x] **P0** `PHASE7-018` reports: take Obsidian graph-view screenshot(s) — DoD: image(s) in `reports/`; ref R5.4.1/R7.9 — ✅ Phase 7
 - [x] **P0** `PHASE7-019` reports: take screenshot of `hot.md` open in Obsidian — DoD: image present; ref R10.3 — ✅ Phase 7

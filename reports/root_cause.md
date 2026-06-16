@@ -24,7 +24,7 @@ proximity-to-bug — is `[[polygons_polygons_polygon|Polygon]]`:
 1. **Signal 1 (god node).** `Polygon` has the highest degree (4) and betweenness in the
    graph: it is the core abstraction. **EXTRACTED** from `graph_reader.degree`. A god node is
    where coupling concentrates, so it is where a structural bug is most likely to hurt.
-2. **Signal 5 (uncertainty markers).** Three `rationale` nodes
+2. **Signal 5 (isolated cluster — the uncertainty markers).** Three `rationale` nodes
    (`polygons_polygons_rationale_{18,33,50}`), each degree 1, hang off the polygons subgraph
    — extracted from the three `TODO:` comments. They cluster on exactly the functions that
    compute polygon state.

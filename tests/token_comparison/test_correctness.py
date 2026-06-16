@@ -10,7 +10,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ex04_graphify_agent.token_comparison.correctness import check_correctness
+import pytest
+
+from ex04_graphify_agent.token_comparison.correctness import _exec_module, check_correctness
 
 _FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
@@ -62,6 +64,19 @@ def test_draw_polygon_hardcoded_six_fails() -> None:
         "for i in range(0, polygon.sides):", "for i in range(0, 6):"
     ).replace("t.right(360 / polygon.sides)", "t.right(60)")
     assert check_correctness(hardcoded) is False
+
+
+def test_calc_polygon_details_rejects_fewer_than_three_sides() -> None:
+    """Signal-4 critical-path guard: <3 sides is invalid geometry and would otherwise
+    ZeroDivisionError on `360 / sides`; calc_polygon_details must raise ValueError instead."""
+    namespace = _exec_module(_fixed_source())
+    assert namespace is not None
+    calc = namespace["calc_polygon_details"]
+    for bad in (2, 1, 0, -3):
+        with pytest.raises(ValueError):
+            calc(bad)
+    # A valid polygon still works (no over-eager guard).
+    assert calc(3).sides == 3
 
 
 def test_all_three_resolutions_must_hold() -> None:

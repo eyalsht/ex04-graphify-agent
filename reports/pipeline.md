@@ -55,14 +55,19 @@ correctly quiet here. One root cause, multiple corroborating signals:
 |---|---|---|---|
 | 1 — God node | **Yes (primary)** | `Polygon` degree 4, top betweenness | the core abstraction |
 | 2 — Ambiguous/INFERRED edge | minor | 2 INFERRED edges (0.8 / 0.9), both in mathsquiz/README | *not* the polygons bug (secondary) |
-| 3 — Broken path / missing file | elsewhere | `mathsquiz-final.py` node, file absent on disk | mathsquiz (out of scope) |
-| 4 — Isolated cluster | minor | `license_mit_license` isolated | not a bug |
-| 5 — Uncertainty markers | **Yes** | `rationale_{18,33,50}` from the 3 TODOs | the exact functions to fix |
+| 3 — Broken / missing path | elsewhere | `mathsquiz-final.py` node, file absent on disk | mathsquiz (out of scope) |
+| 4 — Critical-path break | **Yes (secondary)** | no `sides >= 3` validation before `calc_polygon_details`/`draw_polygon` | the `ZeroDivisionError` guard (now fixed) |
+| 5 — Isolated cluster | **Yes** | `rationale_{18,33,50}` (degree 1) from the 3 TODOs | the exact functions to fix |
 | 6 — Semantic duplication | **Yes** | dict keys ≡ `Polygon` constructor params | the dead-class duplication |
 
-Signals **{1, 5, 6} converge** on `Polygon` + `calc_polygon_details`. The fix resolves all
-three at once, which is why the POST-FIX graph loses the rationale nodes *and* gains the
-`calls→Polygon` edge ([`graph_diff.md`](graph_diff.md)).
+Signals **{1, 5, 6} converge** on the *root cause* — `Polygon` + `calc_polygon_details`; the
+fix resolves all three at once, which is why the POST-FIX graph loses the rationale nodes
+*and* gains the `calls→Polygon` edge ([`graph_diff.md`](graph_diff.md)). **Signal 4** is a
+distinct, secondary defect on the same critical path (missing `sides >= 3` validation) — it
+was initially deferred as "minor" but a code review correctly flagged that it crashes
+(`ZeroDivisionError` at `sides=0`) on the live `input()` path, so the fix now raises
+`ValueError` for `sides < 3` (see [`diff_polygons.md`](diff_polygons.md) #7,
+[`oop_improvement.md`](oop_improvement.md)).
 
 ## Research questions
 

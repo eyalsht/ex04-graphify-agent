@@ -3,8 +3,8 @@
 > The unified diff below is the **literal** `git diff` of the fix applied to
 > [`data/broken-python/polygons/polygons.py`](../data/broken-python/polygons/polygons.py).
 > The pristine PRE-FIX original is preserved in git history and in the sibling
-> `broken-python/` clone. The POST-FIX source passes the automated 3-part correctness
-> gate (`token_comparison.correctness.check_correctness` → `True`; see
+> `broken-python/` clone. The POST-FIX source passes the automated 3-part correctness gate
+> (`token_comparison.correctness.check_correctness` → `True`; see
 > [`root_cause.md`](root_cause.md)).
 >
 > Reproduce: `git diff <pre-fix-commit> -- data/broken-python/polygons/polygons.py`.
@@ -14,7 +14,7 @@
 ```diff
 --- a/data/broken-python/polygons/polygons.py
 +++ b/data/broken-python/polygons/polygons.py
-@@ -1,44 +1,28 @@
+@@ -1,44 +1,31 @@
  import turtle
  
 -class Polygon(Object):
@@ -45,12 +45,14 @@
 -    else:
 -        internal_angles_sum = 1000
 -        internal_angles = 200
-+    internal_angles_sum = (sides - 2) * 180
-+    internal_angle = internal_angles_sum / sides
++    if sides < 3:
++        raise ValueError(f"a polygon needs at least 3 sides, got {sides}")
  
 -    poly = new Polygon(sides, internal_angles_sum, internal_angles)
 -    print(poly)
--
++    internal_angles_sum = (sides - 2) * 180
++    internal_angle = internal_angles_sum / sides
+ 
 -    # return a dictionary containing info about the polygon
 -    # TODO: perhaps I should use the class Polygon instead!
 -    return {"sides": sides,
@@ -67,7 +69,7 @@
  
      # set up the screen and turtle
      scr = turtle.Screen()
-@@ -46,30 +30,21 @@ def draw_polygon(polygon_details):
+@@ -46,30 +33,21 @@ def draw_polygon(polygon_details):
      t.pen(pencolor="red", pensize=2, fillcolor="green")
  
      length_of_edge = 50
@@ -118,6 +120,7 @@
 | 4 | Returns a `dict` → returns a `Polygon` instance | L34–36 | Duplicated state — the `dict` shadows the class, so `Polygon` is **dead code** | Signal 6 (semantic duplication) + `TODO@L33` "perhaps I should use the class Polygon instead!" → `rationale_33` node |
 | 5 | `range(0, 6)` / `right(60)` → `range(0, polygon.sides)` / `right(360 / polygon.sides)` | L51–53 | Hardcoded hexagon — `draw_polygon` ignores `sides` | Signal 5 (`TODO@L50` "make this work for any type of polygon" → `rationale_50` node) |
 | 6 | `draw_polygon(polygon_details)` dict arg → `draw_polygon(polygon)` object arg | L41, L69 | API mismatch — consumes the now-unified `Polygon` object | Follows from #4 |
+| 7 | **Added `if sides < 3: raise ValueError(...)`** | (new) | Critical-path crash — `sides=0` → `ZeroDivisionError` on `360 / sides`; `sides=1/2` → invalid geometry | **Signal 4 (critical-path break)** — the missing geometric guard on the live `input()` path |
 
 ### TODO comments removed (R7.43)
 
@@ -134,9 +137,9 @@ Their disappearance is independently visible in the graph: the three
 
 ## Scope discipline (ADR-0003)
 
-The diff is intentionally focused: **6 edits, all inside `calc_polygon_details` / `Polygon`
-/ `draw_polygon`** — the single half-finished `Polygon` abstraction. No changes to
-`mathsquiz/` (out of scope, ADR-0003), no speculative refactors. This is one root cause with
-several symptoms, not a scattershot rewrite (R5.2.2 / R7.44). See
+The diff stays inside the single half-finished `Polygon` abstraction — `calc_polygon_details`
+/ `Polygon` / `draw_polygon`. No changes to `mathsquiz/` (out of scope, ADR-0003), no
+speculative refactors. This is one root cause with several symptoms plus the Signal-4 guard
+that closes the only crashing input path (R5.2.2 / R7.44). See
 [`root_cause.md`](root_cause.md) for the narrative and [`oop_improvement.md`](oop_improvement.md)
 for the OOP rationale.

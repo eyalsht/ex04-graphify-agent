@@ -80,12 +80,26 @@ longer needs to know anything except "give me a `Polygon`."
 `NameError`). Minor but foundational: signal 1's "core abstraction" cannot be central if it
 cannot be instantiated.
 
-## Minor / deliberately-not-done (R7.16)
+## Invariant enforcement — the Signal-4 guard (R7.16)
 
-- **`sides >= 3` validation** (signal 4, low priority): a real `Polygon` should reject
-  `sides < 3`. We did **not** add it, to keep the fix scoped to the documented root cause and
-  avoid changing observable behavior for valid input. It is recorded here and in
-  `docs/KNOWN_LIMITATIONS.md` as an intentional omission, not an oversight.
+- **`sides >= 3` validation** (signal 4): a real `Polygon` is only well-defined for ≥3 sides.
+  `calc_polygon_details` now raises `ValueError` for `sides < 3` **before** any arithmetic:
+
+  ```python
+  def calc_polygon_details(sides):
+      if sides < 3:
+          raise ValueError(f"a polygon needs at least 3 sides, got {sides}")
+      ...
+  ```
+
+  This is not cosmetic: the live script feeds `int(input(...))` straight into this function,
+  so without the guard `sides = 0` crashes with `ZeroDivisionError` on `360 / sides` (and
+  `sides = 1/2` produces invalid geometry). Guarding the constructor's precondition at the
+  factory is the OOP-correct place to defend the abstraction's invariant — an object should
+  never exist in an impossible state. Covered by
+  `test_calc_polygon_details_rejects_fewer_than_three_sides`. *(Originally deferred as
+  "minor"; a ruthless review correctly flagged it as a crashing bug on the critical path, so
+  it is now fixed rather than documented as an omission.)*
 
 ## Why this is the *right* OOP improvement (R10.2)
 

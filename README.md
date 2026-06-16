@@ -14,7 +14,7 @@ savings versus a naive "dump every file" baseline.
 > vault + `hot.md`, the LangGraph `agent_workflow`, `token_comparison`, and the **Phase-7
 > reports**). The bug is fixed (`data/broken-python/polygons/polygons.py` passes the 3-part
 > correctness gate), the POST-FIX graph is regenerated under `artifacts/graphify_post_fix/`,
-> and a keyless structural eval shows the graph-guided fix-context uses **77.3% fewer input
+> and a keyless structural eval shows the graph-guided fix-context uses **76.7% fewer input
 > tokens** than the naive dump.
 >
 > The full R5.6/R7.8 keyed numbers (output tokens, LLM calls, duration) come from a manual
@@ -61,7 +61,7 @@ The [`reports/`](reports/README.md) directory holds the graph-guided fix evidenc
 - [OOP-improvement summary](reports/oop_improvement.md) — `Polygon` as single source of truth
   (R3.4/R7.7).
 - [Graph diff](reports/graph_diff.md) — PRE vs POST structure (R5.6.3).
-- [Token comparison](reports/token_comparison.md) — 77.3% input-context reduction, keyless (R4.1/R7.8).
+- [Token comparison](reports/token_comparison.md) — 76.7% input-context reduction, keyless (R4.1/R7.8).
 - [Diagrams](reports/diagrams.md) — C4 + both agent routes (Mermaid, topology-verified, R5.4.2).
 - [Pipeline & research questions](reports/pipeline.md) — R4.3/R4.6/R4.7, six-signal convergence.
 - [Graph renders + Obsidian screenshot guide](reports/screenshots.md) — R5.4.1/R7.9/R10.3.

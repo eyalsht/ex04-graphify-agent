@@ -44,7 +44,7 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
 
 5. **Token-comparison: keyless layer done; keyed layer pending (Phase 7).** The *input-
    context* reduction — the independent variable of the thesis (R4.1) — is measured keylessly
-   and committed: **77.3%** (graph-guided 392 vs naive 1729 input tokens), reproducible via
+   and committed: **76.7%** (graph-guided 406 vs naive 1743 input tokens), reproducible via
    `uv run pytest -m eval` and documented in `reports/token_comparison.md`. The **full keyed
    table** (output tokens, # LLM calls, duration, end-to-end correctness; R5.6.2/R5.6.4/R7.8)
    still requires one live run per ADR-0005, via the provider set in `config/agent.json` (the

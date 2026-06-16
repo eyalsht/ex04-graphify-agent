@@ -13,6 +13,9 @@ class Polygon(object):
 # a regular version of the polygon
 def calc_polygon_details(sides):
 
+    if sides < 3:
+        raise ValueError(f"a polygon needs at least 3 sides, got {sides}")
+
     internal_angles_sum = (sides - 2) * 180
     internal_angle = internal_angles_sum / sides
 
