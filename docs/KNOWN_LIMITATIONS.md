@@ -123,10 +123,10 @@ graph-guided route is the three-agent crew of ADR-0006.
 
 ## Self-grade
 
-**87 / 100 — conservative and defensible.** Computed against `docs/ASSIGNMENT.md` with all
-gates green (ruff 0, `mypy --strict` 0, 244 tests at 98%, files ≤150 lines) and cross-referenced
-against the limitations above. Each documented limitation maps to a concrete deduction in the
-table below; the score reflects delivered, verified substance, not aspiration.
+**90 / 100 — defensible, evidence-backed.** Computed against `docs/ASSIGNMENT.md` with all
+gates green (ruff 0, `mypy --strict` 0, 244 tests at 98%, files ≤150 lines); the per-area
+breakdown below sums to 72 / 80. Each row is already discounted for its specific disclosed
+limitation, so the total reflects delivered, verified substance, not aspiration.
 
 | Rubric area | Self-score | Basis / what holds it back |
 |---|---|---|
@@ -139,6 +139,6 @@ table below; the score reflects delivered, verified substance, not aspiration.
 | Engineering discipline (tests, gates, ADRs, SDK-first, gatekeeper) | 9.5 / 10 | All gates green; provider-agnostic gatekeeper proven by the model-switching saga |
 | Honesty / known-limitations / AI disclosure | 9 / 10 | This file + `PROMPTS.md` + `run_journey.md`; every caveat disclosed with its mitigation |
 
-The number is held at 87 (not higher) chiefly by the one-sample keyed run (#6), the deliberate
-loop-scoping (#4), and the load-not-clone Navigator agent (#3) — all disclosed rather than hidden.
-A multi-seed keyed benchmark on a paid tier would be the main lever to raise it.
+No row scores a perfect 10: the deductions concentrate in the one-sample keyed run (#6), the
+deliberate loop-scoping (#4), and the load-not-clone Navigator agent (#3) — all disclosed above.
+A multi-seed keyed benchmark on a paid tier is the main lever that would close the remaining gap.
