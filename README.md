@@ -316,6 +316,26 @@ Getting the keyed run to pass meant changing models **three times** and re-tunin
 
 The only two *code* fixes landed exactly where provider quirks belong — the `GeminiClient` adapter (the sole module that imports the SDK) and the agent's output seam (`fix_target`) — both behind the protocol, both keyless-tested. That's the modularity claim, demonstrated rather than asserted. Full log: [`reports/run_journey.md`](reports/run_journey.md).
 
+## 🔧 Configuration & security
+
+**Everything is config-driven (CLAUDE.md §3 / [ADR-0002](docs/adr/0002-gatekeeper-present-or-omitted.md)).** No path, model id, price, threshold, or loop bound is hardcoded in code — they live in three JSON files, and [`scripts/check_no_hardcoded.py`](scripts/check_no_hardcoded.py) **fails CI** if a literal/secret/absolute path leaks into `src/`.
+
+| File | Holds |
+|---|---|
+| [`config/agent.json`](config/agent.json) | provider, model, `api_key_env`, temperature, output-token cap, loop bounds (`max_findings_tried`), rate limit + retry policy, and the USD `pricing` that drives the cost report |
+| [`config/paths.json`](config/paths.json) | the vault + target-repo paths (so no absolute path lives in code) |
+| [`config/weakness_thresholds.json`](config/weakness_thresholds.json) | the six-signal thresholds + the `hot.md` ranking weights (`0.6·degree + 0.4·betweenness`, `top_k`) |
+
+> Swapping the LLM is **one field** (`model`) — proven live: the keyed run changed models three times via [six edits, all in `config/agent.json`](#modularity-proven-live-the-model-switching-saga), zero code changes.
+
+**Secrets & keyless-by-default ([ADR-0005](docs/adr/0005-keyless-by-default-test-strategy.md)):**
+
+- **API key via `os.environ` only** — never in code, never in config. Even the env-var *name* is config (`api_key_env`, default `GEMINI_API_KEY`), so nothing about the secret is hardcoded.
+- `.env` is **gitignored** (`.env`, `.env.*`, `*.key`); only [`.env.example`](.env.example) — a placeholder — is committed. The **model is not a secret**: it lives in `config/agent.json`, not `.env`.
+- **The full suite + self-grade pass with no key** — the provider client is mocked at the gatekeeper boundary, so a grader with zero credentials still gets a green project. Only the one manual keyed run (`scripts/run_comparison.py`) ever reads `.env`.
+- **Single egress:** every external LLM call funnels through the provider-agnostic [`gatekeeper/`](src/ex04_graphify_agent/gatekeeper/) — rate-limit (30/min), retry (6× / 3s backoff), per-call token logging. Nothing else touches the provider.
+- Repo kept **private** so student IDs stay unindexed; no secret has ever been committed (scanner + `.gitignore`). Server-side branch protection isn't enforceable on the free tier — disclosed in [`KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) #10, mitigated by CI on every push/PR.
+
 ## 🎬 The agent in action (graph-guided trace)
 
 A real graph-guided run never reads raw source first — it reads the *map*:
