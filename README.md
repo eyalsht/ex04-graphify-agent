@@ -24,7 +24,7 @@ Authors: **Eyal Shtinmtez** (314884834) · **Imree Cohen** (312359284)
 <table>
 <tr>
 <td align="center"><b>76.7%</b><br/>fewer input-context tokens<sup>†</sup></td>
-<td align="center"><b>61.4%</b><br/>lower cost on the live run<sup>‡</sup></td>
+<td align="center"><b>20.7%</b><br/>lower cost on the live run<sup>‡</sup></td>
 <td align="center"><b>✅ vs ❌</b><br/>graph-guided fixed it; naive dump didn't</td>
 <td align="center"><b>6/6</b><br/>PART-C signals converge on the bug</td>
 </tr>
@@ -228,12 +228,13 @@ uv run pytest -m eval tests/evals/test_agent_context_delta.py   # asserts the �
 
 | Route | Input tok | Output tok | Cost (USD) | Correctness |
 |---|---|---|---|---|
-| **graph-guided** | 1559 | 1020 | **$0.0030** | ✅ **pass** |
-| **naive** | 3670 | 2684 | $0.0078 | ❌ fail |
+| **graph-guided** | 1559 | 1891 | **$0.0052** | ✅ **pass** |
+| **naive** | 3670 | 2180 | $0.0066 | ❌ fail |
 
-- **57.5% fewer input tokens · 61.4% lower total cost.**
+- **57.5% fewer input tokens · 20.7% lower total cost.**
 - **And graph-guided reached the correct fix while the naive dump did not** — the "Lost in the Middle" prediction (ADR-0004) on a live model: the curated context let the model fix the bug; the 8-file dump derailed it. So the savings come with **better** accuracy, not worse (R4.2).
 - **Cost = logged tokens × a config-driven rate** (`config/agent.json` `pricing`; $0.30/$2.50 per 1M in/out for `gemini-2.5-flash`). Swap the model and the report re-prices itself — no code change.
+- **The input-token cut is the deterministic, load-bearing number; the cost *gap* is noisier.** This row is the **second keyed run** — the one that exercises the three-agent crew ([§4](#-4-the-agent-workflow-r84)) — and the input figures are **byte-for-byte identical** to the pre-crew run (the crew adds no LLM calls). Total cost is output-token-bound (output is priced 8.3× input) and output length varies run-to-run even at `temperature=0`: the earlier monolithic run measured a 61.4% gap, this one 20.7%, with the same 57.5% input cut and the same pass/fail correctness both times. Full before/after: [`reports/crew_rerun_findings.md`](reports/crew_rerun_findings.md).
 
 > **Honest provenance.** Getting a clean keyed pass took real debugging (a spurious `function_call` dropping the patch, markdown-fenced output, a flaky model, and Pro being unavailable on the free tier). The whole model-switching log is in [`reports/run_journey.md`](reports/run_journey.md) — kept on purpose, because it's also the best live proof of the [modularity](#-architecture--modularity) below. The keyless 76.7% (Layer 1) remains the reproducible, key-free headline.
 
@@ -347,7 +348,7 @@ A real graph-guided run never reads raw source first — it reads the *map*:
 5. **`fix`** — with only `hot.md` + `index.md` + the one validated file in context, the model patches `Polygon` into the single source of truth.
 6. **`report`** — emits the root cause, tag, validation status, and diff.
 
-On the live run that path **fixed the bug at $0.0030**, while the naive route — handed all eight files at once — **failed**. Same model, same prompts for `plan/fix/report`; the only difference was *what entered context*. Diagram in [§4](#-4-the-agent-workflow-r84); topology verified against `build_graph` in [`reports/diagrams.md`](reports/diagrams.md).
+On the live run that path **fixed the bug at $0.0052**, while the naive route — handed all eight files at once — **failed**. Same model, same prompts for `plan/fix/report`; the only difference was *what entered context*. Diagram in [§4](#-4-the-agent-workflow-r84); topology verified against `build_graph` in [`reports/diagrams.md`](reports/diagrams.md).
 
 ## ✅ Every claim, checked
 

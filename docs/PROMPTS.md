@@ -293,6 +293,38 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-17 — Phase 9 (keyed re-run through the three-agent crew + evidence doc)
+
+- **Prompt summary:** Owner noted the project now has "a 3 agents run" and asked to **run the
+  project again**, document the differences, and add a **new findings doc** before deciding how
+  to update the README — then, after seeing the results, directed a new branch with the updated
+  docs + README plus `docs/TODO.md` (added tasks) and this `docs/PROMPTS.md` entry.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline; no subagents).
+  The keyed re-run itself called **Google `gemini-2.5-flash`** via the gatekeeper.
+- **AI-generated vs. human-reviewed/edited:** AI-authored. The orchestrator ran the keyless
+  layers first (`-m eval` 4 passed; full suite **244 @ 98%**), then the keyed
+  `scripts/run_comparison.py` **through the new crew** — the first keyed run that exercises the
+  Navigator/Analyst/Fixer topology (the committed numbers were from the pre-crew monolithic
+  agent, commit `0139ba5`). Result: **input tokens (1559 / 3670) and pass/fail correctness are
+  byte-for-byte identical** to the pre-crew run (the crew adds no LLM calls), so the deterministic
+  57.5% input cut and the "Lost in the Middle" win reproduced; only the **model-nondeterministic
+  output tokens/cost moved** (cost gap 61.4% → 20.7%, `$0.0052` vs `$0.0066`). A side finding: the
+  *old* committed ledgers were a mock stub (`output_tokens: 2`) that never matched the old report —
+  the new real ledgers now reconcile exactly, closing a latent CLAUDE.md §4 traceability gap. The
+  orchestrator wrote `reports/crew_rerun_findings.md` (before/after + the output-bound-cost caveat)
+  and refreshed the keyed cost figures across README §6, `token_comparison.md`, `run_journey.md`,
+  `reports/README.md`, `KNOWN_LIMITATIONS.md`, and ADR-0006. It also **root-caused and fixed** the
+  traceability gap itself: a keyless test (`test_compare_tokens_writes_report`) was dumping mock
+  ledgers to the tracked `artifacts/runs/` on every `pytest`, so the committed ledgers never
+  reflected the keyed run — fixed by threading a `runs_dir` through `Ex04Sdk.compare_tokens` and
+  pointing the test at `tmp_path` (gates re-run green: ruff 0, mypy 0, 244 @ 98%; keyed ledgers now
+  survive a full suite run). The **human owner** authorized the
+  billed run, decided after seeing the findings to update the docs, and asked for a new branch +
+  PR. Honest note: this is a **second** single keyed sample — the input cut is the deterministic,
+  load-bearing number; the cost gap is output-token-bound and varies run-to-run.
+
+---
+
 ## Template for future entries
 
 ```markdown

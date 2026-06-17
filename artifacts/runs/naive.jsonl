@@ -1,2 +1,2 @@
-{"run_id": "naive", "run_type": "naive", "node": "plan", "input_tokens": 30, "output_tokens": 2, "model": "gemini-2.5-flash"}
-{"run_id": "naive", "run_type": "naive", "node": "fix", "input_tokens": 1800, "output_tokens": 2, "model": "gemini-2.5-flash"}
+{"run_id": "naive", "run_type": "naive", "node": "plan", "input_tokens": 39, "output_tokens": 1182, "model": "gemini-2.5-flash"}
+{"run_id": "naive", "run_type": "naive", "node": "fix", "input_tokens": 3631, "output_tokens": 998, "model": "gemini-2.5-flash"}

@@ -60,9 +60,11 @@ blob* is itself part of the "Lost in the Middle" story (ADR-0004).
 ## Consequences
 - **Token instrumentation unchanged.** Only `plan` and `fix` call the gatekeeper; both are the
   shared node objects (AW-T8), now owned by the Navigator and Fixer agents respectively. The
-  crew adds **zero** LLM calls, so the committed keyless (76.7% / 406 vs 1743 tokens, 3 vs 8 files)
-  and keyed (`$0.0030` vs `$0.0078`) numbers remain valid with **no re-run** — verified after the
-  refactor.
+  crew adds **zero** LLM calls, so the committed keyless numbers (76.7% / 406 vs 1743 tokens,
+  3 vs 8 files) hold unchanged. A later **keyed re-run through the crew** confirmed this on a
+  live model: input tokens (1559 / 3670) and pass/fail correctness are **byte-for-byte
+  identical** to the pre-crew run; only the model-nondeterministic output tokens/cost moved
+  (cost gap 61.4% → 20.7%, `$0.0052` vs `$0.0066`). Evidence: `reports/crew_rerun_findings.md`.
 - **Behaviour-preserving.** The flat node execution order is identical
   (`plan → read_vault → hypothesize → validate → fix → report`); `node_names("graph_guided")` is
   now *derived* from `agents.CREW` so the diagram and the code cannot drift. Every pre-existing

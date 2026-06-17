@@ -18,7 +18,7 @@
 | 5 | `gemini-3.5-flash` | Repeated **503 "high demand"** storms; then **429 daily-quota** (free tier = 20 req/day per model — the 503-retries burned through it) | `gemini-3.5-flash` was both flaky and rate-capped for the day | Bumped gatekeeper retries (`3→6`, backoff `2→3 s`); still capped |
 | 6 | **`gemini-2.5-flash`** | ✅ **Completed.** graph-guided **PASS**, naive **FAIL** | Stable GA model, separate per-model quota, no 503s | **Kept as the configured model** |
 
-## The result (run #6)
+## The result (run #6 — first keyed pass, pre-crew monolithic agent)
 
 | Run | Input tok | Output tok | # calls | Cost (USD) | Correctness |
 |---|---|---|---|---|---|
@@ -28,8 +28,27 @@
 **57.5% fewer input tokens · 61.4% lower total cost · and graph-guided reached the correct
 fix while the full-repo dump did not** — the "Lost in the Middle" prediction (ADR-0004),
 realized on a live model: the curated `hot.md` + one validated file let `gemini-2.5-flash`
-fix the bug; the 8-file dump derailed it. Numbers trace to the committed gatekeeper ledgers
-under [`../artifacts/runs/`](../artifacts/runs/).
+fix the bug; the 8-file dump derailed it.
+
+## Confirmation run (post-crew — the current committed ledgers)
+
+After the graph-guided route was rebuilt as the three-agent crew (Navigator / Analyst /
+Fixer, ADR-0006), the comparison was re-run keyed on the same model. This is the run whose
+ledgers are now committed under [`../artifacts/runs/`](../artifacts/runs/), and it is the
+source of the [`token_comparison.md`](token_comparison.md) numbers:
+
+| Run | Input tok | Output tok | # calls | Cost (USD) | Correctness |
+|---|---|---|---|---|---|
+| **graph_guided** | 1559 | 1891 | 2 | **$0.0052** | ✅ **pass** |
+| naive | 3670 | 2180 | 2 | $0.0066 | ❌ fail |
+
+The **input tokens (1559 / 3670) and the pass/fail correctness are identical** to run #6 —
+the crew adds no LLM calls, so the deterministic 57.5% input cut and the "Lost in the
+Middle" result reproduce exactly. The **output tokens and cost moved** (cost gap 61.4% →
+20.7%) because output length is model-nondeterministic even at `temperature=0`, and total
+cost is output-bound (output priced 8.3× input). One keyed run is one sample; the input cut
+is the load-bearing number. Full before/after analysis:
+[`crew_rerun_findings.md`](crew_rerun_findings.md).
 
 ## Why this is a modularity proof, not just a war story
 
