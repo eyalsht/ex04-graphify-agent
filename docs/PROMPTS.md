@@ -211,6 +211,67 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-17 — Phase 8 (README glow-up + LICENSE)
+
+- **Prompt summary:** Owner directed the orchestrator to start Phase 8 and "go the extra
+  mile" making the top-level `README.md` modern and compelling for the (AI-agent) grader —
+  showcasing the work without losing rigor — and to use `grill-me` to confirm any decision.
+  The orchestrator ran a `grill-me` interview that resolved four design decisions: (1) voice
+  = **confident + evidence-backed** (not marketing hype, since a rigorous AI grader rewards
+  requirement coverage + verifiable claims and penalizes unsubstantiated superlatives);
+  (2) **all nine §8 sections inline** (R8.1–R8.9) with a requirement-coverage map, so the
+  grader finds each `R8.x` on the page; (3) visuals = hero block + **9 static badges** +
+  embedded **Mermaid** (both agent routes) + the committed graph/Obsidian images, with
+  `<details>` for long command blocks; (4) the headline **76.7%** token stat is presented as
+  the hero number **with an inline scope footnote** (keyless input-context measurement; the
+  full keyed run is still a documented open item). A follow-up prompt then asked to update
+  `docs/TODO.md` + `docs/PROMPTS.md`, open a new `phase8/readme` branch, and commit.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline; no subagents).
+- **AI-generated vs. human-reviewed/edited:** AI-authored. The orchestrator rewrote
+  `README.md` end-to-end and **verified the claims rather than asserting them**: it ran the
+  full suite (**221 tests @ 97%**) to source the test/coverage badges, confirmed every
+  referenced file/image path resolves, checked the embedded figure numbers against
+  `reports/screenshots.md`, and validated the TOC anchors against GitHub's emoji-stripping
+  rule. It discovered the README linked a **non-existent `LICENSE`** (the prior README had the
+  same dead link) and added a real MIT `LICENSE` (pyproject already declared MIT). The
+  **human owner** drove every design decision through the `grill-me` interview (voice,
+  structure, visual set, and how honestly to scope the 76.7% claim) and explicitly chose the
+  recommended option at each branch. Honest note: README prose is AI-drafted and still merits
+  a final human read-through before submission (R10.1); `scripts/self_grade.py` and the keyed
+  token run remain open Phase-8 items.
+
+---
+
+### 2026-06-17 — Phase 8 (keyed token+cost run, live-run fixes, cost layer, run journey)
+
+- **Prompt summary:** Owner pointed at a sibling project's README (`Imreec/agent-debate`) and
+  asked to study its creative presentation, then upgrade ours to **showcase modularity** and
+  **add a real cost analysis**, using `grill-me` for decisions. A grill confirmed: (1) cost via
+  config-driven pricing + a dumped JSONL ledger (traceable, not hand-typed); (2) port the
+  module table, an annotated agent-run, a claims→check map, QA layers, and a doc index; (3) the
+  owner chose to **do a real keyed run** to get actual costs (not a projection). A follow-up
+  asked to **record the whole model-switching saga** in the reports + README.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline). The keyed
+  run itself called **Google `gemini-2.5-flash`** via the gatekeeper (the product under test).
+- **AI-generated vs. human-reviewed/edited:** AI-authored under the gates (TDD for the new
+  code; ruff 0, mypy 0, **235 tests @ 97.65%**). Work: a config-driven **cost layer**
+  (`token_comparison/cost.py` + a Cost (USD) report section + JSONL ledger dump in `run_both`,
+  so cost = logged tokens × `config/agent.json` `pricing`, CLAUDE.md §4); and two **live-run
+  robustness fixes** the real runs surfaced — `GeminiClient` disabling automatic
+  function-calling + `join_text_parts` (a spurious `function_call` was dropping the patch),
+  and `fix_target._strip_code_fence` (markdown-fenced replies were not executable). The keyed
+  run took **six attempts across three models** (`gemini-3.5-flash` function_call+503+daily-
+  quota issues; `gemini-3.1-pro` 404→429 *unavailable on the free tier*; → `gemini-2.5-flash`
+  **passed**): graph-guided **passed** correctness at **$0.0030** vs naive **failed** at
+  $0.0078 (57.5% fewer input tokens, 61.4% lower cost — the "Lost in the Middle" effect live).
+  Every model/retry/pricing change was **one field in `config/agent.json`** (zero gatekeeper/
+  agent changes) — recorded in the new `reports/run_journey.md` as honest provenance (R10.4)
+  and a live modularity proof. The **human owner** drove all `grill-me` decisions, authorized
+  the billed run, and asked for the saga to be documented. Honest notes: one live sample (not a
+  benchmark); Pro tier untested (free-key quota = 0); prose still merits a final human read.
+
+---
+
 ## Template for future entries
 
 ```markdown

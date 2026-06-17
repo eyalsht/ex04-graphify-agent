@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 from ex04_graphify_agent.gatekeeper.config import repo_root
+from ex04_graphify_agent.token_comparison import cost
 from ex04_graphify_agent.token_comparison.models import ComparisonResult, RunMetrics
 
 _PATHS_CONFIG = "config/paths.json"
@@ -48,6 +49,8 @@ def render_report(result: ComparisonResult) -> str:
         'cause").',
         "",
         *_narrative(result),
+        "",
+        *_cost_section(result),
     ]
     return "\n".join(lines) + "\n"
 
@@ -84,4 +87,40 @@ def _narrative(result: ComparisonResult) -> list[str]:
         "",
         "## R4.2 - Accuracy cost",
         result.correctness_delta,
+    ]
+
+
+def _model_id() -> str:
+    """The configured provider model id (provenance for the cost numbers)."""
+    from ex04_graphify_agent.gatekeeper.config import load_agent_config
+
+    return str(load_agent_config().get("model", "unknown"))
+
+
+def _cost_section(result: ComparisonResult) -> list[str]:
+    """USD cost per run + total-cost reduction, from config rates x logged tokens (R4.1)."""
+    pricing = cost.load_pricing()
+    rate_in = pricing["input_per_million_usd"]
+    rate_out = pricing["output_per_million_usd"]
+    g = cost.cost_usd(result.graph_guided.input_tokens, result.graph_guided.output_tokens, pricing)
+    n = cost.cost_usd(result.naive.input_tokens, result.naive.output_tokens, pricing)
+    pct = round(100.0 * (n - g) / n, 1) if n else 0.0
+    return [
+        "## Cost (USD)",
+        (
+            f"Model: `{_model_id()}`. Rates (config-driven, `config/agent.json` `pricing`): "
+            f"${rate_in:g}/1M input, ${rate_out:g}/1M output. Token counts trace to the "
+            "gatekeeper JSONL ledger (`artifacts/runs/`); cost = logged tokens x these rates."
+        ),
+        "",
+        "| Run | Cost (USD) |",
+        "|---|---|",
+        f"| graph_guided | ${g:.4f} |",
+        f"| naive | ${n:.4f} |",
+        "",
+        f"Graph-guided cost **${g:.4f}** vs naive **${n:.4f}** — **{pct:g}% lower total cost**.",
+        "",
+        "> This is the keyed live run. The keyless, reproducible input-context delta (76.7%, "
+        "`uv run pytest -m eval`) and the full model-switching log are in "
+        "[`run_journey.md`](run_journey.md).",
     ]

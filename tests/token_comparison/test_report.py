@@ -50,6 +50,20 @@ def test_render_report_includes_narrative_sections() -> None:
     assert "## R4.2 - Accuracy cost" in report
 
 
+def test_render_report_includes_cost_section_with_usd() -> None:
+    """Cost (USD) section: per-run dollars from config rates x logged tokens + reduction."""
+    from ex04_graphify_agent.token_comparison import cost
+
+    tc = TokenComparison()
+    report = tc.render_report(_result(tc))  # type: ignore[arg-type]
+    pricing = cost.load_pricing()
+    graph_cost = cost.cost_usd(1200, 80, pricing)
+    naive_cost = cost.cost_usd(8000, 80, pricing)
+    assert "## Cost (USD)" in report
+    assert f"${graph_cost:.4f}" in report
+    assert f"${naive_cost:.4f}" in report
+
+
 def test_write_report_writes_file(tmp_path: Path) -> None:
     tc = TokenComparison()
     out_path = tmp_path / "token_comparison.md"

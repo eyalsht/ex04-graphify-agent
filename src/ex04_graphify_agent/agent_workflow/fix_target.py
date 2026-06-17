@@ -8,12 +8,17 @@ naive route has no hypothesis, so the LLM declares the file it fixed on a leadin
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from ex04_graphify_agent.agent_workflow import config
 from ex04_graphify_agent.agent_workflow.state import AgentState
 
 _FILE_TAG = "FILE:"
+# A line-oriented code fence: ``` + optional language tag + newline, capturing up to the
+# closing fence. Anchored on a newline after the tag, so inline backticks in prose
+# (e.g. ``new``) cannot be mistaken for a block opener.
+_FENCE = re.compile(r"```[ \t]*\w*\n(.*?)```", re.DOTALL)
 
 
 def graph_target(state: AgentState) -> str:
@@ -43,10 +48,15 @@ def original_source(state: AgentState, target: str | None) -> str:
 
 
 def fixed_content(state: AgentState, llm_text: str) -> str:
-    """The post-fix file contents from the LLM (naive strips its leading ``FILE:`` line)."""
-    if state["run_type"] == "naive":
-        return _strip_file_line(llm_text)
-    return llm_text or (state["validated_source"] or "")
+    """The post-fix file contents from the LLM, stripped of any markdown fence/prose.
+
+    A live model often wraps the file in a ```` ```python ... ``` ```` block or adds a
+    preamble; we keep only the code so ``check_correctness`` runs the real fix. Naive also
+    drops its leading ``FILE:`` line first.
+    """
+    text = _strip_file_line(llm_text) if state["run_type"] == "naive" else llm_text
+    code = _strip_code_fence(text or "")
+    return code or (state["validated_source"] or "")
 
 
 def scratch_name(target: str) -> str:
@@ -63,7 +73,21 @@ def _named_file(text: str) -> str | None:
 
 
 def _strip_file_line(text: str) -> str:
+    """Return everything after the first ``FILE:`` line (anywhere), else the text unchanged.
+
+    Consistent with ``_named_file`` (which scans every line): the ``FILE:`` marker declares
+    the path and the file body follows it, so any preamble plus the marker line are dropped.
+    """
     lines = text.splitlines()
-    if lines and lines[0].strip().upper().startswith(_FILE_TAG):
-        return "\n".join(lines[1:]).lstrip("\n")
+    for i, line in enumerate(lines):
+        if line.strip().upper().startswith(_FILE_TAG):
+            return "\n".join(lines[i + 1 :]).lstrip("\n")
     return text
+
+
+def _strip_code_fence(text: str) -> str:
+    """Return the first line-oriented ```-fenced block's code, else the text unchanged."""
+    match = _FENCE.search(text)
+    if match:
+        return match.group(1).strip("\n")
+    return text.strip("\n")
