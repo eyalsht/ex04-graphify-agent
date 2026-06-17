@@ -270,6 +270,27 @@ entries except to fix factual errors (note the correction inline).
   the billed run, and asked for the saga to be documented. Honest notes: one live sample (not a
   benchmark); Pro tier untested (free-key quota = 0); prose still merits a final human read.
 
+### 2026-06-17 — Phase 9 (multi-agent crew: Navigator / Analyst / Fixer)
+
+- **Prompt summary:** Restructure the graph-guided route from one flat `StateGraph` into the
+  three specialist agents the lecture asks for (§11.1.4): GitHub/clone, graph-analysis, refactor.
+  Built as three composed LangGraph subgraphs — **Navigator** (`plan`→`read_vault`), **Analyst**
+  (`hypothesize`→`validate`, owning the bounded loop), **Fixer** (`fix`) — under a deterministic
+  orchestrator, with ADR-0006 recording the decision (and reconciling ADR-0001's earlier
+  "multi-agent not needed" line). The human owner chose the **Navigator / Analyst / Fixer** names
+  over the literal role words. Also folded in: the self-grade (87/100), the bounded-loop framing,
+  and a README/test-count refresh (244 @ 98%).
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (1M context), strict TDD (RED tests first).
+- **AI-generated vs. human-reviewed/edited:** The crew code, tests, ADR-0006, and the diagram/doc
+  updates are AI-drafted. The refactor was deliberately **behaviour-preserving** — only `plan` and
+  `fix` call the LLM, so regrouping the six nodes into three agents left every LLM call and the
+  per-node context unchanged; token parity verified identical (406 vs 1743 input tokens, 76.7%),
+  so the committed keyed-run ledgers stay valid with no re-run. The **human owner** chose the
+  multi-agent rebuild (over a docs-only reconciliation), picked the agent names, and asked for the
+  work on a feature branch + PR left open for review. Honest note: the **Navigator** loads/navigates
+  the committed Graphify map rather than cloning live (target repo vendored, artifacts committed),
+  and the supervisor is deterministic — both disclosed in ADR-0006 and `KNOWN_LIMITATIONS.md` #3.
+
 ---
 
 ## Template for future entries
