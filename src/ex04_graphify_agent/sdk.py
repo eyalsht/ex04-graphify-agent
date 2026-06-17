@@ -70,14 +70,19 @@ class Ex04Sdk:
         graph = graph_def.build_graph(rt, deps)
         return cast("AgentState", graph.invoke(nodes.initial_state(rt)))
 
-    def compare_tokens(self, report_path: str | Path | None = None) -> Path:
+    def compare_tokens(
+        self, report_path: str | Path | None = None, runs_dir: str | Path | None = None
+    ) -> Path:
         """Run both routes, compare token usage, and write ``reports/token_comparison.md``.
 
         Thin delegation to ``token_comparison.TokenComparison`` (R5.6 / R7.8). Keyless by
         default — both runs use the gatekeeper's MockClient when no provider key is set.
+        ``runs_dir`` is where the per-call gatekeeper ledgers are dumped (defaults to the
+        config-driven ``artifacts/runs/`` so the manual keyed run populates the committed
+        ledgers); tests pass a tmp dir so the keyless suite never overwrites them.
         """
         from .token_comparison import TokenComparison
 
         comparison = TokenComparison()
-        result = comparison.run_both(self)
+        result = comparison.run_both(self, runs_dir=runs_dir)
         return comparison.write_report(result, path=report_path)
