@@ -17,9 +17,12 @@ def test_agent_config_dict_exposes_provider_and_api_key_env() -> None:
     assert cfg["api_key_env"] == "GEMINI_API_KEY"
 
 
-def test_model_is_not_hardcoded_in_code() -> None:
-    # D6: model is intentionally empty in config; code must not pin one.
-    assert config.agent_config()["model"] == ""
+def test_model_is_config_driven_not_hardcoded() -> None:
+    # D6: the model id is supplied by config/agent.json (config-driven, swappable),
+    # never pinned in code — and specifically never a Claude Haiku default.
+    model = config.agent_config()["model"]
+    assert model, "config/agent.json 'model' must name a provider model id for the real run"
+    assert "haiku" not in model.lower()
 
 
 def test_resolves_vault_and_repo_paths() -> None:
