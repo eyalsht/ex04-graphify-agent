@@ -55,8 +55,12 @@ counts with `{run_type, node}` — the typed state makes that tagging unambiguou
   orchestrates LLM calls internally, which makes per-call token instrumentation and
   deterministic, node-by-node state harder to expose cleanly for the R5.6 comparison. The
   crew abstraction also gives looser control over the exact number of LLM calls (and thus
-  cost), which weakens the credibility of an apples-to-apples token report. Its strengths
-  (multi-agent role play) are not needed for a single graph-guided debugging agent.
+  cost), which weakens the credibility of an apples-to-apples token report. CrewAI's headline
+  strength — multi-agent role play — is **not given up** by this choice: the assignment's
+  three-role crew (Navigator / Analyst / Fixer) is realized as composed LangGraph
+  **subgraphs** instead (see **ADR-0006**), which keeps the multi-agent structure *and* every
+  LLM call individually attributable. This ADR is only about the *framework*; ADR-0006 supersedes
+  the earlier framing that read multi-agent design as unnecessary.
 - **Raw provider-SDK loop, no framework** — *Rejected.* A hand-rolled loop would give
   maximum control over calls but provides no resumability, no typed state object, and no
   graph structure to render — making the R5.4.2 / R7.3 workflow diagram a manual artifact
