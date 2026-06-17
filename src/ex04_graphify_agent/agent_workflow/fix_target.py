@@ -15,7 +15,10 @@ from ex04_graphify_agent.agent_workflow import config
 from ex04_graphify_agent.agent_workflow.state import AgentState
 
 _FILE_TAG = "FILE:"
-_LANG_TAG = re.compile(r"^[A-Za-z0-9_+-]{1,15}$")
+# A line-oriented code fence: ``` + optional language tag + newline, capturing up to the
+# closing fence. Anchored on a newline after the tag, so inline backticks in prose
+# (e.g. ``new``) cannot be mistaken for a block opener.
+_FENCE = re.compile(r"```[ \t]*\w*\n(.*?)```", re.DOTALL)
 
 
 def graph_target(state: AgentState) -> str:
@@ -70,18 +73,21 @@ def _named_file(text: str) -> str | None:
 
 
 def _strip_file_line(text: str) -> str:
+    """Return everything after the first ``FILE:`` line (anywhere), else the text unchanged.
+
+    Consistent with ``_named_file`` (which scans every line): the ``FILE:`` marker declares
+    the path and the file body follows it, so any preamble plus the marker line are dropped.
+    """
     lines = text.splitlines()
-    if lines and lines[0].strip().upper().startswith(_FILE_TAG):
-        return "\n".join(lines[1:]).lstrip("\n")
+    for i, line in enumerate(lines):
+        if line.strip().upper().startswith(_FILE_TAG):
+            return "\n".join(lines[i + 1 :]).lstrip("\n")
     return text
 
 
 def _strip_code_fence(text: str) -> str:
-    """Return the first ```-fenced block's code, or the text unchanged if there is no fence."""
-    if "```" not in text:
-        return text.strip("\n")
-    block = text.split("```", 2)[1]
-    lines = block.splitlines()
-    if lines and _LANG_TAG.match(lines[0].strip()):
-        lines = lines[1:]
-    return "\n".join(lines).strip("\n")
+    """Return the first line-oriented ```-fenced block's code, else the text unchanged."""
+    match = _FENCE.search(text)
+    if match:
+        return match.group(1).strip("\n")
+    return text.strip("\n")

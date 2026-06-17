@@ -40,3 +40,15 @@ def test_fixed_content_plain_code_unchanged() -> None:
 def test_fixed_content_naive_strips_file_line_then_fence() -> None:
     text = f"FILE: polygons/polygons.py\n```python\n{_CODE}\n```"
     assert fix_target.fixed_content(_state("naive"), text) == _CODE
+
+
+def test_fixed_content_naive_file_line_not_on_first_line() -> None:
+    # _named_file scans all lines for FILE:; _strip_file_line must agree (preamble + marker dropped)
+    text = f"Sure, here is your fix:\nFILE: polygons/polygons.py\n{_CODE}"
+    assert fix_target.fixed_content(_state("naive"), text) == _CODE
+
+
+def test_fixed_content_ignores_inline_backticks_before_real_fence() -> None:
+    # a line-oriented fence must win over inline backticks earlier in the prose
+    text = f"I noticed you used ```new```. Here is the fix:\n```python\n{_CODE}\n```"
+    assert fix_target.fixed_content(_state("graph_guided"), text) == _CODE
