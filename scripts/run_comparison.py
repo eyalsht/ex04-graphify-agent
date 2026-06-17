@@ -12,11 +12,23 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 _SRC = Path(__file__).resolve().parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from ex04_graphify_agent.gatekeeper.config import load_agent_config  # noqa: E402
+
+
+def _load_local_env() -> None:
+    """Load a local ``.env`` (manual real run only) so the provider key reaches os.environ.
+
+    Invoked solely from ``__main__`` below — never from ``main()`` — so the keyless test
+    suite (ADR-0005) never auto-loads a developer's local key. ``.env`` is gitignored;
+    the key is read from ``os.environ`` by the gatekeeper, never from any config file.
+    """
+    load_dotenv()
 
 
 def _missing_key_message(env_var: str) -> str:
@@ -46,4 +58,5 @@ def _run_real_comparison() -> int:  # pragma: no cover - requires a real provide
 
 
 if __name__ == "__main__":  # pragma: no cover
+    _load_local_env()
     raise SystemExit(main(sys.argv[1:]))

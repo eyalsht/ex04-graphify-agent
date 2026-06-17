@@ -36,7 +36,14 @@ uv run ex04 hot          # (re)generate obsidian/hot.md from the PRE-FIX graph (
 
 The real token-comparison numbers (one manual run, requires a provider API key — likely
 `GEMINI_API_KEY`) are produced separately and committed as static artifacts under
-`reports/` + `docs/evidence/`, so grading never needs a key (see `docs/adr/0005-*`).
+`reports/` + `docs/evidence/`, so grading never needs a key (see `docs/adr/0005-*`). For
+that manual run, copy `.env.example` → `.env` and set your key (the `.env` is gitignored and
+auto-loaded only by `scripts/run_comparison.py`); pick the model in `config/agent.json`:
+
+```bash
+cp .env.example .env          # then edit: GEMINI_API_KEY=...
+uv run python scripts/run_comparison.py
+```
 
 ## Navigating the graph (Obsidian vault)
 

@@ -1,6 +1,6 @@
 {
   "provider": "gemini",
-  "model": "",
+  "model": "gemini-3.5-flash",
   "api_key_env": "GEMINI_API_KEY",
   "temperature": 0.0,
   "max_output_tokens": 4096,
@@ -8,5 +8,5 @@
   "max_validation_attempts": 1,
   "rate_limit_per_minute": 30,
   "retry": { "max_attempts": 3, "backoff_seconds": 2.0 },
-  "_notes": "model is intentionally empty (D6): provider/model are decided at run time and never hardcoded; a non-empty model must be set before the Phase-6 real run. provider is config-driven; the gatekeeper is provider-agnostic."
+  "_notes": "provider/model are config-driven here, never hardcoded in code (D6). Change 'model' to any provider model id to switch (e.g. gemini-3.5-flash, gemini-3-pro); confirm the exact id in Google AI Studio. The gatekeeper is provider-agnostic. The API key is NEVER stored here: it is read from os.environ via the var named by 'api_key_env' (loaded from a gitignored .env on the manual real run)."
 }

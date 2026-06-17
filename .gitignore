@@ -13,6 +13,8 @@ htmlcov/
 # Secrets — never commit a provider API key (e.g. GEMINI_API_KEY)
 .env
 .env.*
+# committed template only — carries a placeholder, never a real key
+!.env.example
 *.key
 
 # The pristine upstream clone of martinpeck/broken-python lives beside the vendored
@@ -33,3 +35,4 @@ Thumbs.db
 .idea/
 .vscode/
 graphify-out/
+obsidian/HW4/

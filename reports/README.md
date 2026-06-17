@@ -34,7 +34,7 @@ The POST-FIX graph itself was produced keylessly with `graphify update data/brok
 
 ## Open items (owner action — see `docs/KNOWN_LIMITATIONS.md`)
 
-1. **Obsidian screenshots** — capture the 4 PNGs per [`screenshots.md`](screenshots.md) §2.
+1. ✅ **Obsidian screenshots** — captured (Figures 3–6 in [`screenshots.md`](screenshots.md) §2).
 2. **Keyed token run** — set a model in `config/agent.json` + `GEMINI_API_KEY`, then
    `uv run python scripts/run_comparison.py` to fill the full R5.6.5 table in
-   [`token_comparison.md`](token_comparison.md).
+   [`token_comparison.md`](token_comparison.md). *(Only remaining open item.)*
