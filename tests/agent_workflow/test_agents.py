@@ -34,8 +34,8 @@ def test_navigator_agent_loads_map_without_reading_source(deps: NodeDeps) -> Non
     out = agent.invoke(nodes.initial_state("graph_guided"))
     assert out["vault_context"]
     assert "polygon" in out["vault_context"].lower()
-    assert out["validated_source"] is None          # the Analyst hasn't run
-    assert len(out["files_read"]) == 2              # index.md + hot.md only
+    assert out["validated_source"] is None  # the Analyst hasn't run
+    assert len(out["files_read"]) == 2  # index.md + hot.md only
     assert any(r["node"] == "plan" for r in out["token_usage"])
 
 
