@@ -1,31 +1,37 @@
-"""build_graph — ONE parameterized StateGraph keyed on run_type (ADR-0001, AW-T8).
+"""build_graph — the route compiler keyed on run_type (ADR-0001, ADR-0006, AW-T8).
 
-A single compiled graph selects its route by ``run_type``; the shared plan/fix/report node
-objects are reused across both routes so the gatekeeper token instrumentation is identical
-(the comparison measures context strategy alone). The graph-guided route adds a bounded
-validate->hypothesize loop: an unconfirmed AMBIGUOUS finding falls through to the next-ranked
-finding (findings_tried += 1) and terminates at max_findings_tried (AW-E1/AW-T6).
+``run_type`` selects the topology. **graph_guided** is a three-agent crew (ADR-0006): the
+orchestrator wires the Navigator -> Analyst -> (Fixer | report) specialist subgraphs from
+``agents.py``. **naive** is the deliberately monolithic baseline (one flat pipeline) — the
+"Lost in the Middle" control. The shared plan/fix/report node objects are reused across both
+routes so the gatekeeper token instrumentation is identical (the comparison measures context
+strategy alone). The analysis agent owns the bounded validate->hypothesize loop: an unconfirmed
+AMBIGUOUS finding falls through to the next-ranked finding (findings_tried += 1) and terminates
+at max_findings_tried (AW-E1/AW-T6); the orchestrator then skips refactor when nothing validated.
 """
 
 from __future__ import annotations
 
-from collections.abc import Callable
-
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from ex04_graphify_agent.agent_workflow import nodes
+from ex04_graphify_agent.agent_workflow import agents, nodes
 from ex04_graphify_agent.agent_workflow.deps import NodeDeps
 from ex04_graphify_agent.agent_workflow.state import AgentState, RunType
 
 _Builder = StateGraph[AgentState]
-_GRAPH_NODES = ["plan", "read_vault", "hypothesize", "validate", "fix", "report"]
 _NAIVE_NODES = ["plan", "dump_repo", "fix", "report"]
 
 
 def node_names(run_type: RunType) -> list[str]:
-    """The documented node order for each route (R5.3.3)."""
-    return list(_GRAPH_NODES) if run_type == "graph_guided" else list(_NAIVE_NODES)
+    """The documented node execution order for each route (R5.3.3).
+
+    For graph_guided this is the crew's nodes flattened in orchestration order plus the
+    orchestrator's final ``report`` — derived from ``agents.CREW`` so there is one source of truth.
+    """
+    if run_type == "graph_guided":
+        return [*agents.crew_flat(), "report"]
+    return list(_NAIVE_NODES)
 
 
 def shared_nodes(deps: NodeDeps) -> dict[str, nodes.Node]:
@@ -48,10 +54,10 @@ def build_graph(run_type: RunType, deps: NodeDeps) -> CompiledStateGraph[AgentSt
     return builder.compile()
 
 
-def _add(builder: _Builder, name: str, node: nodes.Node) -> None:
-    """Register a node. LangGraph 0.x ``add_node`` overloads only accept its internal
-    ``_Node``/``Runnable`` protocol types, not a plain partial-update ``Callable``; this one
-    precise, centralized ignore is the correct idiom (cleaner than a blanket ``cast(Any)``).
+def _add(builder: _Builder, name: str, node: object) -> None:
+    """Register a node or a compiled subgraph. LangGraph's ``add_node`` overloads only accept
+    its internal protocol types, not a plain partial-update ``Callable``; this one precise,
+    centralized ignore is the correct idiom (cleaner than a blanket ``cast(Any)``).
     """
     builder.add_node(name, node)  # type: ignore[call-overload]
 
@@ -69,34 +75,19 @@ def _wire_naive(builder: _Builder, shared: dict[str, nodes.Node], deps: NodeDeps
 
 
 def _wire_graph_guided(builder: _Builder, deps: NodeDeps, shared: dict[str, nodes.Node]) -> None:
-    _add(builder, "plan", shared["plan"])
-    _add(builder, "read_vault", nodes.make_read_vault(deps))
-    _add(builder, "hypothesize", nodes.make_hypothesize(deps))
-    _add(builder, "validate", nodes.make_validate(deps))
-    _add(builder, "fix", shared["fix"])
+    """Orchestrate the three specialist agents (ADR-0006): the Navigator, Analyst and Fixer
+    subgraphs are composed as nodes; the orchestrator owns the final ``report`` and the
+    post-analysis gate that skips the Fixer when the Analyst validated nothing."""
+    _add(builder, "navigator", agents.build_navigator_agent(deps, shared["plan"]))
+    _add(builder, "analyst", agents.build_analyst_agent(deps))
+    _add(builder, "fixer", agents.build_fixer_agent(deps, shared["fix"]))
     _add(builder, "report", shared["report"])
-    builder.add_edge(START, "plan")
-    builder.add_edge("plan", "read_vault")
-    builder.add_edge("read_vault", "hypothesize")
-    builder.add_edge("hypothesize", "validate")
+    builder.add_edge(START, "navigator")
+    builder.add_edge("navigator", "analyst")
     builder.add_conditional_edges(
-        "validate",
-        _route_after_validate(deps),
-        {"fix": "fix", "hypothesize": "hypothesize", "report": "report"},
+        "analyst",
+        agents._post_analyst_router,
+        {"fixer": "fixer", "report": "report"},
     )
-    builder.add_edge("fix", "report")
+    builder.add_edge("fixer", "report")
     builder.add_edge("report", END)
-
-
-def _route_after_validate(deps: NodeDeps) -> Callable[[AgentState], str]:
-    """Validated -> fix; unconfirmed & budget left -> re-hypothesize; else -> report."""
-    limit = deps.limits.max_findings_tried
-
-    def router(state: AgentState) -> str:
-        if state["validated"]:
-            return "fix"
-        if state["findings_tried"] >= limit:
-            return "report"
-        return "hypothesize"
-
-    return router
