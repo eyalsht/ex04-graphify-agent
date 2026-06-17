@@ -211,6 +211,37 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-17 — Phase 8 (README glow-up + LICENSE)
+
+- **Prompt summary:** Owner directed the orchestrator to start Phase 8 and "go the extra
+  mile" making the top-level `README.md` modern and compelling for the (AI-agent) grader —
+  showcasing the work without losing rigor — and to use `grill-me` to confirm any decision.
+  The orchestrator ran a `grill-me` interview that resolved four design decisions: (1) voice
+  = **confident + evidence-backed** (not marketing hype, since a rigorous AI grader rewards
+  requirement coverage + verifiable claims and penalizes unsubstantiated superlatives);
+  (2) **all nine §8 sections inline** (R8.1–R8.9) with a requirement-coverage map, so the
+  grader finds each `R8.x` on the page; (3) visuals = hero block + **9 static badges** +
+  embedded **Mermaid** (both agent routes) + the committed graph/Obsidian images, with
+  `<details>` for long command blocks; (4) the headline **76.7%** token stat is presented as
+  the hero number **with an inline scope footnote** (keyless input-context measurement; the
+  full keyed run is still a documented open item). A follow-up prompt then asked to update
+  `docs/TODO.md` + `docs/PROMPTS.md`, open a new `phase8/readme` branch, and commit.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline; no subagents).
+- **AI-generated vs. human-reviewed/edited:** AI-authored. The orchestrator rewrote
+  `README.md` end-to-end and **verified the claims rather than asserting them**: it ran the
+  full suite (**221 tests @ 97%**) to source the test/coverage badges, confirmed every
+  referenced file/image path resolves, checked the embedded figure numbers against
+  `reports/screenshots.md`, and validated the TOC anchors against GitHub's emoji-stripping
+  rule. It discovered the README linked a **non-existent `LICENSE`** (the prior README had the
+  same dead link) and added a real MIT `LICENSE` (pyproject already declared MIT). The
+  **human owner** drove every design decision through the `grill-me` interview (voice,
+  structure, visual set, and how honestly to scope the 76.7% claim) and explicitly chose the
+  recommended option at each branch. Honest note: README prose is AI-drafted and still merits
+  a final human read-through before submission (R10.1); `scripts/self_grade.py` and the keyed
+  token run remain open Phase-8 items.
+
+---
+
 ## Template for future entries
 
 ```markdown
