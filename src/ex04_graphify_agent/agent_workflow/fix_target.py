@@ -8,12 +8,14 @@ naive route has no hypothesis, so the LLM declares the file it fixed on a leadin
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from ex04_graphify_agent.agent_workflow import config
 from ex04_graphify_agent.agent_workflow.state import AgentState
 
 _FILE_TAG = "FILE:"
+_LANG_TAG = re.compile(r"^[A-Za-z0-9_+-]{1,15}$")
 
 
 def graph_target(state: AgentState) -> str:
@@ -43,10 +45,15 @@ def original_source(state: AgentState, target: str | None) -> str:
 
 
 def fixed_content(state: AgentState, llm_text: str) -> str:
-    """The post-fix file contents from the LLM (naive strips its leading ``FILE:`` line)."""
-    if state["run_type"] == "naive":
-        return _strip_file_line(llm_text)
-    return llm_text or (state["validated_source"] or "")
+    """The post-fix file contents from the LLM, stripped of any markdown fence/prose.
+
+    A live model often wraps the file in a ```` ```python ... ``` ```` block or adds a
+    preamble; we keep only the code so ``check_correctness`` runs the real fix. Naive also
+    drops its leading ``FILE:`` line first.
+    """
+    text = _strip_file_line(llm_text) if state["run_type"] == "naive" else llm_text
+    code = _strip_code_fence(text or "")
+    return code or (state["validated_source"] or "")
 
 
 def scratch_name(target: str) -> str:
@@ -67,3 +74,14 @@ def _strip_file_line(text: str) -> str:
     if lines and lines[0].strip().upper().startswith(_FILE_TAG):
         return "\n".join(lines[1:]).lstrip("\n")
     return text
+
+
+def _strip_code_fence(text: str) -> str:
+    """Return the first ```-fenced block's code, or the text unchanged if there is no fence."""
+    if "```" not in text:
+        return text.strip("\n")
+    block = text.split("```", 2)[1]
+    lines = block.splitlines()
+    if lines and _LANG_TAG.match(lines[0].strip()):
+        lines = lines[1:]
+    return "\n".join(lines).strip("\n")

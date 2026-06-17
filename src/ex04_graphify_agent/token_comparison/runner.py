@@ -80,11 +80,19 @@ class TokenComparison:
 
         return write_report(result, path)
 
-    def run_both(self, sdk: Any, scratch_dir: str | Path | None = None) -> ComparisonResult:
+    def run_both(
+        self,
+        sdk: Any,
+        scratch_dir: str | Path | None = None,
+        runs_dir: str | Path | None = None,
+    ) -> ComparisonResult:
         """Drive ``sdk.run_agent`` for both runs and compare, cross-checking each run's
-        ``token_usage`` against the gatekeeper's own ledger (TC-E5, mandatory — R10.5)."""
-        graph, graph_secs, graph_log = self._timed_run(sdk, "graph_guided", scratch_dir)
-        naive, naive_secs, naive_log = self._timed_run(sdk, "naive", scratch_dir)
+        ``token_usage`` against the gatekeeper's own ledger (TC-E5, mandatory — R10.5).
+
+        Each run's per-call token ledger is dumped as JSONL under ``runs_dir`` (config-driven
+        ``artifacts/runs/`` when ``None``) so cost/token numbers trace to a stored entry."""
+        graph, graph_secs, graph_log = self._timed_run(sdk, "graph_guided", scratch_dir, runs_dir)
+        naive, naive_secs, naive_log = self._timed_run(sdk, "naive", scratch_dir, runs_dir)
         graph_metrics = self.metrics_from_state(
             graph, graph_secs, run_helpers.fixed_source_for_state(graph), graph_log
         )
@@ -95,17 +103,26 @@ class TokenComparison:
 
     @staticmethod
     def _timed_run(
-        sdk: Any, run_type: str, scratch_dir: str | Path | None
+        sdk: Any,
+        run_type: str,
+        scratch_dir: str | Path | None,
+        runs_dir: str | Path | None = None,
     ) -> tuple[AgentState, float, list[dict[str, Any]]]:
-        """Run one route with an injected gatekeeper logger; return (state, seconds, log)."""
+        """Run one route with an injected gatekeeper logger; return (state, seconds, log).
+
+        The logger's records are dumped to JSONL (``runs_dir``/<run_id>.jsonl) so the token
+        and cost numbers always trace back to a stored ledger (CLAUDE.md §4)."""
         import time
 
         from ex04_graphify_agent.gatekeeper import TokenLogger
 
-        logger = TokenLogger()
+        logger = TokenLogger(runs_dir)
         start = time.monotonic()
         state: AgentState = sdk.run_agent(run_type, scratch_dir=scratch_dir, logger=logger)
-        return state, time.monotonic() - start, run_helpers.ledger(logger)
+        elapsed = time.monotonic() - start
+        if logger.records:
+            logger.dump()
+        return state, elapsed, run_helpers.ledger(logger)
 
     def graph_diff_section(
         self,

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -43,23 +45,36 @@ class _FakeSdk:
         return state
 
 
-def test_run_both_calls_agent_for_both_run_types() -> None:
+def test_run_both_calls_agent_for_both_run_types(tmp_path: Path) -> None:
     sdk = _FakeSdk([graph_guided_state(), naive_state()])
-    result = TokenComparison().run_both(sdk)
+    result = TokenComparison().run_both(sdk, runs_dir=tmp_path)
     assert sdk.calls == ["graph_guided", "naive"]
     assert result.graph_guided.run_type == "graph_guided"
     assert result.naive.run_type == "naive"
 
 
-def test_run_both_records_wall_clock_durations() -> None:
+def test_run_both_records_wall_clock_durations(tmp_path: Path) -> None:
     sdk = _FakeSdk([graph_guided_state(), naive_state()])
-    result = TokenComparison().run_both(sdk)
+    result = TokenComparison().run_both(sdk, runs_dir=tmp_path)
     assert result.graph_guided.duration_s >= 0.0
     assert result.naive.duration_s >= 0.0
 
 
-def test_run_both_fails_loud_when_state_disagrees_with_gatekeeper_log() -> None:
+def test_run_both_fails_loud_when_state_disagrees_with_gatekeeper_log(tmp_path: Path) -> None:
     # TC-E5 (mandatory): run_both always verifies token_usage against the gatekeeper ledger.
     sdk = _FakeSdk([graph_guided_state(), naive_state()], skew=True)
     with pytest.raises(ValueError, match="gatekeeper log disagree"):
-        TokenComparison().run_both(sdk)
+        TokenComparison().run_both(sdk, runs_dir=tmp_path)
+
+
+def test_run_both_dumps_gatekeeper_ledger_jsonl(tmp_path: Path) -> None:
+    # CLAUDE.md §4: the per-call token ledger is persisted so cost/token numbers trace to it.
+    sdk = _FakeSdk([graph_guided_state(), naive_state()])
+    TokenComparison().run_both(sdk, runs_dir=tmp_path)
+    dumped = sorted(p.name for p in tmp_path.glob("*.jsonl"))
+    assert dumped == ["graph_guided.jsonl", "naive.jsonl"]
+    records = [
+        json.loads(line)
+        for line in (tmp_path / "graph_guided.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert records and records[0]["run_type"] == "graph_guided"
