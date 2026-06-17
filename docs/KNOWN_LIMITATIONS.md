@@ -67,12 +67,14 @@ graph-guided route is the three-agent crew of ADR-0006.
 6. **Token-comparison: keyless + keyed layers BOTH done (Phase 8) — one-sample, tier-bound
    caveat.** The keyless *input-context* reduction (R4.1) is committed: **76.7%** (graph-guided
    406 vs naive 1743 input tokens), reproducible via `uv run pytest -m eval`. The **keyed
-   run** (ADR-0005) is now done on `gemini-2.5-flash`: graph-guided **passed** correctness at
-   **$0.0030** vs naive **failed** at $0.0078 — 57.5% fewer input tokens, 61.4% lower cost,
-   with graph-guided reaching the correct fix while the naive dump did not (R5.6.2/R5.6.4/R7.8/
-   R4.2). Numbers trace to committed gatekeeper ledgers (`artifacts/runs/*.jsonl`); cost =
-   logged tokens × the config-driven `pricing`. **Caveats (honest):** (a) it is **one** live
-   run, not a multi-seed benchmark; (b) the stronger Gemini **Pro** tier was **unavailable on
+   run** (ADR-0005) is now done on `gemini-2.5-flash`, re-run on the three-agent crew:
+   graph-guided **passed** correctness at **$0.0052** vs naive **failed** at $0.0066 — 57.5%
+   fewer input tokens, 20.7% lower cost, with graph-guided reaching the correct fix while the
+   naive dump did not (R5.6.2/R5.6.4/R7.8/R4.2). Numbers trace to committed gatekeeper ledgers
+   (`artifacts/runs/*.jsonl`); cost = logged tokens × the config-driven `pricing`. **Caveats
+   (honest):** (a) it is **one** live run, not a multi-seed benchmark — and the cost *gap* is
+   output-token-bound, so it varies between samples (a prior keyed run measured 61.4%; the
+   input cut is the deterministic, load-bearing number — see `reports/crew_rerun_findings.md`); (b) the stronger Gemini **Pro** tier was **unavailable on
    the free key** (quota = 0), so the result reflects `gemini-2.5-flash` specifically — not the
    best model available on a paid tier; (c) reaching a clean pass required two provider-quirk
    fixes (a spurious `function_call` dropping the patch text; markdown-fenced output), both

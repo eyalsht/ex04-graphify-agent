@@ -2,8 +2,8 @@
 
 | Run | Input tok | Output tok | Total | Files read | Iterations | # LLM calls | Duration (s) | Correctness | Notes |
 |---|---|---|---|---|---|---|---|---|---|
-| graph_guided | 1559 | 1020 | 2579 | 3 | 1 | 2 | 29.11 | pass | hot.md + polygons.py only |
-| naive | 3670 | 2684 | 6354 | 8 | 1 | 2 | 35.64 | fail | full data/broken-python/** dump |
+| graph_guided | 1559 | 1891 | 3450 | 3 | 1 | 2 | 29.67 | pass | hot.md + polygons.py only |
+| naive | 3670 | 2180 | 5850 | 8 | 1 | 2 | 34.09 | fail | full data/broken-python/** dump |
 
 > **Columns `Files read` and `Iterations` are mandated by R5.6.5 (PDF §5.6)** - not optional. `Files read` = distinct files/textual units that entered the LLM context; `Iterations` = hypothesize->validate rounds. Together with `Duration` and `Correctness` they answer R5.6.5 (d) ("quality and speed of reaching root cause").
 
@@ -18,9 +18,9 @@ Model: `gemini-2.5-flash`. Rates (config-driven, `config/agent.json` `pricing`):
 
 | Run | Cost (USD) |
 |---|---|
-| graph_guided | $0.0030 |
-| naive | $0.0078 |
+| graph_guided | $0.0052 |
+| naive | $0.0066 |
 
-Graph-guided cost **$0.0030** vs naive **$0.0078** — **61.4% lower total cost**.
+Graph-guided cost **$0.0052** vs naive **$0.0066** — **20.7% lower total cost**.
 
 > This is the keyed live run. The keyless, reproducible input-context delta (76.7%, `uv run pytest -m eval`) and the full model-switching log are in [`run_journey.md`](run_journey.md).

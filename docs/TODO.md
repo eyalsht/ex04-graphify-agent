@@ -55,8 +55,9 @@
 > Mermaid + graph/Obsidian images, requirement-coverage map, modularity showcase, annotated
 > agent run, claims→check + QA layers — and the MIT `LICENSE` added. The keyed token+cost run
 > is DONE** (gemini-2.5-flash: graph-guided passed @ $0.0030 vs naive failed @ $0.0078; ledgers
-> in artifacts/runs/; saga in reports/run_journey.md). A config-driven cost layer + two live-run
-> robustness fixes landed under TDD (235 tests @ 97.65%).
+> in artifacts/runs/; saga in reports/run_journey.md). *(Re-run on the Phase-9 crew — current
+> committed numbers — is $0.0052 vs $0.0066; input + correctness identical; see Phase 9 below.)*
+> A config-driven cost layer + two live-run robustness fixes landed under TDD (235 tests @ 97.65%).
 > Remaining Phase-8 work: `scripts/self_grade.py` (8.3) + final cleanup/verification (8.5).
 >
 > **Phase 2 (graph_reader) ✅ — PR #1 merged.** GR-T1..T7 typed query layer; review fixes:
@@ -1115,6 +1116,25 @@
 - [ ] **P1** `PHASE8-069` final: final `docs: README + self-grade + cleanup` commit — DoD: committed
 - [ ] **P2** `PHASE8-070` final: dry-run the README quickstart on a clean checkout — DoD: third-party reproduce works; ref R10.1
 - [x] **P1** `PHASE8-071` final: confirm KNOWN_LIMITATIONS linked from README §R8.9 — DoD: link resolves — ✅ Phase 8
+
+---
+
+## Phase 9 — multi-agent crew (Navigator / Analyst / Fixer) + crew re-run evidence
+
+> **Progress (2026-06-17):** The graph-guided route was rebuilt as a three-agent crew
+> (ADR-0006, PR #10 merged). This phase also covers the **keyed re-run through the crew** that
+> confirms the thesis on a live model and refreshes the cost numbers.
+
+- [x] **P0** `PHASE9-001` crew: rebuild graph-guided route as Navigator/Analyst/Fixer LangGraph subgraphs — DoD: `agents.CREW` + `build_graph` green — ✅ PR #10 (ADR-0006)
+- [x] **P1** `PHASE9-002` crew: ADR-0006 records the decision + reconciles ADR-0001's "multi-agent not needed" — DoD: ADR merged — ✅
+- [x] **P1** `PHASE9-003` crew: README §4 + diagrams refreshed to the 3-agent crew; test count 244 @ 98% — DoD: docs match code — ✅
+- [x] **P0** `PHASE9-004` crew re-run: keyed `scripts/run_comparison.py` through the crew on `gemini-2.5-flash` — DoD: report + ledgers rewritten from real run — ✅ 2026-06-17
+- [x] **P0** `PHASE9-005` crew re-run: verify thesis holds — input 1559 vs 3670 (57.5%) identical; graph-guided pass / naive fail unchanged — DoD: matches committed ledgers — ✅
+- [x] **P1** `PHASE9-006` crew re-run: write `reports/crew_rerun_findings.md` (before/after, output-token/cost noise framing) — DoD: doc committed — ✅
+- [x] **P1** `PHASE9-007` crew re-run: refresh keyed cost numbers across README §6 / `token_comparison.md` / `run_journey.md` / `reports/README.md` / KNOWN_LIMITATIONS / ADR-0006 (61.4% → 20.7%; `$0.0030/$0.0078` → `$0.0052/$0.0066`) — DoD: no stale keyed cost figure remains — ✅
+- [x] **P1** `PHASE9-008` crew re-run: confirm new ledgers reconcile with the report (closes the prior mock-stub traceability gap) — DoD: 41+1518=1559 in / 1415+476=1891 out etc. — ✅
+- [x] **P0** `PHASE9-009` fix: keyless `test_compare_tokens_writes_report` was dumping mock ledgers to the tracked `artifacts/runs/` on every `pytest` (root of the traceability gap) — thread `runs_dir` through `Ex04Sdk.compare_tokens`, point the test at `tmp_path` — DoD: keyed ledgers survive a full suite run; ruff 0 / mypy 0 / 244 @ 98% — ✅
+- [ ] **P1** `PHASE9-010` crew re-run: open PR for the re-run evidence branch; owner review/merge — DoD: PR merged
 
 ---
 
