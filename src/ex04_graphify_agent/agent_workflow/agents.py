@@ -17,7 +17,8 @@ the naive route (AW-T8); these subgraphs add no LLM calls of their own.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
+from types import MappingProxyType
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -29,12 +30,15 @@ from ex04_graphify_agent.agent_workflow.state import AgentState
 _Builder = StateGraph[AgentState]
 
 # The lecturer's three roles -> the nodes each specialist agent owns (single source of truth;
-# node_names + the workflow diagram are derived from this).
-CREW: dict[str, list[str]] = {
-    "navigator": ["plan", "read_vault"],
-    "analyst": ["hypothesize", "validate"],
-    "fixer": ["fix"],
-}
+# node_names + the workflow diagram are derived from this). Immutable: a read-only proxy over
+# tuple values, so this "single source of truth" cannot be mutated by a caller.
+CREW: Mapping[str, tuple[str, ...]] = MappingProxyType(
+    {
+        "navigator": ("plan", "read_vault"),
+        "analyst": ("hypothesize", "validate"),
+        "fixer": ("fix",),
+    }
+)
 
 
 def crew_order() -> list[str]:

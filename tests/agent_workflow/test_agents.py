@@ -8,14 +8,16 @@ orchestrator in ``graph_def.build_graph``. Each agent owns a distinct role; the 
 
 from __future__ import annotations
 
+from langgraph.graph.state import CompiledStateGraph
+
 from ex04_graphify_agent.agent_workflow import agents, nodes
 from ex04_graphify_agent.agent_workflow.deps import NodeDeps
 
 
 def test_three_agents_compile(deps: NodeDeps) -> None:
-    assert hasattr(agents.build_navigator_agent(deps, nodes.make_plan(deps)), "invoke")
-    assert hasattr(agents.build_analyst_agent(deps), "invoke")
-    assert hasattr(agents.build_fixer_agent(deps, nodes.make_fix(deps)), "invoke")
+    assert isinstance(agents.build_navigator_agent(deps, nodes.make_plan(deps)), CompiledStateGraph)
+    assert isinstance(agents.build_analyst_agent(deps), CompiledStateGraph)
+    assert isinstance(agents.build_fixer_agent(deps, nodes.make_fix(deps)), CompiledStateGraph)
 
 
 def test_crew_role_to_nodes_mapping() -> None:
