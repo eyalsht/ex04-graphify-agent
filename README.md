@@ -331,9 +331,9 @@ The only two *code* fixes landed exactly where provider quirks belong — the `G
 **Secrets & keyless-by-default ([ADR-0005](docs/adr/0005-keyless-by-default-test-strategy.md)):**
 
 - **API key via `os.environ` only** — never in code, never in config. Even the env-var *name* is config (`api_key_env`, default `GEMINI_API_KEY`), so nothing about the secret is hardcoded.
-- `.env` is **gitignored** (`.env`, `.env.*`, `*.key`); only [`.env.example`](.env.example) — a placeholder — is committed. The **model is not a secret**: it lives in `config/agent.json`, not `.env`.
+- `.env` is **gitignored** (`.env`, `.env.*`, `*.key`); only [`.env.example`](.env.example) — a placeholder — is committed. The **model is not a secret** — set it in `config/agent.json`, not `.env`.
 - **The full suite + self-grade pass with no key** — the provider client is mocked at the gatekeeper boundary, so a grader with zero credentials still gets a green project. Only the one manual keyed run (`scripts/run_comparison.py`) ever reads `.env`.
-- **Single egress:** every external LLM call funnels through the provider-agnostic [`gatekeeper/`](src/ex04_graphify_agent/gatekeeper/) — rate-limit (30/min), retry (6× / 3s backoff), per-call token logging. Nothing else touches the provider.
+- **Single egress:** every external LLM call funnels through the provider-agnostic [`gatekeeper/`](src/ex04_graphify_agent/gatekeeper/) — rate-limiting, retry-with-backoff, and per-call token logging, all tunable in `config/agent.json` (`rate_limit_per_minute`, `retry`). Nothing else touches the provider.
 - Repo kept **private** so student IDs stay unindexed; no secret has ever been committed (scanner + `.gitignore`). Server-side branch protection isn't enforceable on the free tier — disclosed in [`KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) #10, mitigated by CI on every push/PR.
 
 ## 🎬 The agent in action (graph-guided trace)
