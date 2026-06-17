@@ -35,6 +35,9 @@ The POST-FIX graph itself was produced keylessly with `graphify update data/brok
 ## Open items (owner action — see `docs/KNOWN_LIMITATIONS.md`)
 
 1. ✅ **Obsidian screenshots** — captured (Figures 3–6 in [`screenshots.md`](screenshots.md) §2).
-2. **Keyed token run** — set a model in `config/agent.json` + `GEMINI_API_KEY`, then
-   `uv run python scripts/run_comparison.py` to fill the full R5.6.5 table in
-   [`token_comparison.md`](token_comparison.md). *(Only remaining open item.)*
+2. ✅ **Keyed token + cost run** — done on `gemini-2.5-flash`: graph-guided **passed** at
+   **$0.0030** vs naive **fail** at $0.0078 (57.5% fewer input tokens, 61.4% lower cost). The
+   R5.6.5 table + cost are in [`token_comparison.md`](token_comparison.md); per-call ledgers
+   in [`../artifacts/runs/`](../artifacts/runs/); the model-switching log in
+   [`run_journey.md`](run_journey.md). Re-runnable: `uv run python scripts/run_comparison.py`
+   (needs `GEMINI_API_KEY`; model/pricing config-driven). *(No open items remain.)*

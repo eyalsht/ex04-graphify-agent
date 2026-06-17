@@ -52,9 +52,12 @@
 > (see KNOWN_LIMITATIONS #9). All P0/P1 items for Phases 2.9–7 are ticked below; the Obsidian
 > app screenshots (PHASE7-018..021) are now captured (Figs 3–6 in reports/screenshots.md).
 > **Phase 8: the §8-compliant README (R8.1–R8.9, all inline) is rebuilt — hero/badges, embedded
-> Mermaid + graph/Obsidian images, requirement-coverage map — and the MIT `LICENSE` added.**
-> Remaining Phase-8 work: `scripts/self_grade.py` (8.3), final cleanup/verification (8.5), and
-> the one owner-only keyed token run (KNOWN_LIMITATIONS #5).
+> Mermaid + graph/Obsidian images, requirement-coverage map, modularity showcase, annotated
+> agent run, claims→check + QA layers — and the MIT `LICENSE` added. The keyed token+cost run
+> is DONE** (gemini-2.5-flash: graph-guided passed @ $0.0030 vs naive failed @ $0.0078; ledgers
+> in artifacts/runs/; saga in reports/run_journey.md). A config-driven cost layer + two live-run
+> robustness fixes landed under TDD (235 tests @ 97.65%).
+> Remaining Phase-8 work: `scripts/self_grade.py` (8.3) + final cleanup/verification (8.5).
 >
 > **Phase 2 (graph_reader) ✅ — PR #1 merged.** GR-T1..T7 typed query layer; review fixes:
 > cached rankings, streamed JSON.
@@ -1039,7 +1042,7 @@
 - [x] **P0** `PHASE8-008` README: §R8.4 documents nodes, tools, stop conditions — DoD: present; ref R5.3.3 — ✅ Phase 8 (validate→hypothesize bounded loop + budget-exhausted stop)
 - [x] **P0** `PHASE8-009` README: write §R8.5 — root cause narrative + before/after diff (or link) — DoD: section + link; ref R8.5/R7.6 — ✅ Phase 8
 - [x] **P0** `PHASE8-010` README: write §R8.6 — token-efficiency results (numbers: naive vs graph-guided) — DoD: numbers + link to report; ref R8.6/R7.8 — ✅ Phase 8 (406 vs 1743, 76.7%)
-- [ ] **P0** `PHASE8-011` README: §R8.6 cites concrete input/output tokens + call counts — DoD: numbers present; ref R5.6.4 — ⏳ input tokens cited; output/call-counts await the keyed run (KNOWN_LIMITATIONS #5)
+- [x] **P0** `PHASE8-011` README: §R8.6 cites concrete input/output tokens + call counts — DoD: numbers present; ref R5.6.4 — ✅ Phase 8 (keyed run on gemini-2.5-flash: input/output tokens, #calls, cost, correctness — §6 + reports/run_journey.md + artifacts/runs/*.jsonl)
 - [x] **P0** `PHASE8-012` README: write §R8.7 — OOP-improvement summary (or link) — DoD: section + link; ref R8.7/R7.7 — ✅ Phase 8
 - [x] **P0** `PHASE8-013` README: write §R8.8 — AI-usage disclosure (AI-generated vs human-reviewed, per PROMPTS.md) — DoD: section + link; ref R8.8/R4.7 — ✅ Phase 8
 - [x] **P0** `PHASE8-014` README: write §R8.9 — known limitations + honest self-grade — DoD: section + link to KNOWN_LIMITATIONS; ref R8.9 — ✅ Phase 8 (self-grade number computed at submission)

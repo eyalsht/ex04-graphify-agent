@@ -242,6 +242,36 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-17 — Phase 8 (keyed token+cost run, live-run fixes, cost layer, run journey)
+
+- **Prompt summary:** Owner pointed at a sibling project's README (`Imreec/agent-debate`) and
+  asked to study its creative presentation, then upgrade ours to **showcase modularity** and
+  **add a real cost analysis**, using `grill-me` for decisions. A grill confirmed: (1) cost via
+  config-driven pricing + a dumped JSONL ledger (traceable, not hand-typed); (2) port the
+  module table, an annotated agent-run, a claims→check map, QA layers, and a doc index; (3) the
+  owner chose to **do a real keyed run** to get actual costs (not a projection). A follow-up
+  asked to **record the whole model-switching saga** in the reports + README.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline). The keyed
+  run itself called **Google `gemini-2.5-flash`** via the gatekeeper (the product under test).
+- **AI-generated vs. human-reviewed/edited:** AI-authored under the gates (TDD for the new
+  code; ruff 0, mypy 0, **235 tests @ 97.65%**). Work: a config-driven **cost layer**
+  (`token_comparison/cost.py` + a Cost (USD) report section + JSONL ledger dump in `run_both`,
+  so cost = logged tokens × `config/agent.json` `pricing`, CLAUDE.md §4); and two **live-run
+  robustness fixes** the real runs surfaced — `GeminiClient` disabling automatic
+  function-calling + `join_text_parts` (a spurious `function_call` was dropping the patch),
+  and `fix_target._strip_code_fence` (markdown-fenced replies were not executable). The keyed
+  run took **six attempts across three models** (`gemini-3.5-flash` function_call+503+daily-
+  quota issues; `gemini-3.1-pro` 404→429 *unavailable on the free tier*; → `gemini-2.5-flash`
+  **passed**): graph-guided **passed** correctness at **$0.0030** vs naive **failed** at
+  $0.0078 (57.5% fewer input tokens, 61.4% lower cost — the "Lost in the Middle" effect live).
+  Every model/retry/pricing change was **one field in `config/agent.json`** (zero gatekeeper/
+  agent changes) — recorded in the new `reports/run_journey.md` as honest provenance (R10.4)
+  and a live modularity proof. The **human owner** drove all `grill-me` decisions, authorized
+  the billed run, and asked for the saga to be documented. Honest notes: one live sample (not a
+  benchmark); Pro tier untested (free-key quota = 0); prose still merits a final human read.
+
+---
+
 ## Template for future entries
 
 ```markdown

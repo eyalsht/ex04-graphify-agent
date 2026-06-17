@@ -42,16 +42,21 @@ It is updated as the project progresses through phases (see `docs/PLAN.md` /
    reported honestly rather than tuning the metric to force an "all polygons" outcome that
    the real graph data does not support.
 
-5. **Token-comparison: keyless layer done; keyed layer pending (Phase 7).** The *input-
-   context* reduction — the independent variable of the thesis (R4.1) — is measured keylessly
-   and committed: **76.7%** (graph-guided 406 vs naive 1743 input tokens), reproducible via
-   `uv run pytest -m eval` and documented in `reports/token_comparison.md`. The **full keyed
-   table** (output tokens, # LLM calls, duration, end-to-end correctness; R5.6.2/R5.6.4/R7.8)
-   still requires one live run per ADR-0005, via the provider set in `config/agent.json` (the
-   `model` field is intentionally empty, D6 — must be set first; likely Google Gemini). That
-   run (`uv run python scripts/run_comparison.py`, needs `GEMINI_API_KEY`) has **not** been
-   performed; its numbers, once produced, will reflect that one specific provider/model and
-   will overwrite the "Layer 2" table in `reports/token_comparison.md`.
+5. **Token-comparison: keyless + keyed layers BOTH done (Phase 8) — one-sample, tier-bound
+   caveat.** The keyless *input-context* reduction (R4.1) is committed: **76.7%** (graph-guided
+   406 vs naive 1743 input tokens), reproducible via `uv run pytest -m eval`. The **keyed
+   run** (ADR-0005) is now done on `gemini-2.5-flash`: graph-guided **passed** correctness at
+   **$0.0030** vs naive **failed** at $0.0078 — 57.5% fewer input tokens, 61.4% lower cost,
+   with graph-guided reaching the correct fix while the naive dump did not (R5.6.2/R5.6.4/R7.8/
+   R4.2). Numbers trace to committed gatekeeper ledgers (`artifacts/runs/*.jsonl`); cost =
+   logged tokens × the config-driven `pricing`. **Caveats (honest):** (a) it is **one** live
+   run, not a multi-seed benchmark; (b) the stronger Gemini **Pro** tier was **unavailable on
+   the free key** (quota = 0), so the result reflects `gemini-2.5-flash` specifically — not the
+   best model available on a paid tier; (c) reaching a clean pass required two provider-quirk
+   fixes (a spurious `function_call` dropping the patch text; markdown-fenced output), both
+   absorbed in the provider adapter + the agent's output seam and disclosed in
+   `reports/run_journey.md`. The full model-switching log is kept deliberately as honest
+   provenance (R10.4) and as a live modularity demonstration.
 
 6. **Duplicate `broken-python/` clone.** A pristine clone of `martinpeck/broken-python`
    (with its own `.git` history) currently sits alongside the vendored copy at
