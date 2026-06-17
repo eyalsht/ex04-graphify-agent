@@ -60,30 +60,44 @@ flowchart TB
     aw -. POST-FIX graph .-> postgraph
 ```
 
-## 3. Agent workflow — graph-guided route (`run_type = graph_guided`)
+## 3. Agent workflow — graph-guided **three-agent crew** (`run_type = graph_guided`)
 
-Node names and edges below are exactly those wired in `_wire_graph_guided`
-(`agent_workflow/graph_def.py`): `plan → read_vault → hypothesize → validate`, with a
-**conditional** edge out of `validate` (the bounded validate→hypothesize loop), then
-`fix → report`.
+The route is an orchestrator over three specialist subgraphs (ADR-0006), wired in
+`_wire_graph_guided` (`agent_workflow/graph_def.py`) from the agent builders in
+`agent_workflow/agents.py`. The **Navigator** agent owns `plan → read_vault`; the **Analyst**
+agent owns `hypothesize → validate` with the **conditional** bounded validate→hypothesize loop;
+the **Fixer** agent owns `fix`. A deterministic post-Analyst gate runs the Fixer only when a
+finding validated, else reports; the orchestrator owns `report`.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> plan
-    plan --> read_vault: read index.md / hot.md (NOT raw dump)
-    read_vault --> hypothesize: graph_reader + vault context
-    hypothesize --> validate: weakness_detector -> 6-signal hypothesis
-    validate --> fix: source confirms hypothesis (validated)
-    validate --> hypothesize: source contradicts AND budget left (findings_tried < max)
-    validate --> report: budget exhausted (max_findings_tried)
-    fix --> report: write POST-FIX polygons.py + diff
+    [*] --> navigator
+    state "Navigator agent (plan, read_vault)" as navigator {
+        [*] --> plan
+        plan --> read_vault: read index.md / hot.md (NOT raw dump)
+        read_vault --> [*]
+    }
+    state "Analyst agent (hypothesize, validate)" as analyst {
+        [*] --> hypothesize
+        hypothesize --> validate: weakness_detector -> 6-signal hypothesis
+        validate --> hypothesize: source contradicts AND budget left (findings_tried < max)
+        validate --> [*]: confirmed, or budget exhausted (max_findings_tried)
+    }
+    state "Fixer agent (fix)" as fixer {
+        [*] --> fix
+        fix --> [*]: write POST-FIX polygons.py + diff
+    }
+    navigator --> analyst
+    analyst --> fixer: a finding validated
+    analyst --> report: nothing validated (skip Fixer)
+    fixer --> report
     report --> [*]
-    note right of read_vault
+    note right of navigator
         Sources: artifacts/graphify/graph.json
         (via graph_reader), obsidian/index.md,
         obsidian/hot.md
     end note
-    note right of validate
+    note right of analyst
         Inference discipline: graph proposes,
         source_file confirms. The fix target is
         resolved dynamically from
@@ -133,9 +147,11 @@ Each stage's inspectable artifact is tabulated in [`pipeline.md`](pipeline.md) (
 The graph-guided and naive diagrams above were checked against the compiled graph by
 listing `agent_workflow.graph_def.node_names(run_type)` and the wired edges:
 
-- **graph_guided:** `plan, read_vault, hypothesize, validate, fix, report` (+ conditional
-  `validate → {fix, hypothesize, report}`).
-- **naive:** `plan, dump_repo, fix, report`.
+- **graph_guided:** `plan, read_vault, hypothesize, validate, fix, report` — the crew's nodes in
+  execution order (derived from `agents.CREW`), composed as the Navigator → Analyst →
+  (Fixer | report) subgraphs, with the bounded `validate → hypothesize` loop inside the Analyst
+  and the `Analyst → {Fixer, report}` gate at the orchestrator (ADR-0006).
+- **naive:** `plan, dump_repo, fix, report` (one flat monolithic agent — no crew).
 
 Reproduce:
 

@@ -19,12 +19,20 @@ the per-node context, and the stop conditions for two runs that fix the same bug
 
 ## One parameterized graph (not two separate graphs)
 
-**Decision:** a single graph parameterized by `run_type: "graph_guided" | "naive"` in
-state, with conditional edges selecting the node path. **Justification (per ADR-0001):**
-shared `plan`/`fix`/`report` nodes and a single typed `AgentState` mean the token
+**Decision:** `build_graph(run_type, deps)` compiles one route per `run_type`, both over a
+single typed `AgentState` and reusing the shared `plan`/`fix`/`report` node objects.
+**Justification (per ADR-0001):** shared nodes + one typed state mean the token
 instrumentation (gatekeeper-wrapped LLM calls) is identical across both runs, so the
-comparison measures *context strategy* and nothing else — no divergence from duplicated
-node implementations. Two named compiled graphs would risk instrumentation drift.
+comparison measures *context strategy* and nothing else.
+
+**Realization (per ADR-0006):** the **graph-guided** route is composed as a **three-agent
+crew** — `Navigator` (`plan`→`read_vault`), `Analyst` (`hypothesize`→`validate`, owning the
+bounded loop), and `Fixer` (`fix`) subgraphs, orchestrated by a deterministic supervisor that
+owns `report` and skips the `Fixer` when nothing validated. The **naive** route stays a single
+flat pipeline (the monolithic baseline). The crew adds **no** LLM calls beyond the shared
+`plan`/`fix`, so the token-parity property above is preserved exactly (verified: 406 vs 1743
+input tokens, unchanged). The node descriptions below are the crew's nodes; the agent each
+belongs to is given in parentheses.
 
 ## Inputs
 

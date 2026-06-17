@@ -14,8 +14,8 @@ Authors: **Eyal Shtinmtez** (314884834) · **Imree Cohen** (312359284)
 ![LangGraph](https://img.shields.io/badge/agent-LangGraph-1C3C3C)
 ![ruff](https://img.shields.io/badge/ruff-0%20violations-success?logo=ruff)
 ![mypy](https://img.shields.io/badge/mypy-strict%20·%200%20errors-2A6DB2)
-![tests](https://img.shields.io/badge/tests-235%20passing-success?logo=pytest&logoColor=white)
-![coverage](https://img.shields.io/badge/coverage-97%25%20(gate%20%E2%89%A590%25)-success)
+![tests](https://img.shields.io/badge/tests-244%20passing-success?logo=pytest&logoColor=white)
+![coverage](https://img.shields.io/badge/coverage-98%25%20(gate%20%E2%89%A590%25)-success)
 ![keyless](https://img.shields.io/badge/test%20suite-keyless%20(no%20API%20key)-blue)
 ![license](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -45,7 +45,7 @@ Everything in this README is backed by a committed artifact, a requirement ID, o
 ```bash
 git clone <repo> && cd HW4
 uv sync
-uv run pytest                 # 235 tests, keyless (provider client mocked)
+uv run pytest                 # 244 tests, keyless (provider client mocked)
 uv run pytest -m eval         # the thesis evals: 76.7% token delta, structural validity
 uv run ruff check . && uv run mypy --strict src/   # 0 / 0
 uv run ex04 hot               # regenerate obsidian/hot.md from the PRE-FIX graph (keyless)
@@ -83,7 +83,7 @@ We were offered three approved repos and picked this one deliberately: its compa
 
 ```bash
 uv sync                       # create env + install from uv.lock
-uv run pytest --cov=src --cov-report=term-missing   # 235 passed, 97% coverage
+uv run pytest --cov=src --cov-report=term-missing   # 244 passed, 98% coverage
 uv run pytest -m eval         # structural + token-delta evals (the thesis, keyless)
 uv run ruff check .           # 0 violations
 uv run mypy --strict src/     # 0 errors
@@ -128,24 +128,44 @@ Instead of feeding the agent raw files, we give it a **map**. Graphify extracted
 
 ## 🤖 4. The agent workflow (R8.4)
 
-A single parameterized **LangGraph** with two routes sharing identical `plan/fix/report` nodes (so the gatekeeper's token instrumentation is *identical* and the comparison is fair). Node names below are the **actual compiled names** from [`agent_workflow/graph_def.py`](src/ex04_graphify_agent/agent_workflow/), verified against `build_graph`.
+The graph-guided route is a **three-agent crew** — the orchestration design the lecture asks for ([§11.1.4 "multiple agents"](docs/ASSIGNMENT.md)) — built as three composed **LangGraph** subgraphs over one typed `AgentState`, each a specialist for one of the lecturer's named roles ([ADR-0006](docs/adr/0006-multi-agent-orchestration.md)):
 
-**Graph-guided route** — reads the *map*, validates against source, fixes:
+| Lecturer's role | Crew agent (subgraph) | Owns nodes | What it does |
+|---|---|---|---|
+| GitHub / clone agent | **Navigator** | `plan` → `read_vault` | loads + navigates the Graphify map (`index.md`/`hot.md`) — **not** a raw dump |
+| graph-analysis agent | **Analyst** | `hypothesize` → `validate` | `weakness_detector`'s 6 signals → a finding, confirmed against **one** source file (bounded retry loop) |
+| refactor agent | **Fixer** | `fix` | applies the patch for the validated finding |
+
+A **deterministic orchestrator** wires them and owns the final `report`; it skips the Fixer when the Analyst can't validate anything. The supervisor adds **no LLM calls of its own**, so the only gatekeeper-billed steps are `plan` (Navigator) and `fix` (Fixer) — identical to the naive route, which keeps the token comparison an apples-to-apples measure of *context strategy alone* (AW-T8). Topology is derived from `agents.CREW` and verified against `build_graph` in [`reports/diagrams.md`](reports/diagrams.md).
+
+> **Honest scoping:** the target repo is **vendored** and the Graphify artifacts are **committed** (CLAUDE.md §4), so the **Navigator** *loads + navigates the committed map* rather than cloning live — named for what it does, not an over-claimed live "GitHub agent". See [ADR-0006](docs/adr/0006-multi-agent-orchestration.md).
 
 ```mermaid
 stateDiagram-v2
-    [*] --> plan
-    plan --> read_vault: read index.md / hot.md (NOT a raw dump)
-    read_vault --> hypothesize: graph_reader + vault context
-    hypothesize --> validate: weakness_detector → 6-signal hypothesis
-    validate --> fix: source confirms hypothesis
-    validate --> hypothesize: source contradicts AND budget left
-    validate --> report: budget exhausted
-    fix --> report: write POST-FIX polygons.py + diff
+    [*] --> navigator
+    state "🧭 Navigator agent" as navigator {
+        [*] --> plan
+        plan --> read_vault: read index.md / hot.md (the map, NOT a dump)
+        read_vault --> [*]
+    }
+    state "🔍 Analyst agent" as analyst {
+        [*] --> hypothesize
+        hypothesize --> validate: weakness_detector → 6-signal finding
+        validate --> hypothesize: source contradicts AND budget left
+        validate --> [*]: confirmed, or budget exhausted
+    }
+    state "🔧 Fixer agent" as fixer {
+        [*] --> fix
+        fix --> [*]: write POST-FIX polygons.py + diff
+    }
+    navigator --> analyst
+    analyst --> fixer: a finding validated
+    analyst --> report: nothing validated (skip Fixer)
+    fixer --> report
     report --> [*]
 ```
 
-**Naive baseline route** — the "Lost in the Middle" control (R1.4 / [ADR-0004](docs/adr/0004-graph-guided-retrieval-over-naive-dump.md)):
+**Naive baseline route** — deliberately **monolithic** (one flat agent, no crew): the "Lost in the Middle" control (R1.4 / [ADR-0004](docs/adr/0004-graph-guided-retrieval-over-naive-dump.md)):
 
 ```mermaid
 stateDiagram-v2
@@ -256,7 +276,7 @@ Full, defensible list in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md
 - **`turtle`** needs a GUI, so `draw_polygon` is verified by a mocked call-count assertion, not a rendered image.
 - **Branch protection** can't be server-enforced on a free-tier private repo; mitigated by CI on every push/PR + local hooks.
 
-**Self-grade:** computed at submission against the rubric, *after* the gates are green (they are: ruff 0, mypy 0, 235 tests @ 97%) — conservative and cross-referenced against the limitations above, never inflated. See [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
+**Self-grade:** **87 / 100** (conservative) — computed against the rubric with the gates green (ruff 0, mypy 0, 244 tests @ 98%) and cross-referenced line-by-line against the limitations, never inflated. Full breakdown in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
 
 ---
 
@@ -269,7 +289,7 @@ Eight modules, each with **one** responsibility, all reached through the [`sdk.p
 | [`graph_reader/`](src/ex04_graphify_agent/graph_reader/) | Parse `graph.json`; degree/betweenness/centrality; confidence filter |
 | [`weakness_detector/`](src/ex04_graphify_agent/weakness_detector/) | The six PART-C signals → ranked bug hypotheses |
 | [`obsidian_writer/`](src/ex04_graphify_agent/obsidian_writer/) | Generate `index.md` / `hot.md` / per-node notes |
-| [`agent_workflow/`](src/ex04_graphify_agent/agent_workflow/) | The LangGraph: typed state + Plan→Retrieve→Hypothesize→Validate→Fix→Report |
+| [`agent_workflow/`](src/ex04_graphify_agent/agent_workflow/) | The LangGraph **3-agent crew** (Navigator / Analyst / Fixer subgraphs + orchestrator) over one typed state ([ADR-0006](docs/adr/0006-multi-agent-orchestration.md)) |
 | [`gatekeeper/`](src/ex04_graphify_agent/gatekeeper/) | Provider-agnostic LLM choke point: rate-limit, retry, token log |
 | [`token_comparison/`](src/ex04_graphify_agent/token_comparison/) | Graph-guided vs naive run, cost, correctness gate, report |
 | [`sdk.py`](src/ex04_graphify_agent/sdk.py) | The single façade — all business logic entry |
@@ -327,7 +347,7 @@ No claim here rests on prose — each maps to an executable check:
 1. **Keyless by default** — the full suite + self-grade pass with **no API key** (provider mocked at the gatekeeper boundary); a grader without credentials gets a fully green project.
 2. **Structural evals** — deterministic invariants (token delta, known-answer localization) under `uv run pytest -m eval`.
 3. **Keyed live run** — one real-provider run, reported with correctness + cost, committed as static evidence (§6).
-4. **CI gates on every push/PR** — ruff (0), mypy `--strict` (0), pytest ≥90% (currently **97%**, 235 tests), ≤150 lines/file, no-hardcoded + anti-pattern scanners.
+4. **CI gates on every push/PR** — ruff (0), mypy `--strict` (0), pytest ≥90% (currently **98%**, 244 tests), ≤150 lines/file, no-hardcoded + anti-pattern scanners.
 5. **Independent review** — every PR reviewed (Antigravity / cold-session); findings fixed-or-disclosed.
 
 ## 📚 Reports & evidence
