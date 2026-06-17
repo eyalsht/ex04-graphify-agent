@@ -1,12 +1,17 @@
 {
   "provider": "gemini",
-  "model": "gemini-3.5-flash",
+  "model": "gemini-2.5-flash",
   "api_key_env": "GEMINI_API_KEY",
   "temperature": 0.0,
   "max_output_tokens": 4096,
   "max_findings_tried": 3,
   "max_validation_attempts": 1,
   "rate_limit_per_minute": 30,
-  "retry": { "max_attempts": 3, "backoff_seconds": 2.0 },
-  "_notes": "provider/model are config-driven here, never hardcoded in code (D6). Change 'model' to any provider model id to switch (e.g. gemini-3.5-flash, gemini-3-pro); confirm the exact id in Google AI Studio. The gatekeeper is provider-agnostic. The API key is NEVER stored here: it is read from os.environ via the var named by 'api_key_env' (loaded from a gitignored .env on the manual real run)."
+  "retry": { "max_attempts": 6, "backoff_seconds": 3.0 },
+  "pricing": {
+    "input_per_million_usd": 0.3,
+    "output_per_million_usd": 2.5,
+    "_source": "Gemini 2.5 Flash standard rate (<=200K-token prompts), 2026; see reports/token_comparison.md"
+  },
+  "_notes": "provider/model are config-driven here, never hardcoded in code (D6). Change 'model' to any provider model id to switch (e.g. gemini-3.5-flash, gemini-3.1-pro); confirm the exact id in Google AI Studio. 'pricing' (USD per 1M tokens) is config-driven too so cost = logged tokens x these rates is reproducible; update it to match the configured model. The gatekeeper is provider-agnostic. The API key is NEVER stored here: it is read from os.environ via the var named by 'api_key_env' (loaded from a gitignored .env on the manual real run)."
 }
