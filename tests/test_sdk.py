@@ -48,7 +48,8 @@ def test_compare_tokens_writes_report(tmp_path: Path, monkeypatch: pytest.Monkey
     """Phase 6: compare_tokens drives both runs (keyless) and writes the report (R5.6)."""
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     out = tmp_path / "token_comparison.md"
-    path = Ex04Sdk().compare_tokens(report_path=out)
+    # runs_dir -> tmp so the keyless suite never overwrites the committed keyed ledgers.
+    path = Ex04Sdk().compare_tokens(report_path=out, runs_dir=tmp_path)
     assert path == out
     text = out.read_text(encoding="utf-8")
     assert "graph_guided" in text
