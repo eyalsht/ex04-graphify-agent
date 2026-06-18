@@ -24,5 +24,9 @@ def load_config(root: Path | None = None) -> dict[str, Any]:
 
 
 def sha256_of(path: Path) -> str:
-    """SHA-256 of a file's bytes — used to prove PRE-FIX baselines are unmodified."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """SHA-256 of a file, line-ending-normalized (CRLF→LF).
+
+    Normalizing keeps the PRE-FIX baseline hash stable across CRLF/LF checkouts, so a fresh
+    clone (autocrlf on either setting) reconciles the same way the committed tree does.
+    """
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()

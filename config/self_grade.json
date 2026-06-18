@@ -26,7 +26,7 @@
     "routes": ["graph_guided", "naive"]
   },
   "baseline_hashes": {
-    "artifacts/graphify/graph.json": "7a0cc6b8ae3d21dac4f1787beef9b87a4a80838351f0ef3ce19472a091911abc"
+    "artifacts/graphify/graph.json": "910af6f0b0e92e87c6345cfede18d9451750cd8e30e526c39d5f38446713129e"
   },
   "gates": {
     "ruff": ["uv", "run", "ruff", "check", "."],
