@@ -14,7 +14,7 @@ Authors: **Eyal Shtinmtez** (314884834) · **Imree Cohen** (312359284)
 ![LangGraph](https://img.shields.io/badge/agent-LangGraph-1C3C3C)
 ![ruff](https://img.shields.io/badge/ruff-0%20violations-success?logo=ruff)
 ![mypy](https://img.shields.io/badge/mypy-strict%20·%200%20errors-2A6DB2)
-![tests](https://img.shields.io/badge/tests-244%20passing-success?logo=pytest&logoColor=white)
+![tests](https://img.shields.io/badge/tests-262%20passing-success?logo=pytest&logoColor=white)
 ![coverage](https://img.shields.io/badge/coverage-98%25%20(gate%20%E2%89%A590%25)-success)
 ![keyless](https://img.shields.io/badge/test%20suite-keyless%20(no%20API%20key)-blue)
 ![license](https://img.shields.io/badge/license-MIT-lightgrey)
@@ -45,7 +45,7 @@ Everything in this README is backed by a committed artifact, a requirement ID, o
 ```bash
 git clone <repo> && cd HW4
 uv sync
-uv run pytest                 # 244 tests, keyless (provider client mocked)
+uv run pytest                 # 262 tests, keyless (provider client mocked)
 uv run pytest -m eval         # the thesis evals: 76.7% token delta, structural validity
 uv run ruff check . && uv run mypy --strict src/   # 0 / 0
 uv run ex04 hot               # regenerate obsidian/hot.md from the PRE-FIX graph (keyless)
@@ -83,11 +83,12 @@ We were offered three approved repos and picked this one deliberately: its compa
 
 ```bash
 uv sync                       # create env + install from uv.lock
-uv run pytest --cov=src --cov-report=term-missing   # 244 passed, 98% coverage
+uv run pytest --cov=src --cov-report=term-missing   # 262 passed, 98% coverage
 uv run pytest -m eval         # structural + token-delta evals (the thesis, keyless)
 uv run ruff check .           # 0 violations
 uv run mypy --strict src/     # 0 errors
 uv run ex04 hot               # (re)generate obsidian/hot.md from the PRE-FIX graph
+uv run python scripts/self_grade.py   # keyless self-grade → 90/100, exits 0 when all gates pass
 ```
 
 <details>
@@ -277,7 +278,7 @@ Full, defensible list in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md
 - **`turtle`** needs a GUI, so `draw_polygon` is verified by a mocked call-count assertion, not a rendered image.
 - **Branch protection** can't be server-enforced on a free-tier private repo; mitigated by CI on every push/PR + local hooks.
 
-**Self-grade:** **90 / 100** — computed against the rubric with the gates green (ruff 0, mypy 0, 244 tests @ 98%); the per-area breakdown sums to 72/80, each row discounted for its disclosed limitation. Full breakdown in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
+**Self-grade:** **90 / 100** — computed against the rubric with the gates green (ruff 0, mypy 0, 262 tests @ 98%); the per-area breakdown sums to 72/80, each row discounted for its disclosed limitation. It is **machine-reproducible and keyless** — `uv run python scripts/self_grade.py` runs the structural checks + every quality gate and emits the number (exits non-zero if any check fails). Full breakdown in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
 
 ---
 
@@ -368,7 +369,7 @@ No claim here rests on prose — each maps to an executable check:
 1. **Keyless by default** — the full suite + self-grade pass with **no API key** (provider mocked at the gatekeeper boundary); a grader without credentials gets a fully green project.
 2. **Structural evals** — deterministic invariants (token delta, known-answer localization) under `uv run pytest -m eval`.
 3. **Keyed live run** — one real-provider run, reported with correctness + cost, committed as static evidence (§6).
-4. **CI gates on every push/PR** — ruff (0), mypy `--strict` (0), pytest ≥90% (currently **98%**, 244 tests), ≤150 lines/file, no-hardcoded + anti-pattern scanners.
+4. **CI gates on every push/PR** — ruff (0), mypy `--strict` (0), pytest ≥90% (currently **98%**, 262 tests), ≤150 lines/file, no-hardcoded + anti-pattern scanners.
 5. **Independent review** — every PR reviewed (Antigravity / cold-session); findings fixed-or-disclosed.
 
 ## 📚 Reports & evidence

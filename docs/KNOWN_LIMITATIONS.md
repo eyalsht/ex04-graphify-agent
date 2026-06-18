@@ -7,7 +7,7 @@ self-grade) and the `CLAUDE.md` non-negotiable: *"Honest self-grade with
 
 It is updated as the project progresses through phases (see `docs/PLAN.md` /
 `docs/TODO.md`). The list below reflects the **submission-ready state**: all phases (1–8) are
-implemented and verified — the quality gates are green (ruff 0, `mypy --strict` 0, 244 tests at
+implemented and verified — the quality gates are green (ruff 0, `mypy --strict` 0, 262 tests at
 98% coverage, all files ≤150 lines), the keyless and keyed token runs are committed, and the
 graph-guided route is the three-agent crew of ADR-0006.
 
@@ -49,7 +49,7 @@ graph-guided route is the three-agent crew of ADR-0006.
    `max_findings_tried`, config-driven) plus a **one-shot** before/after Graphify re-graph done
    once after the fix (`artifacts/graphify_post_fix/`, `reports/graph_diff.md`). This is a
    deliberate scoping of the loop to the target's size, not an oversight; a larger codebase would
-   warrant the full iterative re-graph loop. Unit tests gate every change at the suite level (244
+   warrant the full iterative re-graph loop. Unit tests gate every change at the suite level (262
    tests), rather than the agent re-running them inside each loop iteration.
 
 5. **`hot.md` generated (Phase 4) — ranking composition note.** `obsidian/hot.md` is now
@@ -126,9 +126,13 @@ graph-guided route is the three-agent crew of ADR-0006.
 ## Self-grade
 
 **90 / 100 — defensible, evidence-backed.** Computed against `docs/ASSIGNMENT.md` with all
-gates green (ruff 0, `mypy --strict` 0, 244 tests at 98%, files ≤150 lines); the per-area
+gates green (ruff 0, `mypy --strict` 0, 262 tests at 98%, files ≤150 lines); the per-area
 breakdown below sums to 72 / 80. Each row is already discounted for its specific disclosed
-limitation, so the total reflects delivered, verified substance, not aspiration.
+limitation, so the total reflects delivered, verified substance, not aspiration. The number is
+**machine-reproducible**: `uv run python scripts/self_grade.py` (keyless, behind `Ex04Sdk.self_grade`)
+runs the structural checks (requirement→artifact coverage, `hot.md` consistency, PRE-FIX baseline
+hashes, this grade's presence here) plus every quality gate and exits non-zero on any failure.
+The rubric below is config-driven in `config/self_grade.json`.
 
 | Rubric area | Self-score | Basis / what holds it back |
 |---|---|---|
