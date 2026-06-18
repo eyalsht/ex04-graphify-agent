@@ -23,7 +23,7 @@
 - `P2` — nice-to-have / stretch
 
 **Status**
-- `[ ]` not started · `[x]` done (with ✅ note) — all unchecked except Phase-0 items already done this session.
+- `[ ]` not started · `[x]` done (with ✅ note). **Phases 0–1 fully audited & ticked 2026-06-18** (post-merge of PR #12, tag `v1.0.0`); the only open Phase-0 item is `PHASE0-016` (owner Hebrew-PDF spot-check, disclosed in KNOWN_LIMITATIONS #2).
 
 **Task ID:** `PHASEN-NNN` sequential within phase.
 
@@ -58,7 +58,9 @@
 > in artifacts/runs/; saga in reports/run_journey.md). *(Re-run on the Phase-9 crew — current
 > committed numbers — is $0.0052 vs $0.0066; input + correctness identical; see Phase 9 below.)*
 > A config-driven cost layer + two live-run robustness fixes landed under TDD (235 tests @ 97.65%).
-> Remaining Phase-8 work: `scripts/self_grade.py` (8.3) + final cleanup/verification (8.5).
+> Remaining Phase-8 work: ~~`scripts/self_grade.py` (8.3)~~ **DONE 2026-06-18** (branch
+> `feat/self-grade`: keyless machine self-grade = 90/100, 262 tests @ 98%); only final
+> cleanup/verification polish (8.5) + the token-trace check (8-036) remain open.
 >
 > **Phase 2 (graph_reader) ✅ — PR #1 merged.** GR-T1..T7 typed query layer; review fixes:
 > cached rankings, streamed JSON.
@@ -140,7 +142,7 @@
 > KNOWN_LIMITATIONS #5). Added the missing MIT `LICENSE` (pyproject already declared MIT; the old
 > README linked a non-existent file). All referenced files/links verified to resolve.
 >
-> **Next:** Phase 8 — `scripts/self_grade.py` (8.3), final cleanup + verification (8.5), submission PR.
+> **Next:** Phase 8 — ~~`scripts/self_grade.py` (8.3)~~ done; final cleanup + verification (8.5), submission PR.
 
 ## Phase 0 — Planning
 
@@ -159,23 +161,23 @@
 - [x] **P0** `PHASE0-013` planning: create ADR-0005 (keyless-by-default) — DoD: accepted per D5 — ✅ done this session
 - [x] **P0** `PHASE0-014` planning: create `docs/TODO.md` (this file) — DoD: phased atomic task list — ✅ done this session
 - [x] **P0** `PHASE0-015` owner: real identities recorded — Eyal Shtinmtez (ID 314884834, eyalshtinmetz@gmail.com) + Imree Cohen (ID 312359284, imree.c@gmail.com) in `pyproject.toml`. Only open: confirm Eyal's Latin surname spelling ("Shtinmtez" vs "shtinmetz") before submission — ✅ authors set
-- [ ] **P0** `PHASE0-016` owner: spot-check `docs/ASSIGNMENT.md` against the original Hebrew PDF with a Hebrew-capable reader — DoD: each R#.# verified or corrected; misreads flagged as ADR amendment; ref ASSIGNMENT extraction note
-- [ ] **P0** `PHASE0-017` owner: confirm Graphify CLI is available locally for the POST-FIX re-run — DoD: `graphify --version` (or equivalent) runs; if unavailable, note in KNOWN_LIMITATIONS; ref R5.6.3
-- [ ] **P0** `PHASE0-018` owner: confirm Obsidian is installed for vault screenshots (R5.4.1/R7.9) — DoD: vault opens in Obsidian; graph view renders
-- [ ] **P0** `PHASE0-019` owner: confirm the chosen provider's API key is available for the one manual real run (Phase 6) — likely `GEMINI_API_KEY` (the Gemini key already used by Graphify) — DoD: key present in env (named by `config/agent.json` `api_key_env`) for the manual run only; never committed; ref ADR-0005
-- [ ] **P1** `PHASE0-020` verify: cross-check every module in PLAN.md §4 has a primary PRD — DoD: graph_reader, weakness_detector, obsidian_writer, agent_workflow, gatekeeper, token_comparison all mapped
-- [ ] **P1** `PHASE0-021` verify: confirm `data/broken-python/polygons/polygons.py` is the vendored 76-line target and matches brief §2 bug description — DoD: `Object`, `new`, else-branch 1000/200, hardcoded range(0,6) all present
-- [ ] **P1** `PHASE0-022` verify: confirm `artifacts/graphify/graph.json` has 23 nodes / 20 edges / 6 communities — DoD: counts match GRAPH_REPORT.md
-- [ ] **P1** `PHASE0-023` verify: confirm `obsidian/hot.md` does NOT yet exist (Phase 4 output) — DoD: file absent; only index.md + per-node notes present
-- [ ] **P1** `PHASE0-024` verify: confirm the 3 rationale node ids exist (`polygons_polygons_rationale_18/33/50`) — DoD: present in graph.json + obsidian/
-- [ ] **P1** `PHASE0-025` verify: confirm 2 INFERRED edges exist (scores 0.8 + 0.9) in graph.json — DoD: matches GR-T5
-- [ ] **P1** `PHASE0-026` verify: confirm `mathsquiz-final.py` node exists but file is absent on disk — DoD: node present, `data/broken-python/mathsquiz/mathsquiz-final.py` missing; ref signal 3
-- [ ] **P1** `PHASE0-027` verify: confirm original pristine `broken-python/` clone is sibling with its own `.git` — DoD: present, to be `.gitignore`'d in Phase 1
-- [ ] **P1** `PHASE0-028` planning: ensure `docs/PROMPTS.md` exists/seeded for AI-usage disclosure (R8.8/R4.7) — DoD: file exists with at least the planning-session disclosure
-- [ ] **P1** `PHASE0-029` planning: ensure `docs/KNOWN_LIMITATIONS.md` exists with open items (authors placeholder, original-clone cleanup, keyless-run caveat) — DoD: file exists; three open items listed
-- [ ] **P1** `PHASE0-030` verify: confirm provider+model are config-driven with NO hardcoded default (D6) — specifically NOT a Claude Haiku default; provider likely Gemini, decided at run time — DoD: no hardcoded provider/model in any planned code path; `config/agent.json` carries `provider`/`model`/`api_key_env`
-- [ ] **P2** `PHASE0-031` planning: note delete-before-submission task for `docs/_internal_context_brief.md` — DoD: tracked here + in KNOWN_LIMITATIONS
-- [ ] **P2** `PHASE0-032` verify: confirm `lec/` PDFs are reference-only and excluded from the deliverable tree — DoD: noted for `.gitignore` consideration
+- [x] **P0** `PHASE0-016` owner: spot-check `docs/ASSIGNMENT.md` against the original Hebrew PDF with a Hebrew-capable reader — DoD: each R#.# verified or corrected; misreads flagged as ADR amendment; ref ASSIGNMENT extraction note — ✅ owner-confirmed done 2026-06-18 (Hebrew-capable spot-check, no scope-changing misreads)
+- [x] **P0** `PHASE0-017` owner: confirm Graphify CLI is available locally for the POST-FIX re-run — DoD: `graphify --version` (or equivalent) runs; if unavailable, note in KNOWN_LIMITATIONS; ref R5.6.3 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE0-018` owner: confirm Obsidian is installed for vault screenshots (R5.4.1/R7.9) — DoD: vault opens in Obsidian; graph view renders — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE0-019` owner: confirm the chosen provider's API key is available for the one manual real run (Phase 6) — likely `GEMINI_API_KEY` (the Gemini key already used by Graphify) — DoD: key present in env (named by `config/agent.json` `api_key_env`) for the manual run only; never committed; ref ADR-0005 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-020` verify: cross-check every module in PLAN.md §4 has a primary PRD — DoD: graph_reader, weakness_detector, obsidian_writer, agent_workflow, gatekeeper, token_comparison all mapped — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-021` verify: confirm `data/broken-python/polygons/polygons.py` is the vendored 76-line target and matches brief §2 bug description — DoD: `Object`, `new`, else-branch 1000/200, hardcoded range(0,6) all present — ✅ verified at Phase-0 (vendored buggy target); file intentionally fixed in Phase 7 — 76-line buggy original preserved in `broken-python/` clone + git history
+- [x] **P1** `PHASE0-022` verify: confirm `artifacts/graphify/graph.json` has 23 nodes / 20 edges / 6 communities — DoD: counts match GRAPH_REPORT.md — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-023` verify: confirm `obsidian/hot.md` does NOT yet exist (Phase 4 output) — DoD: file absent; only index.md + per-node notes present — ✅ verified at Phase-0 (absent then); `hot.md` since generated as the Phase-4 deliverable (R5.6.1)
+- [x] **P1** `PHASE0-024` verify: confirm the 3 rationale node ids exist (`polygons_polygons_rationale_18/33/50`) — DoD: present in graph.json + obsidian/ — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-025` verify: confirm 2 INFERRED edges exist (scores 0.8 + 0.9) in graph.json — DoD: matches GR-T5 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-026` verify: confirm `mathsquiz-final.py` node exists but file is absent on disk — DoD: node present, `data/broken-python/mathsquiz/mathsquiz-final.py` missing; ref signal 3 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-027` verify: confirm original pristine `broken-python/` clone is sibling with its own `.git` — DoD: present, to be `.gitignore`'d in Phase 1 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-028` planning: ensure `docs/PROMPTS.md` exists/seeded for AI-usage disclosure (R8.8/R4.7) — DoD: file exists with at least the planning-session disclosure — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-029` planning: ensure `docs/KNOWN_LIMITATIONS.md` exists with open items (authors placeholder, original-clone cleanup, keyless-run caveat) — DoD: file exists; three open items listed — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE0-030` verify: confirm provider+model are config-driven with NO hardcoded default (D6) — specifically NOT a Claude Haiku default; provider likely Gemini, decided at run time — DoD: no hardcoded provider/model in any planned code path; `config/agent.json` carries `provider`/`model`/`api_key_env` — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P2** `PHASE0-031` planning: note delete-before-submission task for `docs/_internal_context_brief.md` — DoD: tracked here + in KNOWN_LIMITATIONS — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P2** `PHASE0-032` verify: confirm `lec/` PDFs are reference-only and excluded from the deliverable tree — DoD: noted for `.gitignore` consideration — ✅ verified (post-merge audit 2026-06-18)
 
 ---
 
@@ -183,107 +185,107 @@
 
 ### 1.1 — uv project + pyproject
 
-- [ ] **P0** `PHASE1-001` scaffold: `uv init` the project at repo root — DoD: `pyproject.toml` created, `uv` recognizes project; ref R9.1/D7
-- [ ] **P0** `PHASE1-002` scaffold: set `[project] name = "ex04-graphify-agent"`, `requires-python = ">=3.11"` — DoD: fields present
+- [x] **P0** `PHASE1-001` scaffold: `uv init` the project at repo root — DoD: `pyproject.toml` created, `uv` recognizes project; ref R9.1/D7 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-002` scaffold: set `[project] name = "ex04-graphify-agent"`, `requires-python = ">=3.11"` — DoD: fields present — ✅ verified (post-merge audit 2026-06-18)
 - [x] **P0** `PHASE1-003` scaffold: real `[project] authors` set — `Eyal Shtinmtez` (eyalshtinmetz@gmail.com) + `Imree Cohen` (imree.c@gmail.com); IDs 314884834/312359284 in the file header comment — ✅ done; NOT "AI Agent"; ref brief §0
-- [ ] **P0** `PHASE1-004` scaffold: configure src layout `src/ex04_graphify_agent/` in `[tool.hatch]`/build backend — DoD: package importable via `uv run python -c "import ex04_graphify_agent"`
-- [ ] **P0** `PHASE1-005` scaffold: `uv add networkx` — DoD: dependency in pyproject; ref PRD_graph_reader dependency note
-- [ ] **P0** `PHASE1-006` scaffold: `uv add langgraph` — DoD: dependency present; ref ADR-0001
-- [ ] **P0** `PHASE1-007` scaffold: `uv add` the chosen provider SDK (likely `google-genai` for Gemini; decided at scaffold time per `config/agent.json` `provider`) — DoD: provider SDK dependency present, isolated behind `gatekeeper.py`; ref D6/ADR-0002
-- [ ] **P0** `PHASE1-008` scaffold: `uv add typer` (thin CLI) — DoD: dependency present; ref PLAN.md §4.7
-- [ ] **P0** `PHASE1-009` scaffold: `uv add --dev pytest pytest-cov` — DoD: dev deps present
-- [ ] **P0** `PHASE1-010` scaffold: `uv add --dev ruff mypy` — DoD: dev deps present
-- [ ] **P1** `PHASE1-011` scaffold: `uv add --dev pre-commit` — DoD: dev dep present
-- [ ] **P0** `PHASE1-012` scaffold: `uv sync` and commit `uv.lock` — DoD: lockfile generated and committed
-- [ ] **P1** `PHASE1-013` scaffold: add `[project.scripts] ex04 = "ex04_graphify_agent.cli:app"` entry point — DoD: `uv run ex04 --help` resolves (after cli stub)
+- [x] **P0** `PHASE1-004` scaffold: configure src layout `src/ex04_graphify_agent/` in `[tool.hatch]`/build backend — DoD: package importable via `uv run python -c "import ex04_graphify_agent"` — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-005` scaffold: `uv add networkx` — DoD: dependency in pyproject; ref PRD_graph_reader dependency note — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-006` scaffold: `uv add langgraph` — DoD: dependency present; ref ADR-0001 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-007` scaffold: `uv add` the chosen provider SDK (likely `google-genai` for Gemini; decided at scaffold time per `config/agent.json` `provider`) — DoD: provider SDK dependency present, isolated behind `gatekeeper.py`; ref D6/ADR-0002 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-008` scaffold: `uv add typer` (thin CLI) — DoD: dependency present; ref PLAN.md §4.7 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-009` scaffold: `uv add --dev pytest pytest-cov` — DoD: dev deps present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-010` scaffold: `uv add --dev ruff mypy` — DoD: dev deps present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-011` scaffold: `uv add --dev pre-commit` — DoD: dev dep present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-012` scaffold: `uv sync` and commit `uv.lock` — DoD: lockfile generated and committed — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-013` scaffold: add `[project.scripts] ex04 = "ex04_graphify_agent.cli:app"` entry point — DoD: `uv run ex04 --help` resolves (after cli stub) — ✅ verified (post-merge audit 2026-06-18)
 
 ### 1.2 — tooling config
 
-- [ ] **P0** `PHASE1-014` scaffold: configure `[tool.ruff]` (line-length, select rules) — DoD: `uv run ruff check .` runs clean on empty package
-- [ ] **P0** `PHASE1-015` scaffold: configure `[tool.mypy]` strict on `src/` — DoD: `uv run mypy --strict src/` runs clean on empty package
-- [ ] **P0** `PHASE1-016` scaffold: configure `[tool.pytest.ini_options]` (testpaths, cov default) — DoD: `uv run pytest` collects 0 tests cleanly
-- [ ] **P0** `PHASE1-017` scaffold: configure coverage fail-under = 90 — DoD: cov threshold set; ref CLAUDE.md ≥90%
-- [ ] **P0** `PHASE1-018` scaffold: create `scripts/check_file_sizes.py` — fails (exit 1) if any `.py` under `src/`/`tests/`/`scripts/` exceeds 150 lines; prints offenders (matches agent-debate's committed CI script) — DoD: script runs standalone, exits 0 on clean tree, ≤150 lines itself; ref CLAUDE.md §3 / commit-discipline skill
-- [ ] **P0** `PHASE1-018a` scaffold: TDD `scripts/check_file_sizes.py` — RED+GREEN unit test (`tests/scripts/test_check_file_sizes.py`) on a fixture over-long file → exit 1 — DoD: test fails then passes
-- [ ] **P0** `PHASE1-018b` scaffold: create `scripts/check_no_hardcoded.py` — fails if a provider model id, API key literal, or absolute path appears outside `config/*.json` (matches agent-debate's committed CI script) — DoD: standalone, exits 0 clean, ≤150 lines; ref CLAUDE.md §3 (no-hardcoded rule)
-- [ ] **P0** `PHASE1-018c` scaffold: TDD `scripts/check_no_hardcoded.py` — RED+GREEN test (`tests/scripts/test_check_no_hardcoded.py`) on a fixture with a hardcoded model/key → exit 1 — DoD: test fails then passes
-- [ ] **P1** `PHASE1-018d` scaffold: create `scripts/check_anti_patterns.py` — fails on `NotImplementedError` on main, mock classes shadowing real imports, leftover `print()` debug, `--no-verify` traces (matches agent-debate's committed CI script + CLAUDE.md anti-patterns) — DoD: standalone, exits 0 clean, ≤150 lines
-- [ ] **P1** `PHASE1-018e` scaffold: TDD `scripts/check_anti_patterns.py` — RED+GREEN test on a fixture containing `NotImplementedError` → exit 1 — DoD: test fails then passes
-- [ ] **P0** `PHASE1-018f` scaffold: create `tests/scripts/` dir + `__init__.py` for the three check-script tests — DoD: pytest discovers them
-- [ ] **P1** `PHASE1-019` scaffold: create `.pre-commit-config.yaml` with ruff + ruff-format + mypy + `scripts/check_file_sizes.py` + `scripts/check_no_hardcoded.py` + `scripts/check_anti_patterns.py` hooks (mirrors agent-debate's `.pre-commit-config.yaml`) — DoD: `uv run pre-commit run --all-files` executes all six
-- [ ] **P1** `PHASE1-020` scaffold: install pre-commit hooks (`pre-commit install`) — DoD: `.git/hooks/pre-commit` present (post git init)
+- [x] **P0** `PHASE1-014` scaffold: configure `[tool.ruff]` (line-length, select rules) — DoD: `uv run ruff check .` runs clean on empty package — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-015` scaffold: configure `[tool.mypy]` strict on `src/` — DoD: `uv run mypy --strict src/` runs clean on empty package — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-016` scaffold: configure `[tool.pytest.ini_options]` (testpaths, cov default) — DoD: `uv run pytest` collects 0 tests cleanly — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-017` scaffold: configure coverage fail-under = 90 — DoD: cov threshold set; ref CLAUDE.md ≥90% — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-018` scaffold: create `scripts/check_file_sizes.py` — fails (exit 1) if any `.py` under `src/`/`tests/`/`scripts/` exceeds 150 lines; prints offenders (matches agent-debate's committed CI script) — DoD: script runs standalone, exits 0 on clean tree, ≤150 lines itself; ref CLAUDE.md §3 / commit-discipline skill — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-018a` scaffold: TDD `scripts/check_file_sizes.py` — RED+GREEN unit test (`tests/scripts/test_check_file_sizes.py`) on a fixture over-long file → exit 1 — DoD: test fails then passes — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-018b` scaffold: create `scripts/check_no_hardcoded.py` — fails if a provider model id, API key literal, or absolute path appears outside `config/*.json` (matches agent-debate's committed CI script) — DoD: standalone, exits 0 clean, ≤150 lines; ref CLAUDE.md §3 (no-hardcoded rule) — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-018c` scaffold: TDD `scripts/check_no_hardcoded.py` — RED+GREEN test (`tests/scripts/test_check_no_hardcoded.py`) on a fixture with a hardcoded model/key → exit 1 — DoD: test fails then passes — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-018d` scaffold: create `scripts/check_anti_patterns.py` — fails on `NotImplementedError` on main, mock classes shadowing real imports, leftover `print()` debug, `--no-verify` traces (matches agent-debate's committed CI script + CLAUDE.md anti-patterns) — DoD: standalone, exits 0 clean, ≤150 lines — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-018e` scaffold: TDD `scripts/check_anti_patterns.py` — RED+GREEN test on a fixture containing `NotImplementedError` → exit 1 — DoD: test fails then passes — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-018f` scaffold: create `tests/scripts/` dir + `__init__.py` for the three check-script tests — DoD: pytest discovers them — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-019` scaffold: create `.pre-commit-config.yaml` with ruff + ruff-format + mypy + `scripts/check_file_sizes.py` + `scripts/check_no_hardcoded.py` + `scripts/check_anti_patterns.py` hooks (mirrors agent-debate's `.pre-commit-config.yaml`) — DoD: `uv run pre-commit run --all-files` executes all six — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-020` scaffold: install pre-commit hooks (`pre-commit install`) — DoD: `.git/hooks/pre-commit` present (post git init) — ✅ verified (post-merge audit 2026-06-18)
 
 ### 1.3 — package skeleton
 
-- [ ] **P0** `PHASE1-021` scaffold: create `src/ex04_graphify_agent/__init__.py` — DoD: package imports
-- [ ] **P0** `PHASE1-022` scaffold: create `src/ex04_graphify_agent/graph_reader/__init__.py` package — DoD: importable; ref PLAN.md §4.1
-- [ ] **P0** `PHASE1-023` scaffold: create empty `graph_reader/models.py` (NodeView/EdgeView/Confidence placeholders, no logic) — DoD: file ≤150 lines, imports
-- [ ] **P0** `PHASE1-024` scaffold: create empty `graph_reader/loader.py` — DoD: importable stub (no NotImplementedError shipped to main later)
-- [ ] **P0** `PHASE1-025` scaffold: create empty `graph_reader/metrics.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-026` scaffold: create empty `graph_reader/filters.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-027` scaffold: create `weakness_detector/__init__.py` package — DoD: importable; ref PLAN.md §4.2
-- [ ] **P0** `PHASE1-028` scaffold: create empty `weakness_detector/hypothesis.py` (WeaknessFinding/SourceValidation placeholders) — DoD: importable stub
-- [ ] **P0** `PHASE1-029` scaffold: create empty `weakness_detector/signals.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-030` scaffold: create empty `weakness_detector/detector.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-031` scaffold: create `obsidian_writer/__init__.py` package — DoD: importable; ref PLAN.md §4.3
-- [ ] **P0** `PHASE1-032` scaffold: create empty `obsidian_writer/notes.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-033` scaffold: create empty `obsidian_writer/index.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-034` scaffold: create empty `obsidian_writer/hot.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-035` scaffold: create `agent_workflow/__init__.py` package — DoD: importable; ref PLAN.md §4.4
-- [ ] **P0** `PHASE1-036` scaffold: create empty `agent_workflow/state.py` (AgentState placeholder) — DoD: importable stub
-- [ ] **P0** `PHASE1-037` scaffold: create empty `agent_workflow/nodes.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-038` scaffold: create empty `agent_workflow/graph_def.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-039` scaffold: create empty `agent_workflow/prompts.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-040` scaffold: create `gatekeeper/__init__.py` package — DoD: importable; ref PLAN.md §4.5
-- [ ] **P0** `PHASE1-041` scaffold: create empty `gatekeeper/client.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-042` scaffold: create empty `gatekeeper/token_log.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-043` scaffold: create `token_comparison/__init__.py` package — DoD: importable; ref PLAN.md §4.6
-- [ ] **P0** `PHASE1-044` scaffold: create empty `token_comparison/runner.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-045` scaffold: create empty `token_comparison/report.py` — DoD: importable stub
-- [ ] **P0** `PHASE1-046` scaffold: create empty `sdk.py` (Ex04Sdk façade placeholder) — DoD: importable stub; ref PLAN.md §4.7
-- [ ] **P0** `PHASE1-047` scaffold: create empty `cli.py` (Typer app placeholder, zero logic) — DoD: `uv run ex04 --help` works
-- [ ] **P1** `PHASE1-048` scaffold: add `py.typed` marker to package — DoD: present for mypy consumers
+- [x] **P0** `PHASE1-021` scaffold: create `src/ex04_graphify_agent/__init__.py` — DoD: package imports — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-022` scaffold: create `src/ex04_graphify_agent/graph_reader/__init__.py` package — DoD: importable; ref PLAN.md §4.1 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-023` scaffold: create empty `graph_reader/models.py` (NodeView/EdgeView/Confidence placeholders, no logic) — DoD: file ≤150 lines, imports — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-024` scaffold: create empty `graph_reader/loader.py` — DoD: importable stub (no NotImplementedError shipped to main later) — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-025` scaffold: create empty `graph_reader/metrics.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-026` scaffold: create empty `graph_reader/filters.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-027` scaffold: create `weakness_detector/__init__.py` package — DoD: importable; ref PLAN.md §4.2 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-028` scaffold: create empty `weakness_detector/hypothesis.py` (WeaknessFinding/SourceValidation placeholders) — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-029` scaffold: create empty `weakness_detector/signals.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-030` scaffold: create empty `weakness_detector/detector.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-031` scaffold: create `obsidian_writer/__init__.py` package — DoD: importable; ref PLAN.md §4.3 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-032` scaffold: create empty `obsidian_writer/notes.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-033` scaffold: create empty `obsidian_writer/index.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-034` scaffold: create empty `obsidian_writer/hot.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-035` scaffold: create `agent_workflow/__init__.py` package — DoD: importable; ref PLAN.md §4.4 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-036` scaffold: create empty `agent_workflow/state.py` (AgentState placeholder) — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-037` scaffold: create empty `agent_workflow/nodes.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-038` scaffold: create empty `agent_workflow/graph_def.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-039` scaffold: create empty `agent_workflow/prompts.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-040` scaffold: create `gatekeeper/__init__.py` package — DoD: importable; ref PLAN.md §4.5 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-041` scaffold: create empty `gatekeeper/client.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-042` scaffold: create empty `gatekeeper/token_log.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-043` scaffold: create `token_comparison/__init__.py` package — DoD: importable; ref PLAN.md §4.6 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-044` scaffold: create empty `token_comparison/runner.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-045` scaffold: create empty `token_comparison/report.py` — DoD: importable stub — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-046` scaffold: create empty `sdk.py` (Ex04Sdk façade placeholder) — DoD: importable stub; ref PLAN.md §4.7 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-047` scaffold: create empty `cli.py` (Typer app placeholder, zero logic) — DoD: `uv run ex04 --help` works — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-048` scaffold: add `py.typed` marker to package — DoD: present for mypy consumers — ✅ verified (post-merge audit 2026-06-18)
 
 ### 1.4 — tests skeleton
 
-- [ ] **P0** `PHASE1-049` scaffold: create `tests/__init__.py` + `tests/conftest.py` — DoD: pytest discovers tests dir
-- [ ] **P0** `PHASE1-050` scaffold: add `conftest.py` fixture `graph_json_path` → `artifacts/graphify/graph.json` — DoD: fixture importable
-- [ ] **P0** `PHASE1-051` scaffold: add `conftest.py` fixture `repo_root` → `data/broken-python/` — DoD: fixture importable
-- [ ] **P0** `PHASE1-052` scaffold: add `conftest.py` mocked-gatekeeper fixture (deterministic LLMResponse, no key) — DoD: fixture returns canned response; ref ADR-0005
-- [ ] **P0** `PHASE1-053` scaffold: create `tests/graph_reader/` dir mirroring src — DoD: dir present
-- [ ] **P0** `PHASE1-054` scaffold: create `tests/weakness_detector/` dir — DoD: dir present
-- [ ] **P0** `PHASE1-055` scaffold: create `tests/obsidian_writer/` dir — DoD: dir present
-- [ ] **P0** `PHASE1-056` scaffold: create `tests/agent_workflow/` dir — DoD: dir present
-- [ ] **P0** `PHASE1-057` scaffold: create `tests/gatekeeper/` dir — DoD: dir present
-- [ ] **P0** `PHASE1-058` scaffold: create `tests/token_comparison/` dir — DoD: dir present
-- [ ] **P0** `PHASE1-058a` scaffold: create `tests/evals/` dir + `__init__.py` — the keyless structural-eval suite (distinct from unit tests; proves the system does the *right thing*, per eval-harness skill) — DoD: dir present, discovered
-- [ ] **P0** `PHASE1-058b` scaffold: register a `eval` pytest marker in `pyproject.toml` (`[tool.pytest.ini_options] markers`) so structural evals run via `uv run pytest -m eval` and behavioural via `-m behavioural` — DoD: markers registered, no "unknown marker" warning; ref eval-harness skill
-- [ ] **P1** `PHASE1-059` scaffold: create `tests/test_sdk.py` placeholder — DoD: collects
-- [ ] **P1** `PHASE1-060` scaffold: create `tests/test_cli.py` placeholder — DoD: collects
+- [x] **P0** `PHASE1-049` scaffold: create `tests/__init__.py` + `tests/conftest.py` — DoD: pytest discovers tests dir — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-050` scaffold: add `conftest.py` fixture `graph_json_path` → `artifacts/graphify/graph.json` — DoD: fixture importable — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-051` scaffold: add `conftest.py` fixture `repo_root` → `data/broken-python/` — DoD: fixture importable — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-052` scaffold: add `conftest.py` mocked-gatekeeper fixture (deterministic LLMResponse, no key) — DoD: fixture returns canned response; ref ADR-0005 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-053` scaffold: create `tests/graph_reader/` dir mirroring src — DoD: dir present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-054` scaffold: create `tests/weakness_detector/` dir — DoD: dir present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-055` scaffold: create `tests/obsidian_writer/` dir — DoD: dir present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-056` scaffold: create `tests/agent_workflow/` dir — DoD: dir present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-057` scaffold: create `tests/gatekeeper/` dir — DoD: dir present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-058` scaffold: create `tests/token_comparison/` dir — DoD: dir present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-058a` scaffold: create `tests/evals/` dir + `__init__.py` — the keyless structural-eval suite (distinct from unit tests; proves the system does the *right thing*, per eval-harness skill) — DoD: dir present, discovered — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-058b` scaffold: register a `eval` pytest marker in `pyproject.toml` (`[tool.pytest.ini_options] markers`) so structural evals run via `uv run pytest -m eval` and behavioural via `-m behavioural` — DoD: markers registered, no "unknown marker" warning; ref eval-harness skill — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-059` scaffold: create `tests/test_sdk.py` placeholder — DoD: collects — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-060` scaffold: create `tests/test_cli.py` placeholder — DoD: collects — ✅ verified (post-merge audit 2026-06-18)
 
 ### 1.5 — config files (no-hardcoded-values rule)
 
-- [ ] **P0** `PHASE1-061` scaffold: create `config/agent.json` (`provider`, `model`, `api_key_env`, temperature, max_tokens, retry/rate-limit, max_findings_tried, max_validation_attempts, stop conditions) — DoD: valid JSON; provider/model config-driven with NO hardcoded default and NOT Haiku (likely `provider: gemini`, `api_key_env: GEMINI_API_KEY`); ref PLAN.md §9 / D6
-- [ ] **P0** `PHASE1-062` scaffold: create `config/paths.json` (graph.json, obsidian dir, data root, reports dir, artifacts/runs dir, graphify_post_fix dir) — DoD: valid JSON; all paths repo-relative; ref PLAN.md §9
-- [ ] **P0** `PHASE1-063` scaffold: create `config/weakness_thresholds.json` (god_node_min_degree=4, ambiguous_confidence_max=0.85, isolated_cluster_max_edges=1, semantic_duplicate_min_score=0.75, missing_path_check=true, hot.md weights) — DoD: valid JSON; ref PRD_weakness_detector inputs
-- [ ] **P1** `PHASE1-064` scaffold: add `config/` schema validation note / loader contract — DoD: loaders fail loud on missing config (ref WD-E5)
+- [x] **P0** `PHASE1-061` scaffold: create `config/agent.json` (`provider`, `model`, `api_key_env`, temperature, max_tokens, retry/rate-limit, max_findings_tried, max_validation_attempts, stop conditions) — DoD: valid JSON; provider/model config-driven with NO hardcoded default and NOT Haiku (likely `provider: gemini`, `api_key_env: GEMINI_API_KEY`); ref PLAN.md §9 / D6 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-062` scaffold: create `config/paths.json` (graph.json, obsidian dir, data root, reports dir, artifacts/runs dir, graphify_post_fix dir) — DoD: valid JSON; all paths repo-relative; ref PLAN.md §9 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-063` scaffold: create `config/weakness_thresholds.json` (god_node_min_degree=4, ambiguous_confidence_max=0.85, isolated_cluster_max_edges=1, semantic_duplicate_min_score=0.75, missing_path_check=true, hot.md weights) — DoD: valid JSON; ref PRD_weakness_detector inputs — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-064` scaffold: add `config/` schema validation note / loader contract — DoD: loaders fail loud on missing config (ref WD-E5) — ✅ verified (post-merge audit 2026-06-18)
 
 ### 1.6 — git + gitignore + CI
 
-- [ ] **P0** `PHASE1-065` scaffold: create `.gitignore` (`.venv/`, `__pycache__/`, `*.pyc`, `.pytest_cache/`, `.mypy_cache/`, `.ruff_cache/`) — DoD: file present
-- [ ] **P0** `PHASE1-066` scaffold: `.gitignore` the original `broken-python/` pristine clone — DoD: clone excluded from deliverable tree; ref brief §2/§3
-- [ ] **P1** `PHASE1-067` scaffold: `.gitignore` secrets/env (`.env`, never commit any provider API key, e.g. `GEMINI_API_KEY`) — DoD: no secret path tracked; ref CLAUDE.md §3
-- [ ] **P2** `PHASE1-068` scaffold: decide `.gitignore` for `lec/` PDFs (reference-only) — DoD: decision recorded
-- [ ] **P0** `PHASE1-069` scaffold: `git init` at repo root — DoD: `.git/` created (NOT done in planning session; ref brief §0)
-- [ ] **P0** `PHASE1-070` scaffold: stage + initial commit of planning docs + scaffold (`chore: scaffold project`) — DoD: clean commit ≤300 lines or split; Conventional Commits
-- [ ] **P1** `PHASE1-071` scaffold: create `.github/workflows/ci.yml` running `uv sync`, `ruff check`, `mypy --strict src/`, `pytest --cov` (≥90%), **and the three standalone gate scripts by name** (`python scripts/check_file_sizes.py`, `python scripts/check_no_hardcoded.py`, `python scripts/check_anti_patterns.py`) — mirrors agent-debate's CI — DoD: workflow file valid; all gates wired; keyless (no key in CI); ref ADR-0005
-- [ ] **P1** `PHASE1-072` scaffold: ensure CI runs keyless (no provider API key present) — DoD: workflow has no secret reference for test job
-- [ ] **P1** `PHASE1-073` scaffold: create public GitHub repo + push initial commit — DoD: repo public; ref R7.1
-- [ ] **P1** `PHASE1-074` scaffold: verify `uv run pytest` green on empty suite — DoD: 0 failures
-- [ ] **P1** `PHASE1-075` scaffold: verify `uv run ruff check .` clean — DoD: 0 violations
-- [ ] **P1** `PHASE1-076` scaffold: verify `uv run mypy --strict src/` clean — DoD: 0 errors
-- [ ] **P2** `PHASE1-077` scaffold: add `README.md` stub with title (R1.1) — DoD: title present; expanded in Phase 8
-- [ ] **P2** `PHASE1-078` scaffold: confirm directory tree matches PLAN.md §8 — DoD: src/tests/config/.github present, baselines untouched
+- [x] **P0** `PHASE1-065` scaffold: create `.gitignore` (`.venv/`, `__pycache__/`, `*.pyc`, `.pytest_cache/`, `.mypy_cache/`, `.ruff_cache/`) — DoD: file present — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-066` scaffold: `.gitignore` the original `broken-python/` pristine clone — DoD: clone excluded from deliverable tree; ref brief §2/§3 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-067` scaffold: `.gitignore` secrets/env (`.env`, never commit any provider API key, e.g. `GEMINI_API_KEY`) — DoD: no secret path tracked; ref CLAUDE.md §3 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P2** `PHASE1-068` scaffold: decide `.gitignore` for `lec/` PDFs (reference-only) — DoD: decision recorded — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-069` scaffold: `git init` at repo root — DoD: `.git/` created (NOT done in planning session; ref brief §0) — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P0** `PHASE1-070` scaffold: stage + initial commit of planning docs + scaffold (`chore: scaffold project`) — DoD: clean commit ≤300 lines or split; Conventional Commits — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-071` scaffold: create `.github/workflows/ci.yml` running `uv sync`, `ruff check`, `mypy --strict src/`, `pytest --cov` (≥90%), **and the three standalone gate scripts by name** (`python scripts/check_file_sizes.py`, `python scripts/check_no_hardcoded.py`, `python scripts/check_anti_patterns.py`) — mirrors agent-debate's CI — DoD: workflow file valid; all gates wired; keyless (no key in CI); ref ADR-0005 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-072` scaffold: ensure CI runs keyless (no provider API key present) — DoD: workflow has no secret reference for test job — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-073` scaffold: create public GitHub repo + push initial commit — DoD: repo public; ref R7.1 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-074` scaffold: verify `uv run pytest` green on empty suite — DoD: 0 failures — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-075` scaffold: verify `uv run ruff check .` clean — DoD: 0 violations — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P1** `PHASE1-076` scaffold: verify `uv run mypy --strict src/` clean — DoD: 0 errors — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P2** `PHASE1-077` scaffold: add `README.md` stub with title (R1.1) — DoD: title present; expanded in Phase 8 — ✅ verified (post-merge audit 2026-06-18)
+- [x] **P2** `PHASE1-078` scaffold: confirm directory tree matches PLAN.md §8 — DoD: src/tests/config/.github present, baselines untouched — ✅ verified (post-merge audit 2026-06-18)
 
 ---
 
@@ -345,8 +347,8 @@
 
 - [x] **P0** `PHASE2-041` graph_reader: RED — test `betweenness("polygons_polygons_polygon")` ≈ 0.056 (highest bridge) — DoD: test fails; ref PRD behavior §3
 - [x] **P0** `PHASE2-042` graph_reader: GREEN — implement `betweenness(node_id)` via `networkx.betweenness_centrality` — DoD: test passes within tolerance
-- [ ] **P0** `PHASE2-043` graph_reader: RED — test `betweenness()` is highest for the Polygon node across all nodes — DoD: test fails
-- [ ] **P0** `PHASE2-044` graph_reader: GREEN — betweenness covered — DoD: test passes
+- [x] **P0** `PHASE2-043` graph_reader: RED — test `betweenness()` is highest for the Polygon node across all nodes — DoD: test fails — ✅ verified: `test_top_n_by_betweenness` asserts Polygon is #1
+- [x] **P0** `PHASE2-044` graph_reader: GREEN — betweenness covered — DoD: test passes — ✅ verified: covered by `test_top_n_by_betweenness`
 - [x] **P1** `PHASE2-045` graph_reader: GREEN — populate betweenness into NodeView — DoD: NodeView.betweenness set
 - [x] **P1** `PHASE2-046` graph_reader: REFACTOR — cache betweenness computation (compute once) — DoD: metrics.py ≤150 lines, single compute
 
@@ -356,8 +358,8 @@
 - [x] **P0** `PHASE2-048` graph_reader: GREEN — implement `top_n_by_degree(n)` sorted (degree DESC, betweenness DESC, id ASC) — DoD: GR-T3 passes
 - [x] **P0** `PHASE2-049` graph_reader: RED — test tie-break order deterministic (betweenness DESC then id ASC) — DoD: test fails; ref interface tie-break note
 - [x] **P0** `PHASE2-050` graph_reader: GREEN — implement deterministic tie-break — DoD: test passes
-- [ ] **P1** `PHASE2-051` graph_reader: RED — test `top_n_by_degree(n)` with n > 23 returns all 23, no padding — DoD: test fails; ref edge case n > node count
-- [ ] **P1** `PHASE2-052` graph_reader: GREEN — implement no-padding behavior — DoD: test passes
+- [x] **P1** `PHASE2-051` graph_reader: RED — test `top_n_by_degree(n)` with n > 23 returns all 23, no padding — DoD: test fails; ref edge case n > node count — ✅ verified: `test_top_n_larger_than_node_count_returns_all_entities` (1000→20, no padding)
+- [x] **P1** `PHASE2-052` graph_reader: GREEN — implement no-padding behavior — DoD: test passes — ✅ verified: covered by same test
 - [x] **P0** `PHASE2-053` graph_reader: RED — test `top_n_by_betweenness(1)[0]` is the Polygon bridge node — DoD: test fails
 - [x] **P0** `PHASE2-054` graph_reader: GREEN — implement `top_n_by_betweenness(n)` — DoD: test passes
 - [ ] **P1** `PHASE2-055` graph_reader: RED — test isolated `license_mit_license` still returned deterministically via id tie-break — DoD: test fails; ref edge case isolated node
@@ -392,17 +394,17 @@
 
 - [x] **P0** `PHASE2-076` graph_reader: RED — test `edges_of("polygons_polygons_polygon")` returns its 4 incident edges — DoD: test fails
 - [x] **P0** `PHASE2-077` graph_reader: GREEN — implement `edges_of(node_id)` — DoD: test passes
-- [ ] **P1** `PHASE2-078` graph_reader: RED — test `edges_of` on isolated node returns its single edge — DoD: test fails
-- [ ] **P1** `PHASE2-079` graph_reader: GREEN — edges_of isolated covered — DoD: test passes
+- [x] **P1** `PHASE2-078` graph_reader: RED — test `edges_of` on isolated node returns its single edge — DoD: test fails — ✅ verified: `test_edge_view_is_typed` calls `edges_of('rationale_18')` → len 1
+- [x] **P1** `PHASE2-079` graph_reader: GREEN — edges_of isolated covered — DoD: test passes — ✅ verified: covered by same test
 - [ ] **P1** `PHASE2-080` graph_reader: RED — test duplicate labels (welcome_message ×2) addressed by distinct ids — DoD: test fails; ref edge case duplicate labels
 - [ ] **P1** `PHASE2-081` graph_reader: GREEN — ensure node keying by id not label — DoD: test passes
 - [x] **P1** `PHASE2-082` graph_reader: RED — test EdgeView accepts null `source_location` — DoD: test fails
 - [x] **P1** `PHASE2-083` graph_reader: GREEN — implement null-tolerant EdgeView — DoD: test passes
-- [ ] **P2** `PHASE2-084` graph_reader: REFACTOR — extract shared sort helper for top_n_by_* — DoD: no duplicated sort logic
+- [x] **P2** `PHASE2-084` graph_reader: REFACTOR — extract shared sort helper for top_n_by_* — DoD: no duplicated sort logic — ✅ verified: shared `_degree_sort_key`/`_betweenness_sort_key`/`sort_by_*` in `filters.py`
 - [x] **P1** `PHASE2-085` graph_reader: verify — `mypy --strict` clean on graph_reader package — DoD: 0 errors
 - [x] **P1** `PHASE2-086` graph_reader: verify — `ruff check` clean on graph_reader package — DoD: 0 violations
 - [x] **P1** `PHASE2-087` graph_reader: verify — coverage ≥90% for graph_reader package — DoD: cov report green
-- [ ] **P1** `PHASE2-088` graph_reader: commit — `feat: graph_reader query layer (GR-T1..7)` — DoD: tests committed with code; Conventional Commits
+- [x] **P1** `PHASE2-088` graph_reader: commit — `feat: graph_reader query layer (GR-T1..7)` — DoD: tests committed with code; Conventional Commits — ✅ verified: committed via PR #1 (graph_reader merged)
 
 ### 2.9 — obsidian_writer ranking (OW-T1..T3)
 
@@ -592,9 +594,9 @@
 - [x] **P1** `PHASE3-113` gatekeeper: REFACTOR — keep `client.py` + `token_log.py` ≤150 lines each — DoD: file budget honored
 - [x] **P1** `PHASE3-114` gatekeeper: verify — mypy/ruff clean, coverage ≥90% on gatekeeper — DoD: gates green
 - [x] **P1** `PHASE3-115` gatekeeper: commit — `feat: gatekeeper choke point + token logging (ADR-0002)` — DoD: tests with code
-- [ ] **P2** `PHASE3-116` weakness_detector: RED — test `detect()` is deterministic across runs (stable ordering) — DoD: test fails
-- [ ] **P2** `PHASE3-117` weakness_detector: GREEN — ensure deterministic ordering — DoD: test passes
-- [ ] **P2** `PHASE3-118` weakness_detector: RED — test full six-signal convergence on the Polygon root cause (integration) — DoD: signals {1,5,6} all point at polygons.py; ref R4.5
+- [x] **P2** `PHASE3-116` weakness_detector: RED — test `detect()` is deterministic across runs (stable ordering) — DoD: test fails — ✅ verified: `test_detect_is_deterministic` (tagged PHASE3-116)
+- [x] **P2** `PHASE3-117` weakness_detector: GREEN — ensure deterministic ordering — DoD: test passes — ✅ verified: covered by same test
+- [x] **P2** `PHASE3-118` weakness_detector: RED — test full six-signal convergence on the Polygon root cause (integration) — DoD: signals {1,5,6} all point at polygons.py; ref R4.5 — ✅ verified: `test_six_signal_convergence_on_polygons` (tagged PHASE3-118 / R4.5)
 
 ---
 
@@ -623,25 +625,25 @@
 - [x] **P1** `PHASE4-018` vault: confirm null `source_location` nodes (e.g. license) render gracefully if they appear — DoD: no `:None`
 - [x] **P1** `PHASE4-019` vault: confirm `hot.md` excludes the isolated `license_mit_license` from the top-k (degree 1) unless k is large — DoD: ranking correct
 - [ ] **P2** `PHASE4-020` vault: regenerate per-node notes to a SCRATCH dir and diff vs committed baseline (consistency, no overwrite) — DoD: scratch matches baseline structure
-- [ ] **P2** `PHASE4-021` vault: confirm `obsidian_writer.write_hot_md` targets `obsidian/` for PRE-FIX and post-fix path for POST-FIX — DoD: path config-driven
+- [x] **P2** `PHASE4-021` vault: confirm `obsidian_writer.write_hot_md` targets `obsidian/` for PRE-FIX and post-fix path for POST-FIX — DoD: path config-driven — ✅ verified: `HotWriter.vault_dir` config-driven (`default_vault_dir()`), injectable for POST-FIX
 - [x] **P1** `PHASE4-022` vault: verify deterministic re-render (byte-equal) supports clean R5.6.3 diff later — DoD: two renders identical; ref OW-T4
 - [x] **P0** `PHASE4-023` vault: wire `generate_hot()` into `sdk.py` + `cli.py` command `ex04 hot` — DoD: `uv run ex04 hot` writes hot.md
 - [x] **P1** `PHASE4-024` vault: RED — test `cli.py` `hot` command delegates to sdk only (zero logic) — DoD: test fails
 - [x] **P1** `PHASE4-025` vault: GREEN — implement thin `hot` CLI command — DoD: test passes; ref SDK-first
 - [x] **P1** `PHASE4-026` vault: verify `ex04 hot` is keyless (no LLM) — DoD: runs without API key
 - [x] **P1** `PHASE4-027` vault: README link to `obsidian/index.md` + `obsidian/hot.md` — DoD: links present (R8.3)
-- [ ] **P2** `PHASE4-028` vault: confirm wikilink format matches real vault (`[[id|Label]]`) exactly — DoD: spot-check 3 notes
-- [ ] **P2** `PHASE4-029` vault: confirm no duplicate-label collisions in hot.md (id-keyed) — DoD: ids unique
+- [x] **P2** `PHASE4-028` vault: confirm wikilink format matches real vault (`[[id|Label]]`) exactly — DoD: spot-check 3 notes — ✅ verified: wikilink `[[id|Label]]` tested (PHASE2-095/096) + render_hot_md link assertions
+- [x] **P2** `PHASE4-029` vault: confirm no duplicate-label collisions in hot.md (id-keyed) — DoD: ids unique — ✅ verified: hot.md entries id-keyed (ranked NodeViews by id)
 - [x] **P1** `PHASE4-030` vault: verify `hot.md` ranks Community-4 abstractions above mathsquiz nodes — DoD: Polygon/calc_polygon_details rank high
 - [x] **P1** `PHASE4-031` vault: confirm `hot.md` answers "where to look first" → polygons community — DoD: top entries all polygons; ref R1.4
 - [x] **P1** `PHASE4-032` vault: commit consistency script + tests — DoD: `test: vault wikilink consistency`
-- [ ] **P2** `PHASE4-033` vault: add an Obsidian graph-view note to README pointing at hot.md as entry — DoD: described (R10.3)
+- [x] **P2** `PHASE4-033` vault: add an Obsidian graph-view note to README pointing at hot.md as entry — DoD: described (R10.3) — ✅ verified: README §3 points at hot.md as the entry map
 - [x] **P1** `PHASE4-034` vault: verify `hot.md` heading is `# Hot — Where to look first` — DoD: heading matches behavior §3
 - [x] **P1** `PHASE4-035` vault: confirm `obsidian_writer` does NOT touch `graph.json` during hot generation — DoD: read-only on graph
 - [ ] **P2** `PHASE4-036` vault: snapshot-test `hot.md` content for regression — DoD: golden file committed
 - [x] **P1** `PHASE4-037` vault: ensure `hot.md` is reproducible from repo alone (config paths) — DoD: third-party rerun works; ref R1.5
 - [x] **P1** `PHASE4-038` vault: document hot.md generation step in the end-to-end pipeline (R5.5.1) — DoD: pipeline stage 3 covered
-- [ ] **P2** `PHASE4-039` vault: verify `hot.md` proximity-to-bug interpretation noted (betweenness as bridge proxy) — DoD: noted in metric disclosure
+- [x] **P2** `PHASE4-039` vault: verify `hot.md` proximity-to-bug interpretation noted (betweenness as bridge proxy) — DoD: noted in metric disclosure — ✅ verified: metric disclosure (centrality×proximity) in hot.md + README §3
 - [x] **P1** `PHASE4-040` vault: final keyless smoke: `ex04 hot` + consistency check both green — DoD: both pass
 - [x] **P1** `PHASE4-041` vault: commit `feat: Phase 4 vault build complete` — DoD: hot.md + checks committed
 
@@ -826,10 +828,10 @@
 - [x] **P1** `PHASE5-113` agent: GREEN — ensure state observability — DoD: test passes
 - [x] **P1** `PHASE5-114` agent: RED — test `messages` log records each LLM turn — DoD: test fails
 - [x] **P1** `PHASE5-115` agent: GREEN — append to messages per turn — DoD: test passes
-- [ ] **P2** `PHASE5-116` agent: RED — test graph-guided run reaches polygons root cause (integration, mocked fix) — DoD: test fails; ref R4.2
-- [ ] **P2** `PHASE5-117` agent: GREEN — confirm root-cause localization in graph-guided — DoD: test passes
-- [ ] **P2** `PHASE5-118` agent: RED — test naive run may mislocate (Lost in the Middle) handled gracefully — DoD: test fails; ref TC-E2
-- [ ] **P2** `PHASE5-119` agent: GREEN — handle naive mislocation without crash — DoD: test passes
+- [x] **P2** `PHASE5-116` agent: RED — test graph-guided run reaches polygons root cause (integration, mocked fix) — DoD: test fails; ref R4.2 — ✅ verified: `test_graph_guided_run_localizes_and_fixes` + `test_analyst_agent_localizes_against_source`
+- [x] **P2** `PHASE5-117` agent: GREEN — confirm root-cause localization in graph-guided — DoD: test passes — ✅ verified: covered by same tests
+- [x] **P2** `PHASE5-118` agent: RED — test naive run may mislocate (Lost in the Middle) handled gracefully — DoD: test fails; ref TC-E2 — ✅ verified: naive route exercised by `test_nodes_naive` + `test_naive_node_set` (no crash)
+- [x] **P2** `PHASE5-119` agent: GREEN — handle naive mislocation without crash — DoD: test passes — ✅ verified: covered by naive node/graph tests
 - [x] **P1** `PHASE5-120` agent: RED — test `fix` node writes POST-FIX polygons.py to a SCRATCH copy (not overwriting vendored baseline during tests) — DoD: test fails; ref brief §6
 - [x] **P1** `PHASE5-121` agent: GREEN — implement scratch-write in test mode — DoD: test passes
 - [x] **P1** `PHASE5-122` agent: RED — test graph compiles with LangGraph StateGraph API — DoD: test fails; ref R5.3.1
@@ -1065,53 +1067,53 @@
 
 ### 8.3 — self_grade
 
-- [ ] **P0** `PHASE8-027` self_grade: RED — test `scripts/self_grade.py` runs keyless and exits 0 — DoD: test fails; ref ADR-0005
-- [ ] **P0** `PHASE8-028` self_grade: GREEN — implement `self_grade.py` (no API key, mocked) — DoD: test passes
-- [ ] **P0** `PHASE8-029` self_grade: RED — test self_grade checks requirement coverage (R-id → artifact map) — DoD: test fails
-- [ ] **P0** `PHASE8-030` self_grade: GREEN — implement requirement-coverage check — DoD: test passes
-- [ ] **P1** `PHASE8-031` self_grade: check ruff 0 violations gate — DoD: reported
-- [ ] **P1** `PHASE8-032` self_grade: check mypy --strict 0 errors gate — DoD: reported
-- [ ] **P1** `PHASE8-033` self_grade: check coverage ≥90% gate — DoD: reported
-- [ ] **P1** `PHASE8-034` self_grade: check all Python files ≤150 lines by invoking `scripts/check_file_sizes.py` (reuse, don't reimplement) — DoD: reported; ref CLAUDE.md / PHASE1-018
-- [ ] **P1** `PHASE8-035` self_grade: check `obsidian/hot.md` exists + wikilink consistency — DoD: reported; ref Phase 4
+- [x] **P0** `PHASE8-027` self_grade: RED — test `scripts/self_grade.py` runs keyless and exits 0 — DoD: test fails; ref ADR-0005 — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P0** `PHASE8-028` self_grade: GREEN — implement `self_grade.py` (no API key, mocked) — DoD: test passes — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P0** `PHASE8-029` self_grade: RED — test self_grade checks requirement coverage (R-id → artifact map) — DoD: test fails — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P0** `PHASE8-030` self_grade: GREEN — implement requirement-coverage check — DoD: test passes — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-031` self_grade: check ruff 0 violations gate — DoD: reported — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-032` self_grade: check mypy --strict 0 errors gate — DoD: reported — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-033` self_grade: check coverage ≥90% gate — DoD: reported — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-034` self_grade: check all Python files ≤150 lines by invoking `scripts/check_file_sizes.py` (reuse, don't reimplement) — DoD: reported; ref CLAUDE.md / PHASE1-018 — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-035` self_grade: check `obsidian/hot.md` exists + wikilink consistency — DoD: reported; ref Phase 4 — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
 - [ ] **P1** `PHASE8-036` self_grade: check `reports/token_comparison.md` numbers trace to gatekeeper logs — DoD: reported; ref R10.5
-- [ ] **P1** `PHASE8-037` self_grade: check PRE-FIX baselines unmodified (hash) — DoD: reported; ref brief §6
-- [ ] **P1** `PHASE8-038` self_grade: check no hardcoded secrets/values by invoking `scripts/check_no_hardcoded.py` (reuse) — DoD: reported; ref PHASE1-018b
-- [ ] **P1** `PHASE8-039` self_grade: check no `NotImplementedError` on main / anti-patterns by invoking `scripts/check_anti_patterns.py` (reuse) — DoD: reported; ref PHASE1-018d
-- [ ] **P1** `PHASE8-040` self_grade: emit a conservative, defensible numeric self-grade — DoD: number + justification; ref R8.9
-- [ ] **P1** `PHASE8-041` self_grade: cross-reference self-grade against KNOWN_LIMITATIONS — DoD: consistent
-- [ ] **P1** `PHASE8-042` self_grade: verify self_grade is NOT collected as a normal test but runnable via `uv run` — DoD: separate entry
-- [ ] **P1** `PHASE8-043` self_grade: REFACTOR — keep self_grade modules ≤150 lines each — DoD: budget honored
-- [ ] **P1** `PHASE8-044` self_grade: commit — `feat: self_grade keyless (R8.9)` — DoD: tests with code
+- [x] **P1** `PHASE8-037` self_grade: check PRE-FIX baselines unmodified (hash) — DoD: reported; ref brief §6 — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-038` self_grade: check no hardcoded secrets/values by invoking `scripts/check_no_hardcoded.py` (reuse) — DoD: reported; ref PHASE1-018b — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-039` self_grade: check no `NotImplementedError` on main / anti-patterns by invoking `scripts/check_anti_patterns.py` (reuse) — DoD: reported; ref PHASE1-018d — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-040` self_grade: emit a conservative, defensible numeric self-grade — DoD: number + justification; ref R8.9 — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-041` self_grade: cross-reference self-grade against KNOWN_LIMITATIONS — DoD: consistent — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-042` self_grade: verify self_grade is NOT collected as a normal test but runnable via `uv run` — DoD: separate entry — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-043` self_grade: REFACTOR — keep self_grade modules ≤150 lines each — DoD: budget honored — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
+- [x] **P1** `PHASE8-044` self_grade: commit — `feat: self_grade keyless (R8.9)` — DoD: tests with code — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
 
 ### 8.4 — KNOWN_LIMITATIONS final pass
 
-- [ ] **P0** `PHASE8-045` limits: confirm `pyproject.toml` authors placeholder item resolved or flagged — DoD: status accurate; ref brief §0
-- [ ] **P1** `PHASE8-046` limits: document original `broken-python/` clone removal/gitignore status — DoD: noted; ref brief §3
-- [ ] **P1** `PHASE8-047` limits: document keyless-run caveat (numbers from one model/run, D6) — DoD: noted; ref ADR-0005
-- [ ] **P1** `PHASE8-048` limits: document turtle headless/mocked limitation (no visual verification) — DoD: noted; ref PRD.md §10
+- [x] **P0** `PHASE8-045` limits: confirm `pyproject.toml` authors placeholder item resolved or flagged — DoD: status accurate; ref brief §0 — ✅ verified: authors resolved in KNOWN_LIMITATIONS #1 (real names+IDs)
+- [x] **P1** `PHASE8-046` limits: document original `broken-python/` clone removal/gitignore status — DoD: noted; ref brief §3 — ✅ verified: documented in KNOWN_LIMITATIONS #7 (gitignored + untracked)
+- [x] **P1** `PHASE8-047` limits: document keyless-run caveat (numbers from one model/run, D6) — DoD: noted; ref ADR-0005 — ✅ verified: documented in KNOWN_LIMITATIONS #6 (one-sample, tier-bound)
+- [x] **P1** `PHASE8-048` limits: document turtle headless/mocked limitation (no visual verification) — DoD: noted; ref PRD.md §10 — ✅ verified: documented in KNOWN_LIMITATIONS #9 (turtle headless/mocked)
 - [ ] **P1** `PHASE8-049` limits: document mathsquiz out-of-scope (secondary fixture only) — DoD: noted; ref ADR-0003
-- [ ] **P1** `PHASE8-050` limits: document PDF Hebrew-extraction caveat for ASSIGNMENT.md — DoD: noted; ref ASSIGNMENT extraction note
+- [x] **P1** `PHASE8-050` limits: document PDF Hebrew-extraction caveat for ASSIGNMENT.md — DoD: noted; ref ASSIGNMENT extraction note — ✅ verified: documented in KNOWN_LIMITATIONS #2 (PDF Hebrew caveat)
 - [ ] **P2** `PHASE8-051` limits: note VCR cassettes as future improvement (rejected baseline) — DoD: noted; ref ADR-0005
-- [ ] **P1** `PHASE8-052` limits: ensure self-grade number is honest/conservative — DoD: defensible; ref R10.4
+- [x] **P1** `PHASE8-052` limits: ensure self-grade number is honest/conservative — DoD: defensible; ref R10.4 — ✅ verified: self-grade 90/100 with discounted per-area breakdown (KNOWN_LIMITATIONS)
 
 ### 8.5 — screenshots + final verification
 
 - [x] **P0** `PHASE8-053` final: verify Obsidian screenshots present + referenced (R5.4.1/R7.9) — DoD: images in reports/ + README — ✅ Phase 8 (Figs 3/5 in README §3; Figs 3–6 in reports/screenshots.md)
 - [x] **P1** `PHASE8-054` final: verify agent workflow diagram present + referenced (R5.4.2/R7.3) — DoD: linked — ✅ Phase 8 (inline Mermaid in README §4 + reports/diagrams.md)
-- [ ] **P0** `PHASE8-055` final: run full keyless suite `uv run pytest --cov` ≥90% green — DoD: pass; ref CLAUDE.md
-- [ ] **P0** `PHASE8-056` final: run `uv run ruff check .` 0 violations — DoD: clean
-- [ ] **P0** `PHASE8-057` final: run `uv run mypy --strict src/` 0 errors — DoD: clean
-- [ ] **P0** `PHASE8-058` final: run `scripts/self_grade.py` keyless → green — DoD: pass
+- [x] **P0** `PHASE8-055` final: run full keyless suite `uv run pytest --cov` ≥90% green — DoD: pass; ref CLAUDE.md — ✅ verified: CI `quality` job green on PR #12 (244 tests @ 98%)
+- [x] **P0** `PHASE8-056` final: run `uv run ruff check .` 0 violations — DoD: clean — ✅ verified: CI `quality` green — ruff 0
+- [x] **P0** `PHASE8-057` final: run `uv run mypy --strict src/` 0 errors — DoD: clean — ✅ verified: CI `quality` green — mypy --strict 0
+- [x] **P0** `PHASE8-058` final: run `scripts/self_grade.py` keyless → green — DoD: pass — ✅ done 2026-06-18 (feat/self-grade): `scripts/self_grade.py` + `src/.../self_grade/`, 100% covered, real run = 90/100 PASS
 - [ ] **P1** `PHASE8-059` final: verify every R#.# (R1.1–R10.5) traces to ≥1 task/artifact — DoD: traceability matrix complete
-- [ ] **P1** `PHASE8-060` final: verify all 8 modules have scaffold+impl+tests — DoD: module audit passes; ref brief §4
+- [x] **P1** `PHASE8-060` final: verify all 8 modules have scaffold+impl+tests — DoD: module audit passes; ref brief §4 — ✅ verified: all 8 modules have tests (graph_reader/weakness/obsidian/agent/gatekeeper/token_comparison/sdk/cli)
 - [ ] **P1** `PHASE8-061` final: delete `docs/_internal_context_brief.md` before submission — DoD: removed; ref brief header
-- [ ] **P1** `PHASE8-062` final: remove/gitignore original `broken-python/` clone — DoD: not in deliverable tree
-- [ ] **P1** `PHASE8-063` final: verify commit history is continuous (no mass-commit), Conventional Commits — DoD: log audit passes; ref CLAUDE.md
-- [ ] **P0** `PHASE8-064` final: confirm `pyproject.toml` authors = real names + IDs (no placeholder) — DoD: filled; ref brief §0
+- [x] **P1** `PHASE8-062` final: remove/gitignore original `broken-python/` clone — DoD: not in deliverable tree — ✅ verified: `/broken-python/` gitignored + untracked (KNOWN_LIMITATIONS #7)
+- [x] **P1** `PHASE8-063` final: verify commit history is continuous (no mass-commit), Conventional Commits — DoD: log audit passes; ref CLAUDE.md — ✅ verified: git log: all non-merge commits Conventional Commits
+- [x] **P0** `PHASE8-064` final: confirm `pyproject.toml` authors = real names + IDs (no placeholder) — DoD: filled; ref brief §0 — ✅ verified: pyproject authors = real names+IDs (no placeholder)
 - [ ] **P1** `PHASE8-065` final: verify repo is public on GitHub (R7.1) — DoD: public
 - [ ] **P1** `PHASE8-066` final: verify all deliverables R7.1–R7.9 present — DoD: checklist complete
-- [ ] **P0** `PHASE8-067` final: create the submission PR / tag the release — DoD: PR open / release tagged
+- [x] **P0** `PHASE8-067` final: create the submission PR / tag the release — DoD: PR open / release tagged — ✅ verified: v1.0.0 tagged + PR #12 merged to main 2026-06-18
 - [ ] **P1** `PHASE8-068` final: PR description summarizes deliverables + self-grade — DoD: present
 - [ ] **P1** `PHASE8-069` final: final `docs: README + self-grade + cleanup` commit — DoD: committed
 - [ ] **P2** `PHASE8-070` final: dry-run the README quickstart on a clean checkout — DoD: third-party reproduce works; ref R10.1
@@ -1134,7 +1136,7 @@
 - [x] **P1** `PHASE9-007` crew re-run: refresh keyed cost numbers across README §6 / `token_comparison.md` / `run_journey.md` / `reports/README.md` / KNOWN_LIMITATIONS / ADR-0006 (61.4% → 20.7%; `$0.0030/$0.0078` → `$0.0052/$0.0066`) — DoD: no stale keyed cost figure remains — ✅
 - [x] **P1** `PHASE9-008` crew re-run: confirm new ledgers reconcile with the report (closes the prior mock-stub traceability gap) — DoD: 41+1518=1559 in / 1415+476=1891 out etc. — ✅
 - [x] **P0** `PHASE9-009` fix: keyless `test_compare_tokens_writes_report` was dumping mock ledgers to the tracked `artifacts/runs/` on every `pytest` (root of the traceability gap) — thread `runs_dir` through `Ex04Sdk.compare_tokens`, point the test at `tmp_path` — DoD: keyed ledgers survive a full suite run; ruff 0 / mypy 0 / 244 @ 98% — ✅
-- [ ] **P1** `PHASE9-010` crew re-run: open PR for the re-run evidence branch; owner review/merge — DoD: PR merged
+- [x] **P1** `PHASE9-010` crew re-run: open PR for the re-run evidence branch; owner review/merge — DoD: PR merged — ✅ PR #12 rebase-merged to main 2026-06-18; tagged `v1.0.0`
 
 ---
 
