@@ -123,6 +123,21 @@ graph-guided route is the three-agent crew of ADR-0006.
     notes, so they reflect the committed vault. `scripts/render_graph.py` static PNGs +
     Graphify's `graph.html` remain as reproducible, keyless companions.
 
+12. **`mathsquiz` is a secondary fixture, intentionally out of scope.** `broken-python` ships
+    two sub-projects; we localized and fixed the bug in `polygons/polygons.py` only. The graph
+    still ingests `mathsquiz/` (it appears in `graph.json`, `index.md`, and the community map),
+    but `mathsquiz-final.py` is parse-broken across its whole body — a rewrite, not a
+    *localizable root cause* — so it was deliberately excluded as a fix target (ADR-0003). It
+    remains as honest graph context, not a claimed deliverable.
+
+13. **No VCR cassettes for the keyed run (rejected baseline, P2 future work).** The keyed
+    provider run is captured as committed gatekeeper ledgers + a re-runnable
+    `scripts/run_comparison.py`, not as recorded HTTP cassettes (e.g. `vcrpy`). Cassettes were
+    considered and rejected for this one manual run: the keyless suite already mocks the
+    provider at the gatekeeper boundary (ADR-0005), so cassettes would add a dependency and a
+    stale-recording risk for little gain. They are noted as a possible future improvement if the
+    keyed run ever becomes part of automated CI.
+
 ## Self-grade
 
 **90 / 100 — defensible, evidence-backed.** Computed against `docs/ASSIGNMENT.md` with all
