@@ -52,6 +52,25 @@ def test_regenerate_vault_matches_baseline_structure(graph_json_path: Path, tmp_
     assert note_files == node_ids  # one note per node, no overwrite of baseline
 
 
+def test_render_index_nodes_are_sorted_by_id(graph_json_path: Path) -> None:
+    # Deterministic ordering (review #13): node list sorted by id, not dict insertion order.
+    rendered = _writer(graph_json_path).render_index()
+    node_lines = [
+        ln for ln in rendered.splitlines() if ln.startswith("- [[") and "community-" not in ln
+    ]
+    ids = [ln.split("[[", 1)[1].split("|", 1)[0] for ln in node_lines]
+    assert ids == sorted(ids)
+
+
+def test_render_node_note_relations_are_sorted(graph_json_path: Path) -> None:
+    # Deterministic ordering (review #13): relation lines sorted, not raw edge order.
+    note = _writer(graph_json_path).render_node_note(
+        GraphReader(str(graph_json_path)).node("polygons_polygons_polygon")
+    )
+    incoming = [ln for ln in note.splitlines() if ln.startswith("- [[")]
+    assert incoming == sorted(incoming)
+
+
 def test_hot_md_matches_committed_golden(graph_json_path: Path) -> None:
     rendered = _writer(graph_json_path).render_hot_md()
     assert rendered == _GOLDEN.read_text(encoding="utf-8")

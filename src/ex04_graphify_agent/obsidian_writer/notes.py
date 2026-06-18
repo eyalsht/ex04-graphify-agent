@@ -40,9 +40,9 @@ def render_node_note(reader: GraphReader, node: NodeView) -> str:
         else:
             incoming.append(f"- {_wikilink(reader.node(edge.source))} → **{edge.relation}**")
     if outgoing:
-        lines += ["## Outgoing relations", *outgoing, ""]
+        lines += ["## Outgoing relations", *sorted(outgoing), ""]
     if incoming:
-        lines += ["## Incoming relations", *incoming, ""]
+        lines += ["## Incoming relations", *sorted(incoming), ""]
     if node.community is not None:
         lines.append(f"Community: [[community-{node.community}|Community {node.community}]]")
     return "\n".join(lines)

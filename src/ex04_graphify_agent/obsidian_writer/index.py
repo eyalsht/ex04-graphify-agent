@@ -18,6 +18,7 @@ def render_index(reader: GraphReader) -> str:
     lines = ["# Graph Index", "", "## Communities", ""]
     lines += [f"- [[community-{c}|Community {c}]]" for c in sorted(reader.communities())]
     lines += ["", "## All Nodes", ""]
-    lines += [f"- {_wikilink(node)}" for node in reader.all_nodes()]
+    nodes = sorted(reader.all_nodes(), key=lambda node: node.id)
+    lines += [f"- {_wikilink(node)}" for node in nodes]
     lines.append("")
     return "\n".join(lines)
