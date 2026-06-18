@@ -14,6 +14,8 @@ estimate.
 | [`diagrams.md`](diagrams.md) | C4 context/container, both agent routes, pipeline (Mermaid); topology verified vs `build_graph` | R5.4.2, R7.3 |
 | [`pipeline.md`](pipeline.md) | End-to-end pipeline + inspectable artifacts; six-signal convergence; R4.3/R4.6/R4.7 | R4.3, R4.5, R4.6, R4.7, R5.5 |
 | [`screenshots.md`](screenshots.md) | Committed graph renders (Fig. 1/2) + **pending** Obsidian capture instructions | R5.4.1, R7.9, R10.3 |
+| [`research_questions.md`](research_questions.md) | Each research question answered with an evidence link | R4.1–R4.7 |
+| [`traceability.md`](traceability.md) | Every requirement R1.1–R10.5 mapped to its artifact (51/51) | R8.9, all R#.# |
 
 ## Reproduce everything from a clean checkout (R1.5 / R10.1)
 

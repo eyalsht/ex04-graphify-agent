@@ -387,8 +387,32 @@ Start at **[`reports/README.md`](reports/README.md)**. Each report ties every qu
 | [`diagrams.md`](reports/diagrams.md) | C4 + both agent routes + pipeline (Mermaid) |
 | [`pipeline.md`](reports/pipeline.md) | End-to-end pipeline, six-signal convergence |
 | [`screenshots.md`](reports/screenshots.md) | Graph renders + Obsidian captures |
+| [`research_questions.md`](reports/research_questions.md) | R4.1–R4.7 answered with evidence links |
+| [`traceability.md`](reports/traceability.md) | Every requirement R1.1–R10.5 → its artifact (51/51) |
 
 **Planning layer:** [`CLAUDE.md`](CLAUDE.md) (project constitution) · [`docs/PRD.md`](docs/PRD.md) · [`docs/PLAN.md`](docs/PLAN.md) · [`docs/ASSIGNMENT.md`](docs/ASSIGNMENT.md) (requirement IDs) · [`docs/adr/`](docs/adr/).
+
+## 🗂️ Repository structure (R9)
+
+```
+HW4/
+├── README.md · CLAUDE.md · pyproject.toml · uv.lock      # entry + constitution + packaging
+├── src/ex04_graphify_agent/    # 8 modules behind sdk.py (graph_reader, weakness_detector,
+│                               #   obsidian_writer, agent_workflow, gatekeeper, token_comparison)
+├── tests/                      # keyless pytest suite (unit + tests/evals/)
+├── config/                     # agent.json · paths.json · weakness_thresholds.json · self_grade.json
+├── scripts/                    # gate scripts + run_comparison.py + self_grade.py
+├── obsidian/                   # PRE-FIX vault: index.md + hot.md + per-node notes
+├── artifacts/graphify[_post_fix]/ · artifacts/runs/   # graph + gatekeeper ledgers
+├── reports/                    # before/after, token_comparison, traceability, screenshots …
+├── data/broken-python/         # vendored target repo (the code the agent fixes)
+└── docs/                       # ASSIGNMENT · PRD* · PLAN · KNOWN_LIMITATIONS · PROMPTS · adr/
+```
+
+> **`requirements.txt` → `pyproject.toml`/`uv` (intentional, disclosed deviation).** PDF §9 lists
+> `requirements.txt` *or* `pyproject.toml`; per the [TIGHTENED] CLAUDE.md `uv`-only rule this
+> project uses `pyproject.toml` + `uv.lock` exclusively (no `pip`/`venv`). Reproducibility is
+> stronger, not weaker — `uv sync` installs the exact locked graph (R9.1, [`docs/ASSIGNMENT.md`](docs/ASSIGNMENT.md#9-recommended-repository-structure-pdf-9)).
 
 ---
 
