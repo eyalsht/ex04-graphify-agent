@@ -13,7 +13,7 @@ from pathlib import Path
 
 from ex04_graphify_agent.graph_reader import GraphReader, NodeView
 
-from . import ranking
+from . import index, notes, ranking
 from .config import (
     default_bug_node_id,
     default_hot_md_top_k,
@@ -57,8 +57,8 @@ class ObsidianWriter:
         ranked = self.rank_hot_nodes(resolved_k)
         metric = _metric_line(default_hot_md_weights(), default_bug_node_id())
         lines = [_HEADING, "", metric, ""]
-        for index, node in enumerate(ranked, start=1):
-            lines.append(f"{index}. {self.wikilink(node)} — {_item_metadata(node)}")
+        for rank, node in enumerate(ranked, start=1):
+            lines.append(f"{rank}. {self.wikilink(node)} — {_item_metadata(node)}")
         lines.append("")
         return "\n".join(lines)
 
@@ -68,6 +68,28 @@ class ObsidianWriter:
         path = self.vault_dir / "hot.md"
         path.write_text(self.render_hot_md(top_k), encoding="utf-8", newline="\n")
         return path
+
+    def render_node_note(self, node: NodeView) -> str:
+        """Render one per-node note (R5.1) — delegates to ``notes`` (pure, no I/O)."""
+        return notes.render_node_note(self._reader, node)
+
+    def render_index(self) -> str:
+        """Render ``index.md`` listing the 6 communities + all nodes (R5.1.3)."""
+        return index.render_index(self._reader)
+
+    def regenerate_vault(self, scratch_dir: str | Path) -> Path:
+        """Regenerate ``index.md`` + per-node notes into a SCRATCH dir (never the baseline).
+
+        Used to diff a fresh render against the committed PRE-FIX vault for consistency
+        without touching ``obsidian/*`` (CLAUDE.md §4). Returns the scratch dir.
+        """
+        target = Path(scratch_dir)
+        target.mkdir(parents=True, exist_ok=True)
+        (target / "index.md").write_text(self.render_index(), encoding="utf-8", newline="\n")
+        for node in self._reader.all_nodes():
+            note = self.render_node_note(node)
+            (target / f"{node.id}.md").write_text(note, encoding="utf-8", newline="\n")
+        return target
 
 
 def _item_metadata(node: NodeView) -> str:

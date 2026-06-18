@@ -41,6 +41,7 @@ def grade(root: Path | None = None, gate_runner: GateRunner | None = None) -> Gr
         checks.requirement_coverage(base, cfg),
         checks.hot_md_consistent(base, cfg),
         checks.baselines_unmodified(base, cfg),
+        checks.token_trace(base, cfg),
         checks.grade_documented(base, number),
     ]
     runner = gate_runner if gate_runner is not None else subprocess_runner(base)

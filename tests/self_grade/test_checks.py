@@ -64,6 +64,23 @@ def test_grade_documented_fails_when_absent(tmp_path: Path) -> None:
     assert result.passed is False
 
 
+def test_token_trace_reconciles_on_real_ledgers() -> None:  # PHASE8-036
+    result = checks.token_trace(repo_root(), _cfg())
+    assert result.passed is True
+    assert "reconcile" in result.detail
+
+
+def test_token_trace_detects_mismatch(tmp_path: Path) -> None:
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    (runs / "gg.jsonl").write_text('{"input_tokens": 10, "output_tokens": 20}\n', encoding="utf-8")
+    (tmp_path / "report.md").write_text("| gg | 999 | 20 |\n", encoding="utf-8")
+    cfg = {"token_trace": {"report": "report.md", "runs_dir": "runs", "routes": ["gg"]}}
+    result = checks.token_trace(tmp_path, cfg)
+    assert result.passed is False
+    assert "gg" in result.detail
+
+
 def test_sha256_of_is_stable() -> None:
     path = repo_root() / "artifacts" / "graphify" / "graph.json"
     assert sha256_of(path) == sha256_of(path)

@@ -20,6 +20,11 @@
     "R8.9": "docs/KNOWN_LIMITATIONS.md"
   },
   "hot_md": "obsidian/hot.md",
+  "token_trace": {
+    "report": "reports/token_comparison.md",
+    "runs_dir": "artifacts/runs",
+    "routes": ["graph_guided", "naive"]
+  },
   "baseline_hashes": {
     "artifacts/graphify/graph.json": "7a0cc6b8ae3d21dac4f1787beef9b87a4a80838351f0ef3ce19472a091911abc"
   },
