@@ -15,6 +15,7 @@ from .weakness_detector import WeaknessDetector, WeaknessFinding
 if TYPE_CHECKING:
     from .agent_workflow.state import AgentState, RunType
     from .gatekeeper import TokenLogger
+    from .self_grade import GateRunner, GradeReport
 
 
 class Ex04Sdk:
@@ -86,3 +87,14 @@ class Ex04Sdk:
         comparison = TokenComparison()
         result = comparison.run_both(self, runs_dir=runs_dir)
         return comparison.write_report(result, path=report_path)
+
+    def self_grade(self, gate_runner: GateRunner | None = None) -> GradeReport:
+        """Run the keyless self-assessment and return the graded report (R8.9).
+
+        Thin delegation to ``self_grade.grade`` — structural checks + config-driven
+        quality gates + the rubric number. ``gate_runner`` is injectable so the test
+        suite scores without shelling out; production passes the default subprocess runner.
+        """
+        from .self_grade import grade
+
+        return grade(gate_runner=gate_runner)
