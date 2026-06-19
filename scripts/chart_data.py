@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 
 from ex04_graphify_agent.graph_reader import GraphReader
+from ex04_graphify_agent.graph_reader.models import NodeView
 from ex04_graphify_agent.obsidian_writer import ranking
 from ex04_graphify_agent.obsidian_writer.config import (
     default_bug_node_id,
@@ -24,14 +25,13 @@ from ex04_graphify_agent.sdk import Ex04Sdk
 from ex04_graphify_agent.token_comparison import TokenComparison
 from ex04_graphify_agent.token_comparison.cost import cost_usd, load_pricing
 
-BUG_FILE = "polygons/polygons.py"
 KEYED_REPORT = Path("reports/token_comparison.md")
 
 
 def keyless_run() -> dict[str, dict[str, float]]:
     """Live keyless graph-guided vs naive metrics (authoritative gatekeeper ledger)."""
-    tmp = Path(tempfile.mkdtemp())
-    result = TokenComparison().run_both(Ex04Sdk(), runs_dir=tmp / "runs")
+    with tempfile.TemporaryDirectory() as tmp:
+        result = TokenComparison().run_both(Ex04Sdk(), runs_dir=Path(tmp) / "runs")
     pricing = load_pricing()
     gg, nv = result.graph_guided, result.naive
     return {
@@ -75,15 +75,19 @@ def roc_curves() -> dict[str, tuple[np.ndarray, np.ndarray, float]]:
     """
     reader = GraphReader()
     weights = default_hot_md_weights()
+    bug_node = default_bug_node_id()
+    bug_file = reader.node(bug_node).source_file
     nodes = [n for n in reader.all_nodes() if not n.is_file_root]
-    distances = ranking.bfs_distances(reader, default_bug_node_id())
+    distances = ranking.bfs_distances(reader, bug_node)
     max_deg = max((n.degree for n in nodes), default=1) or 1
     max_bw = max((n.betweenness for n in nodes), default=1.0) or 1.0
-    labels = np.array([1 if n.source_file == BUG_FILE else 0 for n in nodes])
+    labels = np.array([1 if n.source_file == bug_file else 0 for n in nodes])
 
-    def _cent(node: object) -> float:
-        deg, betw = node.degree, node.betweenness  # type: ignore[attr-defined]
-        return weights["degree"] * deg / max_deg + weights["betweenness"] * betw / max_bw
+    def _cent(node: NodeView) -> float:
+        return (
+            weights["degree"] * node.degree / max_deg
+            + weights["betweenness"] * node.betweenness / max_bw
+        )
 
     centrality = np.array([_cent(n) for n in nodes])
     composite = np.array(
@@ -99,6 +103,7 @@ def _roc(scores: np.ndarray, labels: np.ndarray) -> tuple[np.ndarray, np.ndarray
     """Tie-aware ROC: returns (fpr, tpr, auc) with the trapezoidal area."""
     order = np.argsort(-scores, kind="stable")
     pos, neg = int(labels.sum()), int(len(labels) - labels.sum())
+    assert pos and neg, "ROC needs at least one positive and one negative label"
     fpr, tpr = [0.0], [0.0]
     tp = fp = 0
     prev: float | None = None
