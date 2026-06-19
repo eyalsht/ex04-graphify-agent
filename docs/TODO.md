@@ -40,10 +40,25 @@
 | Phase 6 — token comparison + evidence | 90 |
 | Phase 7 — reports | 47 |
 | Phase 8 — README + self-grade | 71 |
-| **Total** | **751** |
+| Phase 9 — multi-agent crew + crew re-run evidence | 10 |
+| Phase 10 — project-run notebook + visualization layer | 7 |
+| **Total** | **768** |
 
 ---
 
+> **Progress (2026-06-19): Phase 10 — project-run notebook + visualization layer (PR #14).**
+> Added a per-phase `notebooks/project_run.ipynb` (embedded outputs) and a keyless, evidence-based
+> visualization layer: `scripts/chart_data.py` (authoritative numbers from the SDK
+> token-comparison + config-driven pricing + the `hot.md` composite ROC) and
+> `scripts/make_charts.py` (renders the token / cost / bug-localization-ROC PNGs to
+> `reports/img/`), embedded in the README. No new `src/` module or architectural decision — the
+> layer reuses existing modules and upholds ADR-0005 (keyless) + CLAUDE.md §4 (numbers trace to
+> the gatekeeper ledger), so **no PLAN/ADR change**. An **Antigravity review on PR #14 (6
+> findings)** — temp-dir leak, implicit numpy dep, a hardcoded `BUG_FILE`, five `type: ignore`
+> on the chart fns, `object`-typed node, and an unguarded ROC zero-division — was **fully
+> addressed and approved** (`PR_14_approval.md`). Gates green: ruff 0, mypy 0, 278 @ 98%.
+> ⏳ Awaiting owner merge of PR #14.
+>
 > **Progress (2026-06-18): ALL PHASES ✅ — 0 unchecked items (751/751 done).** Phases 0–8
 > complete; the final wrap (branch `feat/self-grade`) added the keyless machine self-grade
 > (90/100), the obsidian vault renderers, the R1.1–R10.5 traceability matrix, the token-trace
@@ -1143,6 +1158,24 @@
 - [x] **P1** `PHASE9-008` crew re-run: confirm new ledgers reconcile with the report (closes the prior mock-stub traceability gap) — DoD: 41+1518=1559 in / 1415+476=1891 out etc. — ✅
 - [x] **P0** `PHASE9-009` fix: keyless `test_compare_tokens_writes_report` was dumping mock ledgers to the tracked `artifacts/runs/` on every `pytest` (root of the traceability gap) — thread `runs_dir` through `Ex04Sdk.compare_tokens`, point the test at `tmp_path` — DoD: keyed ledgers survive a full suite run; ruff 0 / mypy 0 / 244 @ 98% — ✅
 - [x] **P1** `PHASE9-010` crew re-run: open PR for the re-run evidence branch; owner review/merge — DoD: PR merged — ✅ PR #12 rebase-merged to main 2026-06-18; tagged `v1.0.0`
+
+---
+
+## Phase 10 — project-run notebook + visualization layer
+
+> **Progress (2026-06-19):** A presentation/documentation layer (PR #14, branch
+> `claude/project-run-notebook-38ajg4`) — a per-phase run notebook and keyless, evidence-based
+> token / cost / ROC charts. Reuses existing modules; no new `src/` module, no PLAN/ADR change
+> (upholds ADR-0005 keyless + CLAUDE.md §4 ledger-traceable numbers). Antigravity review on PR
+> #14 (6 findings) addressed + approved.
+
+- [x] **P2** `PHASE10-001` notebook: add `notebooks/project_run.ipynb` — per-phase walkthrough with embedded outputs — DoD: notebook runs keyless, outputs committed — ✅ PR #14
+- [x] **P2** `PHASE10-002` charts: `scripts/chart_data.py` — authoritative keyless numbers (SDK token-comparison + config-driven pricing; keyed numbers parsed from `reports/token_comparison.md`; ROC from the `hot.md` composite score) — DoD: data layer reproduces committed AUCs, no estimates (CLAUDE.md §4) — ✅ PR #14
+- [x] **P2** `PHASE10-003` charts: `scripts/make_charts.py` — render token / cost / bug-localization-ROC PNGs to `reports/img/` — DoD: 3 PNGs generated, shared by the notebook — ✅ PR #14
+- [x] **P2** `PHASE10-004` docs: embed the 3 charts + reference the notebook in `README.md` — DoD: images + link resolve — ✅ PR #14
+- [x] **P2** `PHASE10-005` deps: add jupyter dev tooling + declare `numpy>=2.0` explicitly in `pyproject.toml` — DoD: `uv sync` clean — ✅ PR #14
+- [x] **P1** `PHASE10-006` review: address the Antigravity PR #14 review (6 findings — temp-dir leak → `TemporaryDirectory`; explicit numpy dep; drop hardcoded `BUG_FILE` → derive from `default_bug_node_id()`; five `type: ignore[no-untyped-def]` → real `Axes`/`Figure` hints; `object` node → `NodeView`; ROC `pos`/`neg` zero-division guard) — DoD: ruff 0, mypy 0 (no `type: ignore` in scripts), 278 @ 98%; owner-approved (`PR_14_approval.md`) — ✅ 2026-06-19
+- [ ] **P1** `PHASE10-007` PR: open + merge PR #14 — owner review/approve/merge — DoD: PR merged to main — ⏳ approved, awaiting owner merge
 
 ---
 
