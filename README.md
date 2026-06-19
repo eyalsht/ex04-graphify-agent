@@ -89,7 +89,10 @@ uv run ruff check .           # 0 violations
 uv run mypy --strict src/     # 0 errors
 uv run ex04 hot               # (re)generate obsidian/hot.md from the PRE-FIX graph
 uv run python scripts/self_grade.py   # keyless self-grade → 90/100, exits 0 when all gates pass
+uv run jupyter nbconvert --to notebook --execute --inplace notebooks/project_run.ipynb  # re-run the phase-by-phase walkthrough
 ```
+
+> **Phase-by-phase walkthrough:** [`notebooks/project_run.ipynb`](notebooks/project_run.ipynb) runs the whole project one block per phase (0–8) — graph shape, the six weakness signals, generated `hot.md`, the graph-guided-vs-naive trace, the keyless token reduction, and a green self-grade — with every output embedded. Keyless; mutates no baseline (it writes `hot.md` and the token report into temp dirs).
 
 <details>
 <summary><b>The one keyed run (optional — needs a provider API key)</b></summary>
@@ -389,6 +392,7 @@ Start at **[`reports/README.md`](reports/README.md)**. Each report ties every qu
 | [`screenshots.md`](reports/screenshots.md) | Graph renders + Obsidian captures |
 | [`research_questions.md`](reports/research_questions.md) | R4.1–R4.7 answered with evidence links |
 | [`traceability.md`](reports/traceability.md) | Every requirement R1.1–R10.5 → its artifact (51/51) |
+| [`notebooks/project_run.ipynb`](notebooks/project_run.ipynb) | Phase-by-phase project run (0–8) with every phase's output embedded (keyless) |
 
 **Planning layer:** [`CLAUDE.md`](CLAUDE.md) (project constitution) · [`docs/PRD.md`](docs/PRD.md) · [`docs/PLAN.md`](docs/PLAN.md) · [`docs/ASSIGNMENT.md`](docs/ASSIGNMENT.md) (requirement IDs) · [`docs/adr/`](docs/adr/).
 
@@ -400,6 +404,7 @@ HW4/
 ├── src/ex04_graphify_agent/    # 8 modules behind sdk.py (graph_reader, weakness_detector,
 │                               #   obsidian_writer, agent_workflow, gatekeeper, token_comparison)
 ├── tests/                      # keyless pytest suite (unit + tests/evals/)
+├── notebooks/                  # project_run.ipynb — phase-by-phase walkthrough with embedded outputs
 ├── config/                     # agent.json · paths.json · weakness_thresholds.json · self_grade.json
 ├── scripts/                    # gate scripts + run_comparison.py + self_grade.py
 ├── obsidian/                   # PRE-FIX vault: index.md + hot.md + per-node notes
