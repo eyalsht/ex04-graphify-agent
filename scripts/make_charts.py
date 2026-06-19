@@ -7,9 +7,12 @@ visuals and the committed images share one source of truth.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 import chart_data
 
@@ -22,7 +25,13 @@ def _style() -> None:
     plt.rcParams.update({"figure.dpi": 140, "font.size": 11, "axes.titleweight": "bold"})
 
 
-def _grouped_bars(ax, groups, gg_vals, naive_vals, fmt):  # type: ignore[no-untyped-def]
+def _grouped_bars(
+    ax: Axes,
+    groups: Sequence[str],
+    gg_vals: Sequence[float],
+    naive_vals: Sequence[float],
+    fmt: Callable[[float], str],
+) -> None:
     import numpy as np
 
     x = np.arange(len(groups))
@@ -34,14 +43,20 @@ def _grouped_bars(ax, groups, gg_vals, naive_vals, fmt):  # type: ignore[no-unty
     ax.legend(frameon=True)
 
 
-def _annotate_reduction(ax, gg, nv):  # type: ignore[no-untyped-def]
+def _annotate_reduction(ax: Axes, gg: Sequence[float], nv: Sequence[float]) -> None:
     """Print the graph-guided saving (``-NN%``) above each group."""
     for i in range(len(gg)):
-        ax.text(i, max(gg[i], nv[i]) * 1.12, f"-{chart_data.reduction(gg[i], nv[i])}%",
-                ha="center", color=GG, fontweight="bold")
+        ax.text(
+            i,
+            max(gg[i], nv[i]) * 1.12,
+            f"-{chart_data.reduction(gg[i], nv[i])}%",
+            ha="center",
+            color=GG,
+            fontweight="bold",
+        )
 
 
-def fig_tokens():  # type: ignore[no-untyped-def]
+def fig_tokens() -> Figure:
     """Input-token bars: keyless + keyed, with the % reduction annotated per group."""
     runs = {"Keyless": chart_data.keyless_run(), "Keyed (live)": chart_data.keyed_run()}
     groups = list(runs)
@@ -56,7 +71,7 @@ def fig_tokens():  # type: ignore[no-untyped-def]
     return fig
 
 
-def fig_cost():  # type: ignore[no-untyped-def]
+def fig_cost() -> Figure:
     """USD cost bars: keyless + keyed, % cheaper annotated per group."""
     runs = {"Keyless": chart_data.keyless_run(), "Keyed (live)": chart_data.keyed_run()}
     groups = list(runs)
@@ -71,7 +86,7 @@ def fig_cost():  # type: ignore[no-untyped-def]
     return fig
 
 
-def fig_roc():  # type: ignore[no-untyped-def]
+def fig_roc() -> Figure:
     """Bug-localization ROC: composite (hot.md) vs raw-centrality node rankings."""
     curves = chart_data.roc_curves()
     fig, ax = plt.subplots(figsize=(5.6, 5.2))
