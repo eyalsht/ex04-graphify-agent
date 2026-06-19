@@ -325,6 +325,40 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-19 — Phase 10 (project-run notebook + visualization layer + PR-14 review)
+
+- **Prompt summary:** Owner asked the orchestrator to build a per-phase **project-run notebook**
+  with embedded outputs and a **visualization layer** (token / cost / bug-localization-ROC
+  charts) for the README, then — after an **"Antigravity" code review on PR #14** — to address
+  the review's six findings. On approval, the owner directed recording the new feature as a
+  **new TODO phase**, this PROMPTS entry, and a check of whether `docs/PLAN.md` or a new ADR was
+  warranted.
+- **AI tool/model:** Claude Code — Claude Opus 4.8 (orchestrator, all work inline; no subagents).
+- **AI-generated vs. human-reviewed/edited:** AI-authored. The notebook (`notebooks/project_run.ipynb`)
+  and two **keyless, evidence-based** chart scripts were built reusing existing modules:
+  `scripts/chart_data.py` sources the numbers from the SDK token-comparison + the config-driven
+  pricing (keyed numbers parsed from the committed `reports/token_comparison.md`) and the ROC
+  from the same `ranking.composite_score` that drives `hot.md` — so every figure traces to the
+  gatekeeper ledger, not estimates (CLAUDE.md §4); `scripts/make_charts.py` renders the three
+  PNGs the README and notebook share. The **human owner ran an Antigravity review on PR #14**
+  (6 findings); under the `receiving-code-review` discipline each was verified against the code
+  before fixing: temp-dir leak → `TemporaryDirectory`; implicit numpy → explicit `numpy>=2.0`;
+  hardcoded `BUG_FILE` → derived from `default_bug_node_id()` via the reader; five
+  `type: ignore[no-untyped-def]` → real `Axes`/`Figure`/`Sequence`/`Callable` hints; `object`
+  node → `NodeView` (dropping `type: ignore[attr-defined]`); unguarded ROC division →
+  `assert pos and neg`. Owner approved (`PR_14_approval.md`). **Architecture decision (owner-
+  delegated):** no `docs/PLAN.md` change and **no new ADR** — the layer is presentation/docs
+  that introduces no new `src/` module or architectural seam and *upholds* existing decisions
+  (ADR-0005 keyless reproducibility, CLAUDE.md §4 ledger-traceable numbers); PLAN's locked
+  module table has no precedent for dev/presentation scripts (Phase 7's `render_graph.py` and
+  Phase 8 scripts were likewise never listed there). Gates green: ruff 0, mypy 0 (no `type:
+  ignore` in the scripts), **278 tests @ 98%**. Honest note: `make_charts.py` couldn't be run
+  fully end-to-end here because its keyless run still exercises the live provider and Gemini
+  returned a transient `503`; the data layer my changes touch is verified independently
+  (`roc_curves()` reproduces the committed AUCs — composite 0.95 vs raw centrality 0.53).
+
+---
+
 ## Template for future entries
 
 ```markdown
