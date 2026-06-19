@@ -89,6 +89,7 @@ uv run ruff check .           # 0 violations
 uv run mypy --strict src/     # 0 errors
 uv run ex04 hot               # (re)generate obsidian/hot.md from the PRE-FIX graph
 uv run python scripts/self_grade.py   # keyless self-grade → 90/100, exits 0 when all gates pass
+uv run python scripts/make_charts.py  # render the token/cost/ROC charts → reports/img/
 uv run jupyter nbconvert --to notebook --execute --inplace notebooks/project_run.ipynb  # re-run the phase-by-phase walkthrough
 ```
 
@@ -125,6 +126,13 @@ Instead of feeding the agent raw files, we give it a **map**. Graphify extracted
 </div>
 
 > Open `obsidian/` as a vault to explore it live. More renders (the `Polygon` node, `index.md`) in [`reports/screenshots.md`](reports/screenshots.md).
+
+**Does the ranking actually find the bug?** Treating *"node belongs to the buggy file `polygons/polygons.py`"* as ground truth, the `hot.md` metric (**centrality × proximity**) separates the bug's file at **AUC ≈ 0.95**, where raw centrality alone is near chance (**AUC ≈ 0.53**) — the R1.4 design decision, made visible.
+
+<div align="center">
+<img src="reports/img/bug_localization_roc.png" width="440"/><br/>
+<sub><b>Fig. 7</b> — bug-localization ROC: the composite ranking that drives graph-guided retrieval vs raw centrality. <em>(Re-runnable: <code>uv run python scripts/make_charts.py</code>.)</em></sub>
+</div>
 
 **Inference discipline.** Every graph-derived claim is tagged **EXTRACTED / INFERRED / AMBIGUOUS**, and any `INFERRED`/`AMBIGUOUS` fact must pass a source-validation step (open the file, confirm) before the agent acts on it — the PART-C *Observe → Relation → Confidence → Context → Source-validation* trail.
 
@@ -241,6 +249,16 @@ uv run pytest -m eval tests/evals/test_agent_context_delta.py   # asserts the �
 - **The input-token cut is the deterministic, load-bearing number; the cost *gap* is noisier.** This row is the **second keyed run** — the one that exercises the three-agent crew ([§4](#-4-the-agent-workflow-r84)) — and the input figures are **byte-for-byte identical** to the pre-crew run (the crew adds no LLM calls). Total cost is output-token-bound (output is priced 8.3× input) and output length varies run-to-run even at `temperature=0`: the earlier monolithic run measured a 61.4% gap, this one 20.7%, with the same 57.5% input cut and the same pass/fail correctness both times. Full before/after: [`reports/crew_rerun_findings.md`](reports/crew_rerun_findings.md).
 
 > **Honest provenance.** Getting a clean keyed pass took real debugging (a spurious `function_call` dropping the patch, markdown-fenced output, a flaky model, and Pro being unavailable on the free tier). The whole model-switching log is in [`reports/run_journey.md`](reports/run_journey.md) — kept on purpose, because it's also the best live proof of the [modularity](#-architecture--modularity) below. The keyless 76.7% (Layer 1) remains the reproducible, key-free headline.
+
+<div align="center">
+<table>
+<tr>
+<td align="center"><img src="reports/img/token_comparison.png" width="430"/><br/><sub><b>Fig. 8</b> — input tokens: keyless (−72.5%) + keyed (−57.5%)</sub></td>
+<td align="center"><img src="reports/img/cost_comparison.png" width="430"/><br/><sub><b>Fig. 9</b> — USD cost per fix run (tokens × config pricing)</sub></td>
+</tr>
+</table>
+<sub>Both figures regenerate from the authoritative numbers via <code>uv run python scripts/make_charts.py</code> — keyless live, keyed parsed from the committed report.</sub>
+</div>
 
 ---
 
