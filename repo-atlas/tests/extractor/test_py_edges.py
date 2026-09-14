@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from repo_atlas.extractor import parse, py_edges, py_nodes
 
-_SRC = '''class Polygon(Object):
+_SRC = """class Polygon(Object):
     def __init__(self):
         pass
 
@@ -18,7 +18,7 @@ def calc(n):
 
 
 calc(3)
-'''
+"""
 
 
 def _edges(source: str = _SRC, path: str = "polygons/polygons.py") -> list:
@@ -102,9 +102,7 @@ def test_a_degraded_file_yields_inferred_edges() -> None:
 
 
 def test_contains_anchors_to_the_targets_definition_line() -> None:
-    contains = next(
-        e for e in _edges() if e.relation == "contains" and e.target.endswith("_calc")
-    )
+    contains = next(e for e in _edges() if e.relation == "contains" and e.target.endswith("_calc"))
     assert contains.source_location == "L6"
 
 

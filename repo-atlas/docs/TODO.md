@@ -56,31 +56,31 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 
 > ADR-0001. The fixture factory lands first: nothing may pin the suite to a real artifact.
 
-- [ ] **P0** `PHASE1-001` tests: `tests/fixtures/graph_factory.py` — synthetic node-link builder
-- [ ] **P0** `PHASE1-002` tests: vendor the reference graph + its 5-file source to `fixtures/golden/`
-- [ ] **P0** `PHASE1-003` paths: RED — `RunPaths`/`RunConfig` construction and config load — ref ADR-0003
-- [ ] **P0** `PHASE1-004` paths: GREEN — implement `paths.py`
+- [x] **P0** `PHASE1-001` tests: `tests/fixtures/graph_factory.py` — synthetic node-link builder
+- [x] **P0** `PHASE1-002` tests: vendor the reference graph + its 5-file source to `fixtures/golden/`
+- [x] **P0** `PHASE1-003` paths: RED — `RunPaths`/`RunConfig` construction and config load — ref ADR-0003
+- [x] **P0** `PHASE1-004` paths: GREEN — implement `paths.py`
 - [ ] **P0** `PHASE1-005` discovery: RED — ignore rules, `.gitignore`, size cap, binary skip — ref R1.3
 - [ ] **P0** `PHASE1-006` discovery: GREEN — implement `discovery.py`
-- [ ] **P0** `PHASE1-007` py_nodes: RED — module/class/function/method nodes, id convention — ref R1.1
-- [ ] **P0** `PHASE1-008` py_nodes: GREEN — implement `py_nodes.py`
-- [ ] **P0** `PHASE1-009` py_nodes: RED — syntax error in a target file is recorded, not fatal — ref R1.5
-- [ ] **P0** `PHASE1-010` py_nodes: GREEN — tolerate `SyntaxError` per file
-- [ ] **P0** `PHASE1-011` py_edges: RED — `contains` edges make file roots resolvable — ref R2.1
-- [ ] **P0** `PHASE1-012` py_edges: GREEN — implement `contains`
-- [ ] **P0** `PHASE1-013` py_edges: RED — `calls` / `inherits` / `method` from the AST
-- [ ] **P0** `PHASE1-014` py_edges: GREEN — implement them
-- [ ] **P0** `PHASE1-015` py_edges: RED — `references` from imports, incl. relative imports
-- [ ] **P0** `PHASE1-016` py_edges: GREEN — implement `references`
-- [ ] **P0** `PHASE1-017` confidence: RED — direct call = EXTRACTED@1.0, attribute/star = INFERRED — ref R1.6
-- [ ] **P0** `PHASE1-018` confidence: GREEN — implement `confidence.py`
+- [x] **P0** `PHASE1-007` py_nodes: RED — module/class/function/method nodes, id convention — ref R1.1
+- [x] **P0** `PHASE1-008` py_nodes: GREEN — implement `py_nodes.py`
+- [x] **P0** `PHASE1-009` py_nodes: RED — syntax error in a target file is recorded, not fatal — ref R1.5
+- [x] **P0** `PHASE1-010` py_nodes: GREEN — tolerate `SyntaxError` per file
+- [x] **P0** `PHASE1-011` py_edges: RED — `contains` edges make file roots resolvable — ref R2.1
+- [x] **P0** `PHASE1-012` py_edges: GREEN — implement `contains`
+- [x] **P0** `PHASE1-013` py_edges: RED — `calls` / `inherits` / `method` from the AST
+- [x] **P0** `PHASE1-014` py_edges: GREEN — implement them
+- [x] **P0** `PHASE1-015` py_edges: RED — `references` from imports, incl. relative imports
+- [x] **P0** `PHASE1-016` py_edges: GREEN — implement `references`
+- [x] **P0** `PHASE1-017` confidence: RED — direct call = EXTRACTED@1.0, attribute/star = INFERRED — ref R1.6
+- [x] **P0** `PHASE1-018` confidence: GREEN — implement `confidence.py`
 - [ ] **P1** `PHASE1-019` communities: RED — greedy modularity labels every node
 - [ ] **P1** `PHASE1-020` communities: GREEN — implement `communities.py`
 - [ ] **P0** `PHASE1-021` build: RED — `graph.json` shape matches the §7.1 contract
 - [ ] **P0** `PHASE1-022` build: GREEN — implement `build.py`
 - [ ] **P1** `PHASE1-023` build: RED — `manifest.json` lets an unchanged file be skipped — ref R1.7
 - [ ] **P1** `PHASE1-024` build: GREEN — implement manifest + incremental skip
-- [ ] **P0** `PHASE1-025` evals: golden regression — AST nodes + structural edges match the reference
+- [x] **P0** `PHASE1-025` evals: golden regression — AST nodes + structural edges match the reference
 - [ ] **P0** `PHASE1-026` extractor: REFACTOR — split any file over 150 lines; gates green
 
 ---

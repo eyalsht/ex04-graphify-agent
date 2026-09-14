@@ -31,6 +31,32 @@ Honest, current, and updated as phases land. Nothing here is a promise that it w
 - **Offline mode produces no insight.** With no API key the gatekeeper returns mock text: the graph,
   vault, token accounting and the whole test suite are real, but `BRIEF.md` is a placeholder.
 
+## Verified gaps in the extractor
+
+These are measured against the golden reference graph, not guessed at. The eval in
+`tests/evals/test_golden_regression.py` holds us to them: 19 of 19 in-scope nodes match the
+reference attribute-for-attribute, and 14 of its 15 in-scope edges are reproduced.
+
+- **One unreachable edge.** The reference contains a `calls` edge anchored at
+  `polygons.py:29` — a call site inside the exact region of the file that fails to parse.
+  Our degraded line scan deliberately does not guess at call edges, because resolving a call
+  needs scope a regex cannot see and a wrong edge is worse than a missing one. So this edge
+  is permanently out of reach for us, and the eval asserts it is *the only* miss rather than
+  quietly tolerating any shortfall.
+- **Degraded files produce weaker claims.** Two of the five golden files do not parse
+  (a Python-2 `print` statement; a JavaScript `new`). We recover their classes, functions and
+  methods by line scan and tag every resulting node and edge `INFERRED` at 0.7, where the
+  reference tagged them `EXTRACTED`. That divergence is deliberate: a fact a regex found is
+  genuinely less certain than one the parser confirmed, and saying otherwise would make the
+  confidence tags decoration.
+- **Community integers are not comparable to the reference.** Its partition was computed over
+  a larger edge set that included five document-pipeline edges we do not produce, so the eval
+  asserts node and edge structure and never `community`.
+- **No semantic edges.** `rationale_for` aside, the reference's `references`,
+  `semantically_similar_to` and `conceptually_related_to` edges came from an LLM pass over
+  prose. We emit none of them (ADR-0001), and the eval asserts their four source nodes are
+  absent rather than fabricated.
+
 ## Open items
 
 - [ ] `uv.lock` not yet committed — `PHASE0-013`.
