@@ -36,3 +36,7 @@ Thumbs.db
 .vscode/
 graphify-out/
 obsidian/HW4/
+
+# Transient git worktrees created for background agents — checkouts of this same
+# repo, never content of their own.
+.claude/worktrees/
