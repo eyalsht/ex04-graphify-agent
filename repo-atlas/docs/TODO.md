@@ -60,8 +60,8 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 - [x] **P0** `PHASE1-002` tests: vendor the reference graph + its 5-file source to `fixtures/golden/`
 - [x] **P0** `PHASE1-003` paths: RED — `RunPaths`/`RunConfig` construction and config load — ref ADR-0003
 - [x] **P0** `PHASE1-004` paths: GREEN — implement `paths.py`
-- [ ] **P0** `PHASE1-005` discovery: RED — ignore rules, `.gitignore`, size cap, binary skip — ref R1.3
-- [ ] **P0** `PHASE1-006` discovery: GREEN — implement `discovery.py`
+- [x] **P0** `PHASE1-005` discovery: RED — ignore rules, `.gitignore`, size cap, binary skip — ref R1.3
+- [x] **P0** `PHASE1-006` discovery: GREEN — implement `discovery.py`
 - [x] **P0** `PHASE1-007` py_nodes: RED — module/class/function/method nodes, id convention — ref R1.1
 - [x] **P0** `PHASE1-008` py_nodes: GREEN — implement `py_nodes.py`
 - [x] **P0** `PHASE1-009` py_nodes: RED — syntax error in a target file is recorded, not fatal — ref R1.5

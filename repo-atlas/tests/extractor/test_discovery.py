@@ -15,7 +15,7 @@ from repo_atlas.paths import ExtractorConfig
 
 _CONFIG = ExtractorConfig(
     exclude_dirs=(".git", "__pycache__", "node_modules"),
-    exclude_globs=("*.lock",),
+    exclude_globs=("*.lock", "generated_*.py"),
     max_file_bytes=1024,
     document_extensions=(".md", ".txt"),
 )
@@ -58,15 +58,17 @@ def test_excludes_a_directory_named_in_exclude_dirs_at_any_depth(tmp_path: Path)
 
 
 def test_excludes_files_matching_an_exclude_glob(tmp_path: Path) -> None:
-    (tmp_path / "poetry.lock").write_text("x\n", encoding="utf-8")
-    (tmp_path / "keep.md").write_text("x\n", encoding="utf-8")
-    assert _rels(discover_files(tmp_path, _CONFIG)) == ["keep.md"]
+    # "generated_x.py" has an otherwise-eligible ".py" suffix -- the exclude_globs check,
+    # not the extension check, is what must reject it.
+    (tmp_path / "generated_x.py").write_text("x = 1\n", encoding="utf-8")
+    (tmp_path / "keep.py").write_text("x = 1\n", encoding="utf-8")
+    assert _rels(discover_files(tmp_path, _CONFIG)) == ["keep.py"]
 
 
 def test_exclude_glob_matches_the_basename_at_any_depth(tmp_path: Path) -> None:
     nested = tmp_path / "sub"
     nested.mkdir()
-    (nested / "poetry.lock").write_text("x\n", encoding="utf-8")
+    (nested / "generated_x.py").write_text("x = 1\n", encoding="utf-8")
     assert discover_files(tmp_path, _CONFIG) == ()
 
 

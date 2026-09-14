@@ -83,3 +83,21 @@ def test_dir_only_rule_never_matches_a_file(tmp_path: Path) -> None:
     _write(tmp_path, "cache/\n")
     ignore = GitIgnore.load(tmp_path)
     assert ignore.matches("cache", is_dir=False) is False
+
+
+def test_an_interior_slash_anchors_the_pattern_even_without_a_leading_one(
+    tmp_path: Path,
+) -> None:
+    _write(tmp_path, "docs/generated\n")
+    ignore = GitIgnore.load(tmp_path)
+    assert ignore.matches("docs/generated", is_dir=True) is True
+    # The basename alone must not match: the interior "/" anchors this to the root.
+    assert ignore.matches("nested/docs/generated", is_dir=True) is False
+
+
+def test_a_lone_slash_or_bare_directory_marker_is_ignored_as_malformed(tmp_path: Path) -> None:
+    _write(tmp_path, "/\n//\n*.log\n")
+    ignore = GitIgnore.load(tmp_path)
+    # Neither malformed line should have produced a rule that matches everything.
+    assert ignore.matches("keep.py", is_dir=False) is False
+    assert ignore.matches("a.log", is_dir=False) is True
