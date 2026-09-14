@@ -19,6 +19,7 @@ from repo_atlas.extractor.models import (
     RawNode,
     Symbol,
 )
+from repo_atlas.extractor.report import render_report, write_report
 from repo_atlas.extractor.serialize import build_graph, write_graph
 
 __all__ = [
@@ -35,6 +36,8 @@ __all__ = [
     "build_manifest",
     "diff_manifest",
     "load_manifest",
+    "render_report",
     "write_graph",
     "write_manifest",
+    "write_report",
 ]
