@@ -4,6 +4,10 @@ A fact read off a parsed AST is EXTRACTED at full confidence. A fact recovered b
 scanning a file that would not parse is INFERRED and worth less, because a regex cannot
 see scope. Keeping the policy in one module means the tags stay load-bearing instead of
 drifting into decoration.
+
+Every edge today is intra-file, so an edge takes its confidence from the one file it came
+from. A "weaker of two endpoints" rule belongs here the moment cross-file edges exist; it
+is deliberately absent until then rather than shipped untested.
 """
 
 from __future__ import annotations
@@ -20,10 +24,3 @@ def for_origin(origin: str) -> tuple[str, float]:
     if origin == ORIGIN_SCAN:
         return INFERRED, SCAN_SCORE
     return EXTRACTED, EXTRACTED_SCORE
-
-
-def weaker(first: str, second: str) -> tuple[str, float]:
-    """An edge is only as trustworthy as its less certain endpoint."""
-    if ORIGIN_SCAN in (first, second):
-        return for_origin(ORIGIN_SCAN)
-    return for_origin(first)

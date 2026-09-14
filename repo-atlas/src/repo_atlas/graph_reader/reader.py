@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import networkx as nx  # type: ignore[import-untyped]
+import networkx as nx
 
 from repo_atlas.graph_reader import filters, loader, metrics, views
 from repo_atlas.graph_reader.models import Confidence, EdgeView, NodeView
@@ -28,7 +28,7 @@ class GraphReader:
         sample_k: int = metrics.DEFAULT_SAMPLE_K,
     ) -> None:
         self._data = loader.load_graph_data(Path(graph_path))
-        self._graph: nx.Graph = loader.build_graph(self._data)
+        self._graph: nx.Graph[str] = loader.build_graph(self._data)
         degrees = metrics.degree(self._graph)
         betweens = metrics.betweenness(self._graph, exact_max_nodes, sample_k)
         self._edges = tuple(

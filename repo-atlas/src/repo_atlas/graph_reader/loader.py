@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-import networkx as nx  # type: ignore[import-untyped]
+import networkx as nx
 
 
 def load_graph_data(path: Path) -> dict[str, Any]:
@@ -21,15 +21,15 @@ def load_graph_data(path: Path) -> dict[str, Any]:
     return data
 
 
-def build_graph(data: dict[str, Any]) -> nx.Graph:
+def build_graph(data: dict[str, Any]) -> nx.Graph[str]:
     """Reconstruct an undirected networkx graph from node-link JSON.
 
     ``edges="links"`` matches the schema's key name and needs networkx >= 3.4.
     """
-    graph: nx.Graph = nx.node_link_graph(data, edges="links")
+    graph: nx.Graph[str] = nx.node_link_graph(data, edges="links")
     return graph
 
 
-def load_graph(path: str | Path) -> nx.Graph:
+def load_graph(path: str | Path) -> nx.Graph[str]:
     """Load a graph file into a networkx graph."""
     return build_graph(load_graph_data(Path(path)))

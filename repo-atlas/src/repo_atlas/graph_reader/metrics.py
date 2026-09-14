@@ -8,7 +8,7 @@ reproducible — an unstable ranking would make ``hot.md`` reshuffle for no reas
 
 from __future__ import annotations
 
-import networkx as nx  # type: ignore[import-untyped]
+import networkx as nx
 
 #: Above this many nodes, estimate betweenness instead of computing it exactly.
 DEFAULT_EXACT_MAX_NODES = 400
@@ -18,13 +18,13 @@ DEFAULT_SAMPLE_K = 200
 _SEED = 7
 
 
-def degree(graph: nx.Graph) -> dict[str, int]:
+def degree(graph: nx.Graph[str]) -> dict[str, int]:
     """Per-node degree (number of incident edges)."""
     return {str(node): int(value) for node, value in graph.degree()}
 
 
 def betweenness(
-    graph: nx.Graph,
+    graph: nx.Graph[str],
     exact_max_nodes: int = DEFAULT_EXACT_MAX_NODES,
     sample_k: int = DEFAULT_SAMPLE_K,
 ) -> dict[str, float]:
