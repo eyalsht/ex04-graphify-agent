@@ -76,8 +76,10 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 - [x] **P0** `PHASE1-018` confidence: GREEN — implement `confidence.py`
 - [x] **P1** `PHASE1-019` communities: RED — greedy modularity labels every node
 - [x] **P1** `PHASE1-020` communities: GREEN — implement `communities.py`
-- [ ] **P0** `PHASE1-021` build: RED — `graph.json` shape matches the §7.1 contract
-- [ ] **P0** `PHASE1-022` build: GREEN — implement `build.py`
+- [x] **P0** `PHASE1-021` build: RED — `graph.json` shape matches the §7.1 contract
+- [x] **P0** `PHASE1-022` build: GREEN — implement `serialize.py` (envelope assembly,
+      validation, writer — split out of the planned `build.py` to stay under the
+      150-line cap; see `docs/PLAN.md` note)
 - [ ] **P1** `PHASE1-023` build: RED — `manifest.json` lets an unchanged file be skipped — ref R1.7
 - [ ] **P1** `PHASE1-024` build: GREEN — implement manifest + incremental skip
 - [x] **P0** `PHASE1-025` evals: golden regression — AST nodes + structural edges match the reference

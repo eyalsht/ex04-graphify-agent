@@ -11,6 +11,7 @@ from repo_atlas.extractor.models import (
     RawNode,
     Symbol,
 )
+from repo_atlas.extractor.serialize import build_graph, write_graph
 
 __all__ = [
     "CallSite",
@@ -20,4 +21,6 @@ __all__ = [
     "RawNode",
     "Symbol",
     "assign_communities",
+    "build_graph",
+    "write_graph",
 ]
