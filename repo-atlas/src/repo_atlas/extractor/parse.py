@@ -31,12 +31,18 @@ class _Collector(ast.NodeVisitor):
 
     @property
     def _parent(self) -> str | None:
-        return self._stack[-1][1] if self._stack else None
+        """Dotted path of the enclosing definitions, e.g. ``Outer.Inner``.
+
+        Fully qualified rather than just the immediate name so that the id map keys and
+        the call sites' ``enclosing`` agree: a call inside ``Polygon.__init__`` has to
+        name the same construct the node layer registered, not the bare ``__init__``.
+        """
+        return ".".join(name for _, name in self._stack) or None
 
     @property
     def _enclosing(self) -> str | None:
-        """Name of the nearest enclosing definition — what a call site is 'inside'."""
-        return self._stack[-1][1] if self._stack else None
+        """The definition a call site sits inside — the same dotted path."""
+        return self._parent
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         self.symbols.append(
