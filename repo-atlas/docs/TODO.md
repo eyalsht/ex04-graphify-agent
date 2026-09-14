@@ -74,8 +74,8 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 - [x] **P0** `PHASE1-016` py_edges: GREEN — implement `references`
 - [x] **P0** `PHASE1-017` confidence: RED — direct call = EXTRACTED@1.0, attribute/star = INFERRED — ref R1.6
 - [x] **P0** `PHASE1-018` confidence: GREEN — implement `confidence.py`
-- [ ] **P1** `PHASE1-019` communities: RED — greedy modularity labels every node
-- [ ] **P1** `PHASE1-020` communities: GREEN — implement `communities.py`
+- [x] **P1** `PHASE1-019` communities: RED — greedy modularity labels every node
+- [x] **P1** `PHASE1-020` communities: GREEN — implement `communities.py`
 - [ ] **P0** `PHASE1-021` build: RED — `graph.json` shape matches the §7.1 contract
 - [ ] **P0** `PHASE1-022` build: GREEN — implement `build.py`
 - [ ] **P1** `PHASE1-023` build: RED — `manifest.json` lets an unchanged file be skipped — ref R1.7
