@@ -24,23 +24,24 @@ and in scope, while `mathsquiz_mathsquiz_final_py` is `file_type: "code"` and ou
 class RawNode:
     id: str
     label: str
-    norm_label: str          # always label.lower()
-    file_type: str           # "code" | "rationale"
-    source_file: str         # repo-relative POSIX path; "" for external symbols
-    source_location: str | None   # "L<n>"; "" for external symbols
-    origin: str              # "ast" | "scan"   (serialized as "_origin")
+    norm_label: str  # always label.lower()
+    file_type: str  # "code" | "rationale"
+    source_file: str  # repo-relative POSIX path; "" for external symbols
+    source_location: str | None  # "L<n>"; "" for external symbols
+    origin: str  # "ast" | "scan"   (serialized as "_origin")
+
 
 @dataclass(frozen=True)
 class RawEdge:
     source: str
     target: str
-    relation: str            # contains | method | inherits | calls | rationale_for
-    confidence: str          # EXTRACTED | INFERRED | AMBIGUOUS
+    relation: str  # contains | method | inherits | calls | rationale_for
+    confidence: str  # EXTRACTED | INFERRED | AMBIGUOUS
     confidence_score: float
-    weight: float            # always 1.0
+    weight: float  # always 1.0
     source_file: str
     source_location: str | None
-    context: str | None = None    # "call" on calls edges; omitted when None
+    context: str | None = None  # "call" on calls edges; omitted when None
 ```
 
 ## 2. Id derivation
