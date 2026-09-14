@@ -36,6 +36,7 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "pre-commit>=3.8",
+    "types-networkx>=3.6.1.20260911",
 ]
 
 [build-system]

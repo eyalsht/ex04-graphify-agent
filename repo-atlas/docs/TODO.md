@@ -74,12 +74,14 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 - [x] **P0** `PHASE1-016` py_edges: GREEN — implement `references`
 - [x] **P0** `PHASE1-017` confidence: RED — direct call = EXTRACTED@1.0, attribute/star = INFERRED — ref R1.6
 - [x] **P0** `PHASE1-018` confidence: GREEN — implement `confidence.py`
-- [ ] **P1** `PHASE1-019` communities: RED — greedy modularity labels every node
-- [ ] **P1** `PHASE1-020` communities: GREEN — implement `communities.py`
-- [ ] **P0** `PHASE1-021` build: RED — `graph.json` shape matches the §7.1 contract
-- [ ] **P0** `PHASE1-022` build: GREEN — implement `build.py`
-- [ ] **P1** `PHASE1-023` build: RED — `manifest.json` lets an unchanged file be skipped — ref R1.7
-- [ ] **P1** `PHASE1-024` build: GREEN — implement manifest + incremental skip
+- [x] **P1** `PHASE1-019` communities: RED — greedy modularity labels every node
+- [x] **P1** `PHASE1-020` communities: GREEN — implement `communities.py`
+- [x] **P0** `PHASE1-021` build: RED — `graph.json` shape matches the §7.1 contract
+- [x] **P0** `PHASE1-022` build: GREEN — implement `serialize.py` (envelope assembly,
+      validation, writer — split out of the planned `build.py` to stay under the
+      150-line cap; see `docs/PLAN.md` note)
+- [x] **P1** `PHASE1-023` build: RED — `manifest.json` lets an unchanged file be skipped — ref R1.7
+- [x] **P1** `PHASE1-024` build: GREEN — implement `manifest.py` (content-hash + diff)
 - [x] **P0** `PHASE1-025` evals: golden regression — AST nodes + structural edges match the reference
 - [ ] **P0** `PHASE1-026` extractor: REFACTOR — split any file over 150 lines; gates green
 

@@ -52,6 +52,12 @@ reference attribute-for-attribute, and 14 of its 15 in-scope edges are reproduce
 - **Community integers are not comparable to the reference.** Its partition was computed over
   a larger edge set that included five document-pipeline edges we do not produce, so the eval
   asserts node and edge structure and never `community`.
+- **`GRAPH_REPORT.md`'s confidence breakdown is edge-only.** `RawNode` carries `origin`
+  (`ast`/`scan`), not a `confidence` field — only `RawEdge` has one. The report's
+  EXTRACTED/INFERRED/AMBIGUOUS percentages are computed over edges for that reason; a
+  node's own trustworthiness is instead surfaced through the separate "degraded
+  extraction" section, which names every file a node came from via the line-scan
+  fallback rather than a clean parse.
 - **No semantic edges.** `rationale_for` aside, the reference's `references`,
   `semantically_similar_to` and `conceptually_related_to` edges came from an LLM pass over
   prose. We emit none of them (ADR-0001), and the eval asserts their four source nodes are

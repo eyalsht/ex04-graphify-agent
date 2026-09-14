@@ -60,7 +60,9 @@ src/repo_atlas/
 │   ├── py_edges.py            (~140 lines: contains/calls/inherits/method/references)
 │   ├── confidence.py          (~60 lines: EXTRACTED vs INFERRED resolution)
 │   ├── communities.py         (~50 lines: greedy modularity)
-│   └── build.py               (~120 lines: assemble, manifest, GRAPH_REPORT.md)
+│   ├── serialize.py           (~130 lines: assemble + validate graph.json, write it)
+│   ├── manifest.py            (~90 lines: manifest.json — mtime + ast_hash, diffing)
+│   └── report.py              (~125 lines: render + write GRAPH_REPORT.md)
 ├── graph_reader/
 │   ├── models.py              (~55 lines: Confidence, NodeView, EdgeView)
 │   ├── loader.py              (~50 lines: load + node_link_graph)
