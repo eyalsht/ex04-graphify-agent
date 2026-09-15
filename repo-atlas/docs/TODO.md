@@ -154,20 +154,20 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 
 ## Phase 5 — Token comparison
 
-- [ ] **P0** `PHASE5-001` models/metrics/comparison/cost: port
-- [ ] **P0** `PHASE5-002` metrics: keep `_assert_logs_agree` — reported numbers must equal logs — ref R5.2
-- [ ] **P0** `PHASE5-003` runner: RED — both routes run the same prompt, differing only in context
-- [ ] **P0** `PHASE5-004` runner: GREEN — implement `run_both`
-- [ ] **P0** `PHASE5-005` coverage: RED — fraction of hot nodes + modules cited by the brief — ref R5.3
-- [ ] **P0** `PHASE5-006` coverage: GREEN — implement the metric
-- [ ] **P0** `PHASE5-007` report: RED — table renders from metrics, no hardcoded prose or numbers
-- [ ] **P0** `PHASE5-008` report: GREEN — implement `render_report`
-- [ ] **P1** `PHASE5-009` cost: RED/GREEN — cost from config pricing; zero for the offline provider
-- [ ] **P1** `PHASE5-010` report: RED — a mismatch between log and report fails the run
-- [ ] **P1** `PHASE5-011` report: GREEN — reconcile before rendering
-- [ ] **P1** `PHASE5-012` evals: keyless comparison shows a real reduction via the mock's token counts
+- [x] **P0** `PHASE5-001` models/metrics/comparison/cost: port
+- [x] **P0** `PHASE5-002` metrics: keep `_assert_logs_agree` — reported numbers must equal logs — ref R5.2
+- [x] **P0** `PHASE5-003` runner: RED — both routes run the same prompt, differing only in context
+- [x] **P0** `PHASE5-004` runner: GREEN — implement `run_both`
+- [x] **P0** `PHASE5-005` coverage: RED — fraction of hot nodes + modules cited by the brief — ref R5.3
+- [x] **P0** `PHASE5-006` coverage: GREEN — implement the metric
+- [x] **P0** `PHASE5-007` report: RED — table renders from metrics, no hardcoded prose or numbers
+- [x] **P0** `PHASE5-008` report: GREEN — implement `render_report`
+- [x] **P1** `PHASE5-009` cost: RED/GREEN — cost from config pricing; zero for the offline provider
+- [x] **P1** `PHASE5-010` report: RED — a mismatch between log and report fails the run
+- [x] **P1** `PHASE5-011` report: GREEN — reconcile before rendering
+- [x] **P1** `PHASE5-012` evals: keyless comparison shows a real reduction via the mock's token counts
 - [ ] **P2** `PHASE5-013` run: one real-key run; commit the report as static evidence
-- [ ] **P0** `PHASE5-014` token_comparison: REFACTOR — file sizes, gates green
+- [x] **P0** `PHASE5-014` token_comparison: REFACTOR — file sizes, gates green
 
 ---
 
