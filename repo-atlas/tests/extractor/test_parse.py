@@ -101,3 +101,40 @@ def test_a_call_on_an_expression_yields_no_callee() -> None:
     """``factory()()`` and lambda calls have no name to resolve — record nothing."""
     result = parse.parse_source("m.py", "def f():\n    (lambda: 1)()\n")
     assert result.calls == ()
+
+
+def test_plain_imports_are_recorded() -> None:
+    result = parse.parse_source("m.py", "import os\nimport pkg.mod\n")
+    assert [(i.module, i.names, i.level) for i in result.imports] == [
+        ("os", (), 0),
+        ("pkg.mod", (), 0),
+    ]
+
+
+def test_from_imports_record_their_bound_names() -> None:
+    result = parse.parse_source("m.py", "from pkg.mod import alpha, beta\n")
+    record = result.imports[0]
+    assert (record.module, record.level) == ("pkg.mod", 0)
+    assert [(n.original, n.bound) for n in record.names] == [("alpha", "alpha"), ("beta", "beta")]
+
+
+def test_relative_imports_record_their_depth() -> None:
+    result = parse.parse_source("pkg/m.py", "from ..other import thing\n")
+    assert (result.imports[0].module, result.imports[0].level) == ("other", 2)
+
+
+def test_bare_relative_import_has_no_module() -> None:
+    result = parse.parse_source("pkg/m.py", "from . import sibling\n")
+    record = result.imports[0]
+    assert (record.module, [n.bound for n in record.names]) == ("", ["sibling"])
+
+
+def test_aliased_imports_record_the_bound_alias() -> None:
+    """`as` rebinds the name, and the alias is what call sites will use."""
+    result = parse.parse_source("m.py", "from pkg import thing as renamed\n")
+    name = result.imports[0].names[0]
+    assert (name.original, name.bound) == ("thing", "renamed")
+
+
+def test_import_line_numbers_are_recorded() -> None:
+    assert parse.parse_source("m.py", "\nimport os\n").imports[0].lineno == 2

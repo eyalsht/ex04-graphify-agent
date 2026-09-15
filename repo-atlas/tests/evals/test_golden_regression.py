@@ -76,7 +76,9 @@ def test_marker_comments_survive_an_unparseable_file(extracted) -> None:  # type
 
 
 @pytest.mark.eval
-def test_no_import_edges_are_emitted(extracted) -> None:  # type: ignore[no-untyped-def]
-    """Negative constraint: the corpus imports turtle and random, the reference links neither."""
+def test_no_edges_point_outside_the_repository(extracted) -> None:  # type: ignore[no-untyped-def]
+    """The corpus imports only turtle and random, so cross-file resolution finds nothing to
+    link — which is exactly why the reference has no import edges. A `references` edge here
+    would mean we had started inventing links to code the repository does not contain."""
     _, edges, _ = extracted
     assert not [e for e in edges if e.relation == "references"]

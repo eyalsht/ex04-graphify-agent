@@ -63,6 +63,23 @@ reference attribute-for-attribute, and 14 of its 15 in-scope edges are reproduce
   prose. We emit none of them (ADR-0001), and the eval asserts their four source nodes are
   absent rather than fabricated.
 
+## Ranking and graph shape
+
+- **Cross-file resolution is partial by design.** A name imported directly, and an attribute
+  call on an imported module, both resolve. `self.method()` and `obj.method()` do not — that
+  needs type inference, and a guessed edge is worse than a missing one. On this repository
+  the resolved edges cut the largest connected component's fragmentation substantially, but
+  around 100 small components remain, mostly test modules that import one thing.
+- **Test code is demoted, not hidden.** Nodes under a test path carry a 0.3 ranking
+  multiplier, so `hot.md` leads with source. A test helper used by most of the suite can
+  still rank first on sheer degree — on this repository `graph_dict()` does, which is
+  arguably correct since it genuinely is the most connected node here. The multiplier is a
+  deliberate round number, not a tuned constant; tuning it to make one repository look right
+  would be overfitting.
+- **Betweenness is small in absolute terms on large graphs** (order 1e-3), because it is
+  normalised over all node pairs. Rankings normalise it against the graph's own maximum, so
+  it still contributes, but the raw figure in `hot.md` reads as ~0.000 for most nodes.
+
 ## Open items
 
 - [ ] `uv.lock` not yet committed — `PHASE0-013`.

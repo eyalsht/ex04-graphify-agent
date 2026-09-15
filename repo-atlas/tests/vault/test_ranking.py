@@ -95,3 +95,53 @@ def test_metric_description_states_what_was_actually_used(tmp_path: Path) -> Non
     """hot.md must not claim proximity weighting when no seed was given."""
     assert "proximity" not in ranking.metric_description(_WEIGHTS, None)
     assert "far" in ranking.metric_description(_WEIGHTS, "far")
+
+
+def _mixed(tmp_path: Path) -> GraphReader:
+    """A test helper with more edges than the source symbol it exercises."""
+    nodes = [
+        graph_factory.make_node("src_core", source_file="src/pkg/core.py"),
+        graph_factory.make_node("src_core_run", source_file="src/pkg/core.py"),
+        graph_factory.make_node("tests_t", source_file="tests/test_core.py"),
+        graph_factory.make_node("tests_t_helper", source_file="tests/test_core.py"),
+        graph_factory.make_node("tests_t_a", source_file="tests/test_core.py"),
+        graph_factory.make_node("tests_t_b", source_file="tests/test_core.py"),
+    ]
+    edges = [
+        graph_factory.make_edge("src_core", "src_core_run", relation="contains"),
+        graph_factory.make_edge("tests_t", "tests_t_helper", relation="contains"),
+        graph_factory.make_edge("tests_t_a", "tests_t_helper", relation="calls"),
+        graph_factory.make_edge("tests_t_b", "tests_t_helper", relation="calls"),
+        graph_factory.make_edge("tests_t_a", "src_core_run", relation="calls"),
+    ]
+    path = graph_factory.write_graph(
+        tmp_path, graph_factory.graph_dict(nodes, edges), filename="mixed.json"
+    )
+    return GraphReader(path)
+
+
+def test_without_a_penalty_a_test_helper_outranks_real_source(tmp_path: Path) -> None:
+    """The observed defect: hot.md led with test fixtures on a real repository."""
+    ranked = ranking.rank_nodes(_mixed(tmp_path), top_k=1, weights=_WEIGHTS, test_penalty=1.0)
+    assert ranked[0].id == "tests_t_helper"
+
+
+def test_the_penalty_puts_source_first(tmp_path: Path) -> None:
+    ranked = ranking.rank_nodes(_mixed(tmp_path), top_k=1, weights=_WEIGHTS)
+    assert ranked[0].id == "src_core_run"
+
+
+def test_tests_are_still_ranked_not_dropped(tmp_path: Path) -> None:
+    """Tests are real structure and often the best documentation — demote, never hide."""
+    ranked = ranking.rank_nodes(_mixed(tmp_path), top_k=10, weights=_WEIGHTS)
+    assert "tests_t_helper" in {node.id for node in ranked}
+
+
+def test_test_detection_matches_common_layouts(tmp_path: Path) -> None:
+    for path in ("tests/test_x.py", "src/pkg/test_x.py", "src/pkg/x_test.py", "tests/conftest.py"):
+        assert ranking.is_test_path(path), path
+
+
+def test_ordinary_source_is_not_mistaken_for_a_test(tmp_path: Path) -> None:
+    for path in ("src/pkg/contest.py", "src/latest.py", "src/pkg/protest_handler.py"):
+        assert not ranking.is_test_path(path), path

@@ -23,6 +23,26 @@ from repo_atlas.graph_reader.models import NodeView
 DEGREE = "degree"
 BETWEENNESS = "betweenness"
 
+#: Test code is real structure and often a repo's best documentation, so it stays on the
+#: map — but someone asking "where do I start reading" means the source. Without this, a
+#: helper called by a dozen tests in one file outranks the code it exercises.
+DEFAULT_TEST_PENALTY = 0.3
+_TEST_FILENAMES = ("conftest.py",)
+_TEST_PREFIX = "test_"
+_TEST_SUFFIX = "_test.py"
+_TEST_DIRS = ("tests", "test")
+
+
+def is_test_path(source_file: str) -> bool:
+    """Whether a repo-relative path looks like test code, by layout convention."""
+    if not source_file:
+        return False
+    parts = source_file.split("/")
+    name = parts[-1]
+    if name in _TEST_FILENAMES or name.startswith(_TEST_PREFIX) or name.endswith(_TEST_SUFFIX):
+        return True
+    return any(part in _TEST_DIRS for part in parts[:-1])
+
 
 def bfs_distances(reader: GraphReader, source_id: str) -> dict[str, int]:
     """Hop counts from ``source_id`` to every node it can reach."""
@@ -55,7 +75,10 @@ def _centrality(node: NodeView, weights: Mapping[str, float], norms: tuple[float
 
 
 def score_nodes(
-    reader: GraphReader, weights: Mapping[str, float], seed_id: str | None = None
+    reader: GraphReader,
+    weights: Mapping[str, float],
+    seed_id: str | None = None,
+    test_penalty: float = DEFAULT_TEST_PENALTY,
 ) -> dict[str, float]:
     """Score every entity node. Raises ``KeyError`` if an explicit seed is unknown."""
     if seed_id is not None and not reader.node_exists(seed_id):
@@ -69,6 +92,8 @@ def score_nodes(
     scores: dict[str, float] = {}
     for node in candidates:
         score = _centrality(node, weights, norms)
+        if is_test_path(node.source_file):
+            score *= test_penalty
         if distances is not None:
             hops = distances.get(node.id)
             score = 0.0 if hops is None else score / (1 + hops)
@@ -81,9 +106,10 @@ def rank_nodes(
     top_k: int,
     weights: Mapping[str, float],
     seed_id: str | None = None,
+    test_penalty: float = DEFAULT_TEST_PENALTY,
 ) -> list[NodeView]:
     """The ``top_k`` nodes worth reading first, most important last-tie-broken by id."""
-    scores = score_nodes(reader, weights, seed_id)
+    scores = score_nodes(reader, weights, seed_id, test_penalty)
     candidates = entities(reader.all_nodes())
     ordered = sorted(candidates, key=lambda n: (-scores[n.id], -n.degree, -n.betweenness, n.id))
     return ordered[:top_k]

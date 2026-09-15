@@ -38,7 +38,36 @@ class CallSite:
     callee: str  # the bare Name, or the attribute's final segment
     lineno: int
     enclosing: str | None = None  # symbol name the call sits inside; None at module level
-    is_attribute: bool = False  # True for obj.method() — never yields an edge
+    is_attribute: bool = False  # True for obj.method()
+    receiver: str | None = None  # the "obj" in obj.method(), when it is a plain name
+
+
+@dataclass(frozen=True)
+class ImportedName:
+    """One name an import binds.
+
+    Both halves are needed: ``original`` is what the exporting module calls the symbol,
+    ``bound`` is what call sites in the importing module will say. For ``import x as y``
+    they differ, and resolving a call needs to travel from ``y`` back to ``x``.
+    """
+
+    original: str
+    bound: str
+
+
+@dataclass(frozen=True)
+class ImportRecord:
+    """One import statement, kept as written so resolution can happen later.
+
+    ``module`` is the dotted path (empty for ``from . import x``), ``names`` the bound
+    names (empty for a plain ``import x``), and ``level`` the number of leading dots in a
+    relative import.
+    """
+
+    module: str
+    names: tuple[ImportedName, ...] = ()
+    lineno: int = 1
+    level: int = 0
 
 
 @dataclass(frozen=True)
@@ -58,6 +87,7 @@ class FileSymbols:
     symbols: tuple[Symbol, ...] = ()
     calls: tuple[CallSite, ...] = ()
     markers: tuple[MarkerComment, ...] = ()
+    imports: tuple[ImportRecord, ...] = ()
 
 
 @dataclass(frozen=True)
