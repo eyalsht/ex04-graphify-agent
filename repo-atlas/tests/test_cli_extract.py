@@ -38,6 +38,15 @@ def test_extract_fails_clearly_when_repo_is_a_file(tmp_path: Path) -> None:
     assert "Traceback" not in result.output
 
 
+def test_extract_reports_degraded_parses(tmp_path: Path) -> None:
+    repo = build_repo(tmp_path)
+    (repo / "legacy.py").write_text('print "python 2"\n', encoding="utf-8")
+    result = runner.invoke(app, ["extract", str(repo), "--out", str(tmp_path / "out")])
+    assert result.exit_code == 0
+    assert "legacy.py" in result.stdout
+    assert "degraded" in result.stdout.lower()
+
+
 def test_extract_fails_clearly_for_a_broken_config(tmp_path: Path) -> None:
     repo = build_repo(tmp_path)
     bad_config = tmp_path / "bad.json"
