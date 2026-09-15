@@ -132,11 +132,11 @@ each phase closing with a REFACTOR item enforcing the ≤150-line budget.
 ## Phase 4 — Brief (TDD)
 
 - [ ] **P0** `PHASE4-001` state: RED/GREEN — brief state schema — ref PLAN §7.2
-- [ ] **P0** `PHASE4-002` gatekeeper: port client/provider/token_log
-- [ ] **P0** `PHASE4-003` gatekeeper: RED — provider dispatch honours `config["provider"]`
-- [ ] **P0** `PHASE4-004` gatekeeper: GREEN — registry dispatch + `offline` provider — ref R6.1
-- [ ] **P1** `PHASE4-005` gatekeeper: RED — a provider 429 surfaces as `RateLimitError` and retries
-- [ ] **P1** `PHASE4-006` gatekeeper: GREEN — map provider errors onto the retry path
+- [x] **P0** `PHASE4-002` gatekeeper: port client/provider/token_log
+- [x] **P0** `PHASE4-003` gatekeeper: RED — provider dispatch honours `config["provider"]`
+- [x] **P0** `PHASE4-004` gatekeeper: GREEN — registry dispatch + `offline` provider — ref R6.1
+- [x] **P1** `PHASE4-005` gatekeeper: RED — a provider 429 surfaces as `RateLimitError` and retries
+- [x] **P1** `PHASE4-006` gatekeeper: GREEN — map provider errors onto the retry path
 - [ ] **P0** `PHASE4-007` context: RED — graph context stays under the configured budget — ref R4.1
 - [ ] **P0** `PHASE4-008` context: GREEN — implement budgeted assembly
 - [ ] **P0** `PHASE4-009` context: RED — source slices come from `source_location`, not whole files — ref R4.2

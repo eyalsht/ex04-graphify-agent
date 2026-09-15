@@ -61,6 +61,13 @@ python_version = "3.12"
 strict = true
 files = ["src"]
 
+# google-genai is an optional dependency (see [project.optional-dependencies].gemini) and
+# is imported lazily inside GeminiClient so the package works without it installed; mypy
+# runs without it too, so it has no stubs to check against here.
+[[tool.mypy.overrides]]
+module = "google.*"
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Coverage is reported on every run; the >=90% gate is enforced explicitly in CI / pre-commit
