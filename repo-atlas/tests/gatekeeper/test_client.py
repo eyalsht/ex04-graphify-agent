@@ -76,9 +76,16 @@ def test_retry_exhaustion_raises(tmp_path: Path) -> None:
         gk.call(messages=[{"role": "user", "content": "x"}], run_id="r1", node="fix")
 
 
+class _PacedClient:
+    """A client that does NOT opt out of pacing — i.e. any real remote provider."""
+
+    def generate(self, messages: list[dict[str, object]], system: str | None) -> LLMResponse:
+        return LLMResponse(text="paced", input_tokens=1, output_tokens=1)
+
+
 def test_rate_limit_queue_spaces_calls(tmp_path: Path) -> None:
     cfg = _config(rate_limit_per_minute=60)  # -> 1.0s min interval
-    gk = Gatekeeper(cfg, _logger(tmp_path))
+    gk = Gatekeeper(cfg, _logger(tmp_path), client=_PacedClient())
     start = time.monotonic()
     for _ in range(2):
         gk.call(messages=[{"role": "user", "content": "x"}], run_id="r1", node="plan")
@@ -91,3 +98,14 @@ def test_zero_rate_limit_disables_throttling(tmp_path: Path) -> None:
     for _ in range(3):
         gk.call(messages=[{"role": "user", "content": "x"}], run_id="r1", node="plan")
     assert time.monotonic() - start < 0.5
+
+
+def test_the_offline_client_is_not_rate_limited(tmp_path: Path) -> None:
+    """Throttling respects a provider's quota. The offline client has none, so pacing it
+    only makes keyless runs — and this suite — slow for nothing."""
+    cfg = _config(rate_limit_per_minute=6)  # 10s between calls, if it were applied
+    gk = Gatekeeper(cfg, _logger(tmp_path), client=OfflineClient())
+    start = time.monotonic()
+    for index in range(3):
+        gk.call([{"role": "user", "content": "hi"}], run_id="r1", node=f"n{index}")
+    assert time.monotonic() - start < 1.0

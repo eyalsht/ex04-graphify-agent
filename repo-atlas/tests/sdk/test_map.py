@@ -34,3 +34,24 @@ def test_map_repo_propagates_an_unknown_seed_as_a_keyerror(tmp_path: Path) -> No
     paths = RunPaths.create(build_repo(tmp_path))
     with pytest.raises(KeyError):
         sdk.map_repo(paths, seed_id="does-not-exist")
+
+
+def test_brief_writes_a_brief_from_the_graph_and_vault(tmp_path: Path) -> None:
+    paths = RunPaths.create(build_repo(tmp_path), out=tmp_path / "out")
+    result = sdk.brief(paths)
+    assert result.brief_path.is_file()
+    assert result.brief_path.read_text(encoding="utf-8").startswith("#")
+
+
+def test_brief_runs_extract_and_vault_first_when_needed(tmp_path: Path) -> None:
+    paths = RunPaths.create(build_repo(tmp_path), out=tmp_path / "out")
+    sdk.brief(paths)
+    assert (paths.out_dir / "graph.json").is_file()
+    assert (paths.out_dir / "vault" / "hot.md").is_file()
+
+
+def test_brief_logs_its_token_usage(tmp_path: Path) -> None:
+    paths = RunPaths.create(build_repo(tmp_path), out=tmp_path / "out")
+    result = sdk.brief(paths)
+    assert result.result.token_usage
+    assert (paths.out_dir / "runs").is_dir()

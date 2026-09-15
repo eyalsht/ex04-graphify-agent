@@ -102,6 +102,25 @@ def map_repo(
     )
 
 
+@app.command()
+def brief(
+    repo: Path = _REPO_ARG,
+    out: Path | None = _OUT_OPT,
+    seed: str | None = _SEED_OPT,
+) -> None:
+    """Write BRIEF.md — an architecture brief built from the graph and vault."""
+    try:
+        outcome = sdk.brief(RunPaths.create(repo, out=out), seed_id=seed)
+    except (ConfigError, KeyError) as exc:
+        _fail(exc)
+    tokens = sum(usage["input_tokens"] for usage in outcome.result.token_usage)
+    typer.echo(f"Brief written to {outcome.brief_path}")
+    typer.echo(
+        f"  {len(outcome.result.sections)} sections, "
+        f"{len(outcome.result.token_usage)} LLM calls, {tokens} input tokens."
+    )
+
+
 def _fail(exc: Exception) -> NoReturn:
     typer.echo(str(exc), err=True)
     raise typer.Exit(code=1) from exc

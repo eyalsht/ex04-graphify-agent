@@ -56,6 +56,27 @@ def _extract_python(
     return parsed, py_nodes.build_file_nodes(parsed, marker_limit)
 
 
+def _deduplicate(nodes: list[RawNode]) -> list[RawNode]:
+    """Collapse repeated external symbols; raise on any other duplicate id.
+
+    An unresolved external (``source_file == ""``) is deliberately shared: two modules
+    subclassing RuntimeError describe one RuntimeError, not two. Every other duplicate id
+    means two real constructs collided, which would silently lose one of them.
+    """
+    seen: dict[str, RawNode] = {}
+    for node in nodes:
+        existing = seen.get(node.id)
+        if existing is None:
+            seen[node.id] = node
+            continue
+        if existing.source_file or node.source_file:
+            raise ValueError(
+                f"node id {node.id!r} is produced by both {existing.source_file!r} and "
+                f"{node.source_file!r} — rename one construct or the graph loses it"
+            )
+    return list(seen.values())
+
+
 def extract(paths: RunPaths, marker_limit: int | None = None) -> ExtractResult:
     """Walk the repo, build the graph, and write graph.json, manifest.json and the report."""
     config = RunConfig.load(paths.config_path)
@@ -85,6 +106,7 @@ def extract(paths: RunPaths, marker_limit: int | None = None) -> ExtractResult:
     # pass each file is an island and every centrality measure degenerates.
     edges.extend(resolve.cross_file_edges(parsed_files, built_files))
 
+    nodes = _deduplicate(nodes)
     community_of = communities.assign_communities(nodes, edges)
     generated_at = datetime.now(UTC).isoformat(timespec="seconds")
     repo_name = paths.repo_root.name

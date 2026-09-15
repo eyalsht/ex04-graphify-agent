@@ -51,6 +51,10 @@ class Gatekeeper:
         self._last_call = 0.0
         self._registry = registry if registry is not None else self._default_registry()
         self.client = client if client is not None else self._select_client()
+        # Throttling exists to respect a provider's quota. A local client has none, so
+        # pacing it would only make keyless runs — and the whole test suite — slow. Clients
+        # opt out by declaring requires_pacing = False; anything unmarked is paced.
+        self._paced = bool(getattr(self.client, "requires_pacing", True))
 
     @staticmethod
     def _default_registry() -> dict[str, ProviderFactory]:
@@ -75,7 +79,7 @@ class Gatekeeper:
         return factory(self.api_key or "", self.model)
 
     def _throttle(self) -> None:
-        if self._min_interval <= 0:
+        if not self._paced or self._min_interval <= 0:
             return
         wait = self._min_interval - (time.monotonic() - self._last_call)
         if wait > 0:

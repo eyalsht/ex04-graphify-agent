@@ -20,6 +20,9 @@ class OfflineClient:
     (P5 depends on this property).
     """
 
+    #: No network and no provider quota, so the gatekeeper must not pace this client.
+    requires_pacing = False
+
     def __init__(self, fail_times: int = 0) -> None:
         self.fail_times = fail_times
         self.calls = 0

@@ -45,3 +45,25 @@ def test_map_fails_clearly_for_a_missing_repo(tmp_path: Path) -> None:
     result = runner.invoke(app, ["map", str(tmp_path / "does-not-exist")])
     assert result.exit_code != 0
     assert "Traceback" not in result.output
+
+
+def test_brief_command_writes_a_brief(tmp_path: Path) -> None:
+    repo = build_repo(tmp_path)
+    out = tmp_path / "out"
+    result = runner.invoke(app, ["brief", str(repo), "--out", str(out)])
+    assert result.exit_code == 0, result.stdout
+    assert (out / "BRIEF.md").is_file()
+
+
+def test_brief_command_reports_where_it_wrote(tmp_path: Path) -> None:
+    repo = build_repo(tmp_path)
+    result = runner.invoke(app, ["brief", str(repo), "--out", str(tmp_path / "out")])
+    assert "BRIEF.md" in result.stdout
+
+
+def test_brief_command_rejects_an_unknown_seed(tmp_path: Path) -> None:
+    repo = build_repo(tmp_path)
+    result = runner.invoke(
+        app, ["brief", str(repo), "--out", str(tmp_path / "out"), "--seed", "no_such_node"]
+    )
+    assert result.exit_code == 1

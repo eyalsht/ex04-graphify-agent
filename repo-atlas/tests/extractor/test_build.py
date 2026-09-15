@@ -103,3 +103,25 @@ def test_an_empty_repo_produces_an_empty_graph(tmp_path: Path) -> None:
     empty.mkdir()
     data = json.loads(build.extract(RunPaths.create(empty)).graph_path.read_text(encoding="utf-8"))
     assert data["nodes"] == []
+
+
+def test_two_files_inheriting_the_same_external_share_one_node(tmp_path: Path) -> None:
+    """An external symbol is one fact about the repo, not one per file that mentions it.
+
+    Regression: two modules each defining `class X(RuntimeError)` both emitted an external
+    node `runtimeerror`, and graph assembly rejected the duplicate — so any repo with two
+    exception subclasses in different files could not be mapped at all.
+    """
+    repo = _repo(tmp_path)
+    (repo / "pkg" / "a.py").write_text("class AError(RuntimeError):\n    pass\n", encoding="utf-8")
+    (repo / "pkg" / "b.py").write_text("class BError(RuntimeError):\n    pass\n", encoding="utf-8")
+    result = build.extract(RunPaths.create(repo))
+    data = json.loads(result.graph_path.read_text(encoding="utf-8"))
+    externals = [node for node in data["nodes"] if node["id"] == "runtimeerror"]
+    assert len(externals) == 1
+    inherits = [
+        link
+        for link in data["links"]
+        if link["relation"] == "inherits" and link["target"] == "runtimeerror"
+    ]
+    assert len(inherits) == 2
