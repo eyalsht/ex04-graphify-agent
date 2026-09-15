@@ -67,3 +67,17 @@ def test_brief_command_rejects_an_unknown_seed(tmp_path: Path) -> None:
         app, ["brief", str(repo), "--out", str(tmp_path / "out"), "--seed", "no_such_node"]
     )
     assert result.exit_code == 1
+
+
+def test_compare_command_writes_the_evidence_report(tmp_path: Path) -> None:
+    out = tmp_path / "out"
+    result = runner.invoke(app, ["compare", str(build_repo(tmp_path)), "--out", str(out)])
+    assert result.exit_code == 0, result.stdout
+    assert (out / "token_comparison.md").is_file()
+
+
+def test_compare_command_reports_the_reduction(tmp_path: Path) -> None:
+    result = runner.invoke(
+        app, ["compare", str(build_repo(tmp_path)), "--out", str(tmp_path / "out")]
+    )
+    assert "%" in result.stdout

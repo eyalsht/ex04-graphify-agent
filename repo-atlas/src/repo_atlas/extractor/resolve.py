@@ -26,7 +26,12 @@ def cross_file_edges(
     parsed: Mapping[str, FileSymbols], built: Mapping[str, FileNodes]
 ) -> list[RawEdge]:
     """Resolve imports into ``references`` edges and cross-file ``calls`` edges."""
-    by_module = {bindings.dotted(path): path for path in parsed}
+    # Register every name a file can be imported as, so both flat and src layouts resolve.
+    all_files = set(parsed)
+    by_module: dict[str, str] = {}
+    for path in sorted(parsed):
+        for name in bindings.module_names(path, all_files):
+            by_module.setdefault(name, path)
     confidence, score = for_origin(ORIGIN_AST)
     edges: list[RawEdge] = []
     seen_references: set[tuple[str, str]] = set()

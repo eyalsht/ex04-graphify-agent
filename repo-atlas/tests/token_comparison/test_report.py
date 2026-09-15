@@ -92,3 +92,25 @@ def test_write_report_creates_parent_dirs_and_returns_the_path(tmp_path: Path) -
     written = write_report(result, _ZERO_PRICING, "proj", "m", out)
     assert written == out
     assert "proj" in out.read_text(encoding="utf-8")
+
+
+def _result_with_coverage(coverage: CoverageMetrics, naive_same: bool = True) -> ComparisonResult:
+    graph = _metrics("graph_guided", 100)
+    naive = _metrics("naive", 500)
+    graph.coverage = coverage
+    naive.coverage = coverage if naive_same else CoverageMetrics(1, 2, 1, 2)
+    return ComparisonResult(graph_guided=graph, naive=naive, input_token_reduction_pct=80.0)
+
+
+def test_zero_coverage_on_both_routes_is_explained_not_left_bare() -> None:
+    """Offline placeholder prose cites nothing, so coverage is structurally 0 for both
+    routes. Printing a bare 0% invites the reader to conclude the brief was empty."""
+    result = _result_with_coverage(CoverageMetrics(0, 5, 0, 9))
+    body = render_report(result, _ZERO_PRICING, "proj", "mock-offline")
+    assert "placeholder" in body.lower()
+
+
+def test_nonzero_coverage_is_not_given_the_caveat() -> None:
+    result = _result_with_coverage(CoverageMetrics(3, 5, 4, 9), naive_same=False)
+    body = render_report(result, _ZERO_PRICING, "proj", "some-model")
+    assert "placeholder" not in body.lower()

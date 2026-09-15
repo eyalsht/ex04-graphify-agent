@@ -68,14 +68,15 @@ reference attribute-for-attribute, and 14 of its 15 in-scope edges are reproduce
 - **Cross-file resolution is partial by design.** A name imported directly, and an attribute
   call on an imported module, both resolve. `self.method()` and `obj.method()` do not — that
   needs type inference, and a guessed edge is worse than a missing one. On this repository
-  the resolved edges cut the largest connected component's fragmentation substantially, but
-  around 100 small components remain, mostly test modules that import one thing.
+  88% of nodes now sit in one connected component; the remainder are mostly small test
+  modules that import a single thing.
 - **Test code is demoted, not hidden.** Nodes under a test path carry a 0.3 ranking
-  multiplier, so `hot.md` leads with source. A test helper used by most of the suite can
-  still rank first on sheer degree — on this repository `graph_dict()` does, which is
-  arguably correct since it genuinely is the most connected node here. The multiplier is a
-  deliberate round number, not a tuned constant; tuning it to make one repository look right
-  would be overfitting.
+  multiplier, so `hot.md` leads with source. The multiplier is a deliberate round number,
+  not a tuned constant. Once cross-file edges resolved properly the ranking corrected
+  itself without touching it, which is the outcome to prefer: fix the graph, not the score.
+- **Package `__init__.py` modules rank high.** They re-export a package's public surface, so
+  they are genuine structural hubs with high degree and betweenness. Whether they are a good
+  *place to start reading* is a judgement call we have not tried to encode.
 - **Betweenness is small in absolute terms on large graphs** (order 1e-3), because it is
   normalised over all node pairs. Rankings normalise it against the graph's own maximum, so
   it still contributes, but the raw figure in `hot.md` reads as ~0.000 for most nodes.
@@ -92,6 +93,19 @@ reference attribute-for-attribute, and 14 of its 15 in-scope edges are reproduce
   model the gatekeeper's keys, and the SDK reads the `vault`/`graph_reader` sections from JSON
   directly for the same reason. Both are honest gaps rather than design: promoting these into
   `RunConfig` is worth doing and is not done.
+
+## When graph-guided retrieval does not pay off
+
+There is a crossover point. Assembling the vault plus a source window costs a fixed
+overhead, so on a repository smaller than that overhead the graph-guided route uses **more**
+input tokens than simply dumping every file — measurably so: on a single seven-line module
+it is roughly twice as expensive. The saving grows with repository size, which is the case
+the tool exists for, but the comparison report will honestly show a negative reduction on a
+toy repo and that is the correct answer rather than a defect.
+
+Practical consequence for tests: any assertion about the reduction needs a fixture past the
+crossover (`tests/sdk/_repo.build_large_repo`). Three separate test failures during
+development traced to fixtures below it asserting an artifact of their own size.
 
 ## Open items
 

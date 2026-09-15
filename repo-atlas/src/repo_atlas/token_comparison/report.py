@@ -12,7 +12,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from repo_atlas.gatekeeper import TokenRecord
-from repo_atlas.token_comparison import cost
+from repo_atlas.token_comparison import caveats, cost
 from repo_atlas.token_comparison.metrics import assert_totals_match_log
 from repo_atlas.token_comparison.models import ComparisonResult, RunMetrics
 
@@ -103,7 +103,7 @@ def _reduction_section(result: ComparisonResult) -> list[str]:
 def _coverage_section(result: ComparisonResult) -> list[str]:
     graph_cov = result.graph_guided.coverage
     naive_cov = result.naive.coverage
-    return [
+    lines = [
         "## Coverage",
         (
             f"Graph-guided cited {graph_cov.hot_nodes_cited}/{graph_cov.hot_nodes_total} hot "
@@ -112,6 +112,9 @@ def _coverage_section(result: ComparisonResult) -> list[str]:
             f"{naive_cov.modules_cited}/{naive_cov.modules_total} modules."
         ),
     ]
+    if caveats.both_cited_nothing(graph_cov, naive_cov):
+        lines.append(caveats.ZERO_COVERAGE_NOTE)
+    return lines
 
 
 def _cost_section(result: ComparisonResult, pricing: Mapping[str, float], model: str) -> list[str]:

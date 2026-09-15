@@ -8,7 +8,7 @@ import pytest
 
 from repo_atlas import sdk
 from repo_atlas.paths import RunPaths
-from tests.sdk._repo import build_repo
+from tests.sdk._repo import build_large_repo, build_repo
 
 _SEED = "pkg_shapes_make"
 
@@ -54,4 +54,28 @@ def test_brief_logs_its_token_usage(tmp_path: Path) -> None:
     paths = RunPaths.create(build_repo(tmp_path), out=tmp_path / "out")
     result = sdk.brief(paths)
     assert result.result.token_usage
+    assert (paths.out_dir / "runs").is_dir()
+
+
+def test_compare_writes_a_report_with_both_routes(tmp_path: Path) -> None:
+    paths = RunPaths.create(build_repo(tmp_path), out=tmp_path / "out")
+    outcome = sdk.compare(paths)
+    assert outcome.report_path.is_file()
+    body = outcome.report_path.read_text(encoding="utf-8")
+    assert "graph_guided" in body and "naive" in body
+
+
+def test_compare_shows_a_real_token_reduction_keylessly(tmp_path: Path) -> None:
+    """The central claim, provable with no API key because the offline client counts the
+    prompt's real tokens rather than returning a stub zero. Needs a repo past the crossover
+    where retrieval beats dumping — see build_large_repo."""
+    paths = RunPaths.create(build_large_repo(tmp_path), out=tmp_path / "out")
+    outcome = sdk.compare(paths)
+    assert outcome.result.input_token_reduction_pct > 0
+    assert outcome.result.graph_guided.input_tokens < outcome.result.naive.input_tokens
+
+
+def test_compare_logs_both_routes_separately(tmp_path: Path) -> None:
+    paths = RunPaths.create(build_repo(tmp_path), out=tmp_path / "out")
+    sdk.compare(paths)
     assert (paths.out_dir / "runs").is_dir()

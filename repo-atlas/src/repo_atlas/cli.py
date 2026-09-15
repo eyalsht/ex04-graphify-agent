@@ -121,6 +121,26 @@ def brief(
     )
 
 
+@app.command()
+def compare(
+    repo: Path = _REPO_ARG,
+    out: Path | None = _OUT_OPT,
+    seed: str | None = _SEED_OPT,
+) -> None:
+    """Run both routes and write the evidence report (graph-guided vs naive dump)."""
+    try:
+        outcome = sdk.compare(RunPaths.create(repo, out=out), seed_id=seed)
+    except (ConfigError, KeyError) as exc:
+        _fail(exc)
+    graph = outcome.result.graph_guided
+    naive = outcome.result.naive
+    typer.echo(f"Comparison written to {outcome.report_path}")
+    typer.echo(
+        f"  graph-guided {graph.input_tokens} vs naive {naive.input_tokens} input tokens "
+        f"({outcome.result.input_token_reduction_pct:g}% fewer)."
+    )
+
+
 def _fail(exc: Exception) -> NoReturn:
     typer.echo(str(exc), err=True)
     raise typer.Exit(code=1) from exc

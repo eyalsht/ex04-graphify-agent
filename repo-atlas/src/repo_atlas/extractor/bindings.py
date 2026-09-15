@@ -15,6 +15,25 @@ from repo_atlas.extractor.py_nodes import FileNodes
 _INIT = "__init__"
 
 
+def module_names(source_file: str, all_files: set[str]) -> set[str]:
+    """Every dotted name this file can be imported as.
+
+    A repository using the ``src/`` layout imports ``pkg.core``, not ``src.pkg.core``:
+    ``src/`` is a source root, not a package. Leading directories that contain no
+    ``__init__.py`` are therefore stripped, and both spellings are registered so either
+    import style resolves. Getting this wrong costs almost every cross-file edge in a
+    src-layout repo — which is one of the two standard Python layouts.
+    """
+    names = {dotted(source_file)}
+    parts = source_file.split("/")
+    for index in range(1, len(parts)):
+        prefix = "/".join(parts[:index])
+        if f"{prefix}/{_INIT}.py" in all_files:
+            break
+        names.add(dotted("/".join(parts[index:])))
+    return names
+
+
 def dotted(source_file: str) -> str:
     """``pkg/mod.py`` -> ``pkg.mod``; ``pkg/__init__.py`` -> ``pkg``."""
     stem = source_file[:-3] if source_file.endswith(".py") else source_file
