@@ -80,6 +80,19 @@ reference attribute-for-attribute, and 14 of its 15 in-scope edges are reproduce
   normalised over all node pairs. Rankings normalise it against the graph's own maximum, so
   it still contributes, but the raw figure in `hot.md` reads as ~0.000 for most nodes.
 
+## Divergences from the plan
+
+- **The brief pipeline is a plain pipeline, not a LangGraph `StateGraph`**, despite
+  `CLAUDE.md` §2 naming LangGraph as the agent framework. The flow is linear — assemble
+  context, answer each section, render — with no branching, no retry loop and no conditional
+  routing, so a state machine would be ceremony without benefit. The origin project genuinely
+  needed it because its flow branched (hypothesise → validate → retry-or-fix). The dependency
+  is kept so the first branching flow can adopt it without re-plumbing.
+- **Gatekeeper config is a plain dict, not `RunConfig`.** The typed config object does not yet
+  model the gatekeeper's keys, and the SDK reads the `vault`/`graph_reader` sections from JSON
+  directly for the same reason. Both are honest gaps rather than design: promoting these into
+  `RunConfig` is worth doing and is not done.
+
 ## Open items
 
 - [ ] `uv.lock` not yet committed — `PHASE0-013`.
