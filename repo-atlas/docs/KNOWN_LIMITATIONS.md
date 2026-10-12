@@ -109,9 +109,12 @@ development traced to fixtures below it asserting an artifact of their own size.
 
 ## Open items
 
-- [ ] `uv.lock` not yet committed — `PHASE0-013`.
-- [ ] No performance figures yet; the largest repo mapped so far is none. `PHASE2-015` records the
-      first real numbers.
+- [x] `uv.lock` committed and the full gate set verified green (`PHASE0-013`, 2026-10-12).
+- [ ] No performance figures yet. The largest repo mapped so far is this one (1076 nodes /
+      2355 edges, mapped keylessly in seconds); `PHASE2-015` records timings properly.
+- [ ] No third-party smoke runs yet (`PHASE6-009`), so every claim about repository *shapes*
+      other than this one and the 5-file golden fixture is untested. `PHASE6-011` folds those
+      findings back here once they exist.
 - [ ] `pyproject.toml` authors are carried over from the origin project (joint coursework). Confirm
       who should be listed here before any public release, and confirm the Latin spelling of Eyal's
       surname ("Shtinmtez" vs the "shtinmetz" in his email).
