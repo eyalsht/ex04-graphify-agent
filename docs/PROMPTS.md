@@ -359,6 +359,54 @@ entries except to fix factual errors (note the correction inline).
 
 ---
 
+### 2026-06-19 → 2026-09-15 — Post-EX04 (`repo-atlas` fork: own AST extractor, general tool)
+
+- **Prompt summary:** *(Reconstructed from commit history — these sessions are not in this
+  conversation's record, so no prompt is quoted verbatim and none is invented.)* Across 44
+  commits on `claude/dreamy-ptolemy-pq7b4t`, the owner directed a **fork of EX04 into a general
+  repo-comprehension tool**: replace the external `graphify` CLI with an in-repo `ast`-based
+  extractor (ADR-0001), drop the bug-fix scope in favour of comprehension only (ADR-0002), and
+  make every path a parameter so nothing is pinned to one target repo (ADR-0003). Work proceeded
+  in the project's existing phased/TDD discipline (visible RED→GREEN commit pairs), partly in
+  parallel worktrees merged back to the fork branch.
+- **AI tool/model:** Claude Code — Claude Opus (orchestrator + worktree subagents; exact
+  per-session model ids not recoverable from the log).
+- **AI-generated vs. human-reviewed/edited:** AI-authored under the owner's direction, with the
+  fork's own `CLAUDE.md`, PRD, PLAN, TODO and three ADRs written before the code. Scope landed:
+  extractor (discovery + a from-scratch gitignore matcher, parse, nodes, edges, confidence
+  policy, communities, serialize, manifest content-hashing), the ported-and-decoupled
+  `graph_reader`, the vault writer (incl. the community notes EX04 linked but never wrote),
+  the brief, token comparison, and the `atlas` SDK/CLI. Evidence discipline was carried over:
+  a pinned golden-oracle regression, a self-hosting eval (`atlas map .` must name its own core
+  modules with zero dangling wikilinks), and keyless-by-default gatekeeping with an offline
+  provider. One **honest negative finding** is recorded rather than hidden: feeding the whole
+  `index.md` made the graph-guided route *more* expensive than a naive dump, so only `hot.md`
+  plus `index.md`'s community structure is given to the model (`src/repo_atlas/vault_context.py`),
+  and below a crossover repo size the reduction is genuinely negative
+  (`repo-atlas/docs/KNOWN_LIMITATIONS.md`).
+
+### 2026-10-12 — Maintenance (promote the fork to `main`; reconcile all docs)
+
+- **Prompt summary:** Owner asked to find the branch carrying new updates, make it `main`, then
+  update all the docs (README, TODO, PROMPTS, etc.).
+- **AI tool/model:** Claude Code — Claude Opus 5 (inline, no subagents).
+- **AI-generated vs. human-reviewed/edited:** AI-authored. The branch was identified by comparing
+  every remote ref against `origin/main` (`claude/dreamy-ptolemy-pq7b4t`: 44 ahead, 0 behind);
+  because it was 0 behind, `main` advanced by **fast-forward** (`543a9a1..fecb7ef`) with no
+  history rewrite, after confirming the diff was purely additive (0 deletions) and that **both**
+  suites were green on the merged tree (EX04 278 @ 97.71%; repo-atlas 498 @ 99%; ruff 0, mypy 0,
+  all four gate scripts passing in each). Docs were then reconciled **against the code rather
+  than from memory** — `repo-atlas/README.md` still said "Phase 0 — scaffold, `atlas version` is
+  the only wired command" while all six commands and 498 tests existed; its `docs/TODO.md` had
+  phases 2, 3 and 6 wholly unticked. 55 TODO items were ticked only after locating the
+  implementing code/test for each, and the 5 genuinely-open items were left open and listed.
+  README walkthrough excerpts are real output from `uv run atlas map .` (1076 nodes / 2355 edges
+  / 68 communities), not illustrative samples. Stale EX04 numbers were corrected (README TL;DR
+  "262 tests" → 278) and `uv.lock not yet committed` was corrected in the fork's
+  KNOWN_LIMITATIONS. Owner review of these doc edits is pending.
+
+---
+
 ## Template for future entries
 
 ```markdown

@@ -16,6 +16,18 @@ uses fewer tokens than a naive "dump-all-files" baseline, without sacrificing
 bug-localization accuracy. See `docs/PRD.md` for the full spec and `docs/ASSIGNMENT.md`
 for the binding, requirement-ID-tagged source of truth.
 
+**Status (2026-10-12): EX04 Phases 0-10 complete.** All `src/` packages exist, 278 keyless
+tests @ ~98%, ruff 0 / mypy 0, the keyed real run is done (ledgers in `artifacts/runs/`),
+self-grade 90/100. Repo: private `github.com/eyalsht/ex04-graphify-agent`. Read the
+**Progress block at the top of `docs/TODO.md`** first — it is the authoritative state log.
+Work from here is incremental: **do not re-scaffold.**
+
+**`main` also carries `repo-atlas/`** — the successor fork (a general repo-comprehension tool
+with its own AST extractor). It is a **self-contained sub-project with its own `CLAUDE.md`,
+which governs everything under `repo-atlas/`** (own `pyproject.toml`, `uv.lock`, CI, ADRs,
+498 tests @ 99%). This file governs the EX04 deliverable only. Never let the two trees' rules,
+configs, or test suites bleed into each other, and keep changes to one out of the other.
+
 ## 2. Tech Stack & Tooling
 
 - **Package/env manager: `uv` ONLY.** `pip`, `venv`, and `python -m ...` are forbidden.
@@ -24,13 +36,13 @@ for the binding, requirement-ID-tagged source of truth.
 - **Typing: `mypy --strict`** — must report **0 errors** on `src/`.
 - **Testing: `pytest`** with coverage — must be **≥90%** [TIGHTENED from the course's 85%
   baseline].
-- **LLM provider/model: config-driven, decided later — never hardcoded.** Provider + model id
-  live in `config/agent.json` (e.g. `{"provider": "...", "model": "..."}`); **no default is
-  pinned in code, and specifically NOT a Claude Haiku default.** Likely provider = **Google
-  Gemini** (a Gemini API key already exists in the Graphify environment and will probably be
-  reused), but the choice is intentionally open. The gatekeeper (§4 / ADR-0002) must be
-  **provider-agnostic**. Secrets via `os.environ` only; the API-key env-var name is itself
-  config-driven (e.g. `GEMINI_API_KEY`).
+- **LLM provider/model: config-driven — never hardcoded.** `config/agent.json` is the single
+  source: `provider: gemini`, `model: gemini-2.5-flash`, `api_key_env: GEMINI_API_KEY`, plus a
+  `pricing` block (USD per 1M tokens) that every cost figure derives from — **update `pricing`
+  whenever `model` changes**, or reported costs silently drift. **No default is pinned in code,
+  and specifically NOT a Claude Haiku default.** The gatekeeper (§4 / ADR-0002) stays
+  **provider-agnostic**. Secrets via `os.environ` only (gitignored `.env` on manual keyed runs);
+  the env-var name is itself config-driven.
 - **Agent framework: LangGraph** (not CrewAI) — see `docs/adr/0001-langgraph-over-crewai.md`.
 
 ## 3. Hard Rules (Non-Negotiable)
@@ -68,10 +80,10 @@ tagged `[TIGHTENED]` (stricter than the course baseline) or `[PROJECT-ADDED]`
   (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, etc.), each commit **≤~300 lines**.
 - **`pyproject.toml` `authors`** contain real student names + IDs (never "AI Agent"):
   **Eyal Shtinmtez** (ID 314884834, `eyalshtinmetz@gmail.com`) and **Imree Cohen**
-  (ID 312359284, email TBD). Use these when scaffolding `pyproject.toml`. Two minor
-  follow-ups before the first commit (tracked in `docs/KNOWN_LIMITATIONS.md`): Imree's
-  email, and confirming Eyal's Latin surname spelling ("Shtinmtez" vs the "shtinmetz" in
-  his email).
+  (ID 312359284, email TBD). Both are set in `pyproject.toml`
+  (Imree: `imree.c@gmail.com`). One follow-up remains before submission
+  (`docs/KNOWN_LIMITATIONS.md` #2): confirm Eyal's Latin surname spelling ("Shtinmtez" vs the
+  "shtinmetz" in his email).
 - **Keyless-by-default test strategy.** The full test suite and `self_grade` must pass with
   **no API key** — all LLM-provider calls mocked at the gatekeeper boundary in tests. See
   `docs/adr/0005-keyless-by-default-test-strategy.md`.
@@ -143,18 +155,27 @@ HW4/                              <- project root (becomes its own git repo; not
 ├── lec/                            <- EXISTS — course PDFs (reference only, not a deliverable)
 ├── broken-python/                 <- EXISTS — ORIGINAL pristine clone (provenance only; not part of deliverable tree)
 │
-│  ── Phase-1 scaffold only (not yet created) ──
-├── pyproject.toml                 <- Phase 1 (authors placeholder per §3)
-├── uv.lock                         <- Phase 1
-├── src/ex04_graphify_agent/        <- Phase 1 (see §6 module table)
-├── tests/                           <- Phase 1
-├── config/                          <- Phase 1 (agent.json etc.)
-└── .github/                         <- Phase 1 (CI, if used)
+│  ── all present (Phases 1-10 shipped) ──
+├── pyproject.toml · uv.lock · LICENSE · README.md
+├── .pre-commit-config.yaml · .gitattributes (eol=lf) · .github/workflows/ci.yml
+├── src/ex04_graphify_agent/        <- see §6 (every entry is a PACKAGE, not a module)
+├── tests/                           <- mirrors src/, one dir per package, + tests/evals/
+├── config/                          <- agent.json · paths.json · self_grade.json · weakness_thresholds.json
+├── scripts/                         <- gate scripts · run_comparison.py · self_grade.py · chart/graph renderers
+├── notebooks/project_run.ipynb      <- Phase 10 per-phase run notebook
+├── artifacts/runs/                  <- gatekeeper JSONL token ledgers (the §4 evidence trail)
+├── artifacts/graphify_post_fix/     <- POST-FIX graph (name now FIXED, not "or equivalent")
+└── repo-atlas/                      <- successor fork; governed by ITS OWN CLAUDE.md (see §1)
 ```
 
 ## 6. Module Structure (SDK-First)
 
 Package: `src/ex04_graphify_agent/`
+
+**Every row below is a package** (`graph_reader/`, `weakness_detector/`, `obsidian_writer/`,
+`agent_workflow/`, `gatekeeper/`, `token_comparison/`, `self_grade/`) — the ≤150-line rule split
+each one, with `__init__.py` re-exporting the public names. Keep that shape; never collapse one
+back into a single module to "tidy up".
 
 | Module | Responsibility | Primary PRD |
 |---|---|---|
@@ -164,6 +185,7 @@ Package: `src/ex04_graphify_agent/`
 | `agent_workflow/` | LangGraph graph: typed state schema + nodes (Plan → Retrieve(graph) → Hypothesize → Validate(source) → Fix → Report) | `docs/PRD_agent_workflow.md` |
 | `gatekeeper.py` | Wraps every LLM-provider API call (provider-agnostic; provider per `config/agent.json`): rate-limit, retry, queue, logging, token counters | `docs/adr/0002-*.md`, `docs/PRD_token_comparison.md` |
 | `token_comparison.py` | Runs graph-guided vs. naive baseline, produces comparison report | `docs/PRD_token_comparison.md` |
+| `self_grade/` | Keyless machine self-grade (R8.9) — re-runs the gate scripts via subprocess | `docs/TODO.md` Phase 8 |
 | `sdk.py` | Top-level façade — all business logic lives behind this | `docs/PLAN.md` |
 | `cli.py` | Thin CLI (Typer/argparse), zero business logic | `docs/PLAN.md` |
 
@@ -181,6 +203,21 @@ Package: `src/ex04_graphify_agent/`
 - No mass-commits that bundle multiple unrelated changes.
 
 ### Running tests keyless (default)
+- **All gates in one command: `uv run pre-commit run --all-files`** (ruff check+format, mypy,
+  and the four gate scripts). `.github/workflows/ci.yml` runs the same set — running only
+  ruff/mypy/pytest locally will still fail CI.
+- Gate scripts: `uv run python scripts/check_file_sizes.py` · `check_no_hardcoded.py` ·
+  `check_anti_patterns.py` · `check_vault_consistency.py obsidian`
+- `uv run pytest --cov=src --cov-fail-under=90` — the 90% gate is passed **explicitly**; it is
+  deliberately NOT in `addopts`, so running a subset of tests never fails spuriously.
+- `uv run pytest -m eval --no-cov` — structural/known-answer evals. `-m behavioural` needs a real
+  key and is excluded from CI.
+- `uv run python scripts/self_grade.py` — keyless machine self-grade, exits non-zero on any fail.
+- Evidence regen, keyless: `scripts/make_charts.py`, `scripts/render_graph.py`.
+- **Gotcha (Windows):** `.gitattributes` pins `eol=lf`. Anything that hashes a committed file must
+  normalize CRLF→LF (as `self_grade/config.py` does) or baseline hashes break on a fresh Windows
+  clone; write generated `.md` with `newline="
+"`, as `obsidian_writer` does.
 - `uv run pytest --cov=src --cov-report=term-missing`
 - All LLM-provider API calls are mocked — `gatekeeper.py`'s provider client is
   injected/mocked in tests so the full suite and `self_grade` pass with **no provider API
@@ -201,8 +238,11 @@ Package: `src/ex04_graphify_agent/`
 
 - `docs/PRD.md` — full product requirements, research questions, six-signal mapping.
 - `docs/PLAN.md` — phased implementation plan, exact directory/module decisions.
-- `docs/adr/` — Architecture Decision Records (0001 LangGraph, 0002 Gatekeeper, 0003
-  target repo/bug, 0004 graph-guided retrieval, 0005 keyless testing).
+- `docs/adr/` — ADRs: 0001 LangGraph, 0002 Gatekeeper, 0003 target repo/bug, 0004 graph-guided
+  retrieval, 0005 keyless testing, 0006 multi-agent orchestration (Phase-9 crew).
+- `docs/VERIFICATION.md` — how each gate and claim was verified.
+- `reports/` — all Phase 6-10 evidence (token_comparison, graph_diff, traceability,
+  run_journey, screenshots, img/).
 - `docs/ASSIGNMENT.md` — binding requirements (requirement IDs R#.#), source of truth for
   scope.
 - `docs/KNOWN_LIMITATIONS.md` — open items (incl. `pyproject.toml` authors placeholder),

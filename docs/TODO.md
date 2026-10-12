@@ -46,6 +46,16 @@
 
 ---
 
+> **Progress (2026-10-12): `main` fast-forwarded onto the `repo-atlas` fork; EX04 scope unchanged.**
+> `main` moved `543a9a1..fecb7ef` (44 commits, fast-forward — no history rewritten). The merge is
+> **purely additive — 15,365 insertions, 0 deletions**: it adds a self-contained `repo-atlas/`
+> sub-project (own `pyproject.toml`, `uv.lock`, CI, `CLAUDE.md`, ADRs, docs) and touches nothing
+> in the graded EX04 tree. PR #14's Phase-10 work is already in `main` (it was squash-merged as
+> `543a9a1`), so the `claude/project-run-notebook-38ajg4` branch is now redundant.
+> **No EX04 task below changes status.** Both suites re-verified on the merged tree:
+> EX04 ruff 0 / mypy 0 / **278 tests @ 97.71%**; repo-atlas ruff 0 / mypy 0 / **498 tests @ 99%**.
+> The fork's remaining work is tracked in its own `repo-atlas/docs/TODO.md` (109/114 done), not here.
+>
 > **Progress (2026-06-19): Phase 10 — project-run notebook + visualization layer (PR #14).**
 > Added a per-phase `notebooks/project_run.ipynb` (embedded outputs) and a keyless, evidence-based
 > visualization layer: `scripts/chart_data.py` (authoritative numbers from the SDK

@@ -45,7 +45,7 @@ Everything in this README is backed by a committed artifact, a requirement ID, o
 ```bash
 git clone <repo> && cd HW4
 uv sync
-uv run pytest                 # 262 tests, keyless (provider client mocked)
+uv run pytest                 # 278 tests, keyless (provider client mocked)
 uv run pytest -m eval         # the thesis evals: 76.7% token delta, structural validity
 uv run ruff check . && uv run mypy --strict src/   # 0 / 0
 uv run ex04 hot               # regenerate obsidian/hot.md from the PRE-FIX graph (keyless)
@@ -429,8 +429,20 @@ HW4/
 ├── artifacts/graphify[_post_fix]/ · artifacts/runs/   # graph + gatekeeper ledgers
 ├── reports/                    # before/after, token_comparison, traceability, screenshots …
 ├── data/broken-python/         # vendored target repo (the code the agent fixes)
-└── docs/                       # ASSIGNMENT · PRD* · PLAN · KNOWN_LIMITATIONS · PROMPTS · adr/
+├── docs/                       # ASSIGNMENT · PRD* · PLAN · KNOWN_LIMITATIONS · PROMPTS · adr/
+└── repo-atlas/                 # successor fork — a general repo-comprehension tool,
+                                #   self-contained (own pyproject/uv.lock/CI/docs). Not graded.
 ```
+
+### `repo-atlas/` — the successor fork (not part of the EX04 submission)
+
+`main` also carries [`repo-atlas/`](repo-atlas/README.md): this project generalised into a
+standalone repo-comprehension tool. It replaces the external `graphify` CLI with **its own
+AST extractor**, drops the bug-fix scope, and takes any repository as a parameter instead of
+one vendored target. It is a **self-contained sub-project** — its own `pyproject.toml`,
+`uv.lock`, CI, `CLAUDE.md` and ADRs — and it adds nothing to and changes nothing in the EX04
+deliverable above (the merge was purely additive: 15,365 insertions, 0 deletions). Its own
+suite is 498 tests @ 99%. **Grade the tree above; `repo-atlas/` is follow-on work.**
 
 > **`requirements.txt` → `pyproject.toml`/`uv` (intentional, disclosed deviation).** PDF §9 lists
 > `requirements.txt` *or* `pyproject.toml`; per the [TIGHTENED] CLAUDE.md `uv`-only rule this
